@@ -1,0 +1,7 @@
+selenium
+requests
+
+pytest
+isort
+flake8
+black
