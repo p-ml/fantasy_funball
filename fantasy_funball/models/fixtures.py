@@ -1,0 +1,18 @@
+from djongo import models
+
+
+class Gameweek(models.Model):
+    deadline = models.DateTimeField()
+
+
+class Gameday(models.Model):
+    date = models.DateTimeField()
+    gameweek = models.ForeignKey(Gameweek, on_delete=models.CASCADE)
+
+
+class Fixture(models.Model):
+    home_team = models.CharField(max_length=20)
+    home_score = models.IntegerField()
+    away_team = models.CharField(max_length=20)
+    away_score = models.IntegerField()
+    gameday = models.ForeignKey(Gameday, on_delete=models.CASCADE)
