@@ -20,7 +20,7 @@ def parse_fixtures(gameweek_raw_text: List[str]) -> List[Dict]:
             start = i * 4
             int_game_data = {
                 f"game_{i}": f"{split_text[start+1]} {split_text[start+2]}:"
-                             f"{split_text[start+3]} {split_text[start+4]}"
+                f"{split_text[start+3]} {split_text[start+4]}"
             }
             int_data["matches"].append(int_game_data)
 
@@ -69,9 +69,12 @@ def get_gameweek_start_time(week: int) -> Dict:
     return {f"gameweek_{week}_start_time": gameweek_start_time}
 
 
-def get_yearly_fixtures() -> List[Dict]:
+def get_yearly_fixtures(until_week: int = None) -> List[Dict]:
+    if not until_week:
+        until_week = N_GAMEWEEKS
+
     yearly_data = []
-    for i in range(1, N_GAMEWEEKS + 1):
+    for i in range(1, until_week + 1):
 
         gameweek_start_time = get_gameweek_start_time(week=i)
 

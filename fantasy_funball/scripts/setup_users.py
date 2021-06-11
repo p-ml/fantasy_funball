@@ -1,7 +1,15 @@
+from pymongo import MongoClient
+
 from fantasy_funball.models import Funballer
 
 
 def setup_users() -> None:
+    # Wipe mongo db user collection before adding setting up
+    mongo_client = MongoClient("mongodb://localhost:27017")
+    mongo_db = mongo_client.fantasy_funball_db
+    users_col = mongo_db.fantasy_funball_funballer
+    users_col.drop()
+
     people = [
         {
             "first_name": "Patrick",

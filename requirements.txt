@@ -1,6 +1,7 @@
 selenium
 requests
 djongo
+pymongo
 
 pytest
 isort
