@@ -1,4 +1,5 @@
-# Fantasy Funball
+# Fantasy Funball 2: Electric Boogaloo
+
 ## Setup 
 Consider using a virtual environment; navigate to `fantasy_funball` directory and:
 ```python3 -m venv <virtual env name>```
