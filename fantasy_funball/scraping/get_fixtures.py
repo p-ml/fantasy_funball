@@ -86,4 +86,4 @@ def get_yearly_fixtures() -> List[Dict]:
 
 
 if __name__ == "__main__":
-    get_yearly_fixtures()
+    get_weekly_fixtures(week=1)

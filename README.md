@@ -1,6 +1,6 @@
 # Fantasy Funball
 ## Setup 
-Consider using a virtual environment; navigate to `EPL_Python` directory and:
+Consider using a virtual environment; navigate to `fantasy_funball` directory and:
 ```python3 -m venv <virtual env name>```
 
 Once set up, install required packages using requirements.txt
