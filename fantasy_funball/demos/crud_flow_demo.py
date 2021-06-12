@@ -1,10 +1,5 @@
-import os
-
 import django
 
-# TODO: Use DJANGO_SETTINGS_MODULE env var to replace this
-# These have to be set before any models are imported ¯\_(ツ)_/¯
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fantasy_funball.settings")
 django.setup()
 
 from fantasy_funball.models import Funballer
@@ -24,9 +19,7 @@ def test_db_crud():
     funballer_1.save()
 
     # Retrieve funballer
-    funballer_retrieved = Funballer.objects.get(
-        first_name="Test", surname="CRUD"
-    )
+    funballer_retrieved = Funballer.objects.get(first_name="Test", surname="CRUD")
 
     funballer_id = funballer_retrieved.id
 
