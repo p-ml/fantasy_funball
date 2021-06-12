@@ -7,9 +7,9 @@ import pytz
 def scraper_deadline_to_datetime_mongo(date: Dict) -> datetime:
     """
     Converts date from FPL website in format:
-        "Mon 1 Oct 10:00"
+        "Mon 1 Oct 10:00" (str)
     to:
-        "2021-10-01 10:00:00"
+        "2021-10-01 10:00:00" (datetime object)
     for database storage
     """
     date_data = list(date.values())[0]
@@ -31,9 +31,9 @@ def scraper_deadline_to_datetime_mongo(date: Dict) -> datetime:
 def scraper_date_to_datetime_mongo(date: str) -> datetime:
     """
     Converts date from FPL website in format:
-        "Monday 1 October 2021"
+        "Monday 1 October 2021" (str)
     to:
-        "2021-10-01 00:00:00"
+        "2021-10-01 00:00:00" (datetime object)
     for database storage
     """
     # To datetime obj
