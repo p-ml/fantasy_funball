@@ -6,6 +6,7 @@ from fantasy_funball.models import Funballer
 
 
 # TODO: Make this a FT
+# TODO: Write a wrapper (DatabaseManager) to make CRUD more intuitive
 def test_db_crud():
     """Demo of database CRUD workflow"""
     # Create

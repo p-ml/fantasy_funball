@@ -6,6 +6,9 @@ from selenium.webdriver.chrome.options import Options
 BASE_URL = "https://fantasy.premierleague.com/fixtures"
 N_GAMEWEEKS = 38
 
+# TODO: Write unit tests for these functions
+# TODO: Functions that use selenium could/should be refactored into a class
+
 
 def parse_fixtures(gameweek_raw_text: List[str]) -> List[Dict]:
     game_data = []
