@@ -4,6 +4,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.exceptions import (
+    FixtureNotFoundError,
+    GamedayNotFoundError,
+    GameweekNotFoundError,
+)
 from fantasy_funball.models import Fixture, Gameday, Gameweek
 
 
@@ -17,7 +22,7 @@ class RetrieveFixture(APIView):
         try:
             fixture = Fixture.objects.get(id=id)
         except Fixture.DoesNotExist:
-            return Response(status=404)
+            raise FixtureNotFoundError(f"Fixture with id {id} not found")
 
         # Convert to json for output
         formatted_fixture = model_to_dict(fixture)
@@ -38,7 +43,7 @@ class RetrieveGameday(APIView):
         try:
             gameday = Gameday.objects.get(id=id)
         except Gameday.DoesNotExist:
-            return Response(status=404)
+            raise GamedayNotFoundError(f"Gameday with id {id} not found")
 
         # Convert to json for output
         formatted_gameday = model_to_dict(gameday)
@@ -59,7 +64,7 @@ class RetrieveGameweek(APIView):
         try:
             gameweek = Gameweek.objects.get(id=id)
         except Gameweek.DoesNotExist:
-            return Response(status=404)
+            raise GameweekNotFoundError(f"Gameweek with id {id} not found")
 
         # Convert to json for output
         formatted_gameweek = model_to_dict(gameweek)
