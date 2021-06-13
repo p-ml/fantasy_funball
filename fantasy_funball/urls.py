@@ -1,19 +1,3 @@
-"""fantasy_funball URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
 from django.urls import path
 
 from fantasy_funball.views.fixtures import (
@@ -24,7 +8,6 @@ from fantasy_funball.views.fixtures import (
 from fantasy_funball.views.funballer import CreateFunballerView, ModifyFunballerView
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("funballer/<int:id>", ModifyFunballerView.as_view(), name="funballer-detail"),
     path("funballer/", CreateFunballerView.as_view(), name="create-funballer"),
     path("fixture/<int:id>", RetrieveFixture.as_view(), name="retrieve-fixture"),

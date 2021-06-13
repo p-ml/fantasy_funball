@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "fantasy_funball"
+    "fantasy_funball",
 ]
 
 MIDDLEWARE = [
@@ -50,7 +50,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "fantasy_funball.urls"
+ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "fantasy_funball.wsgi.application"
+WSGI_APPLICATION = "core.wsgi.application"
 
 
 # Database
@@ -78,9 +78,9 @@ DATABASES = {
     "default": {
         "ENGINE": "djongo",
         "NAME": "fantasy_funball_db",
-        'CLIENT': {
-            'host': 'localhost',
-        }
+        "CLIENT": {
+            "host": "localhost",
+        },
     }
 }
 
