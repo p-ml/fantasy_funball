@@ -11,3 +11,6 @@ venv/
 
 # Python interpreter bytecode
 __pycache__/
+
+# Personal .env file
+.env

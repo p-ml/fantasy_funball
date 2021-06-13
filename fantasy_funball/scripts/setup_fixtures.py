@@ -6,9 +6,7 @@ from fantasy_funball.helpers.mappers.scraper_to_mongo import (
     scraper_fixture_to_mongo,
 )
 from fantasy_funball.models import Fixture, Gameday, Gameweek
-from fantasy_funball.scraping.get_fixtures import (
-    get_yearly_fixtures,
-)
+from fantasy_funball.scraping.fixture_scraper import FixtureScraper
 
 
 def setup_fixtures():
@@ -20,7 +18,8 @@ def setup_fixtures():
     mongo_db.fantasy_funball_gameweek.drop()
 
     # TODO: Refactor, v. messy
-    gameweek_one = get_yearly_fixtures(until_week=1)[0]
+    fixture_scraper = FixtureScraper()
+    gameweek_one = fixture_scraper.get_yearly_fixtures(until_week=1)[0]
 
     # Map retrieved weekly fixtures to Django model format
     deadline_mongo_format = scraper_deadline_to_datetime_mongo(
