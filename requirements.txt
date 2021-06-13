@@ -1,6 +1,8 @@
 selenium
 requests
+django
 djongo
+djangorestframework
 pymongo
 
 pytest

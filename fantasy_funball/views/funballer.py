@@ -1,0 +1,76 @@
+from typing import Union
+
+from django.core.handlers.wsgi import WSGIRequest
+from django.forms import model_to_dict
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from fantasy_funball.models import Funballer
+
+
+def _get_funballer_by_id(id: int) -> Union[Funballer, Response]:
+    try:
+        return Funballer.objects.get(id=id)
+    except Funballer.DoesNotExist:
+        return Response(status=404)
+
+
+class CreateFunballerView(APIView):
+    """Viewset to handle funballers"""
+
+    def post(self, request: WSGIRequest) -> Response:
+        """Add a funballer to MongoDB"""
+        funballer = Funballer(**request.data)
+        funballer.save()
+
+        # Convert to json for output
+        formatted_funballer = model_to_dict(funballer)
+
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data=formatted_funballer,
+        )
+
+
+class ModifyFunballerView(APIView):
+    def get(self, request: WSGIRequest, id: int) -> Response:
+        """Retrieve a funballer from MongoDB"""
+        funballer = _get_funballer_by_id(id=id)
+
+        # Convert to json for output
+        formatted_funballer = model_to_dict(funballer)
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=formatted_funballer,
+        )
+
+    def patch(self, request: WSGIRequest, id: int) -> Response:
+        """Update a funballer in MongoDB"""
+        funballer = _get_funballer_by_id(id=id)
+
+        # Parse update payload
+        update_payload = [
+            {"field": str(key), "value": str(value)}
+            for key, value in request.data.items()
+        ]
+
+        # Update funballer attribute
+        setattr(funballer, update_payload[0]["field"], update_payload[0]["value"])
+        funballer.save()
+
+        # Convert to json for output
+        formatted_funballer = model_to_dict(funballer)
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=formatted_funballer,
+        )
+
+    def delete(self, request: WSGIRequest, id: int) -> Response:
+        """Delete a funballer from MongoDB"""
+        funballer = _get_funballer_by_id(id=id)
+        funballer.delete()
+
+        return Response(status=status.HTTP_200_OK)
