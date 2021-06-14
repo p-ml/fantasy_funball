@@ -33,3 +33,10 @@ of the application code.
 
 ## Basic Idea / Structure
 ![Potential Structure](docs/fantasy_funball_structure.png)
+
+## Todo
+- Logic to check results, update funballer points, determine standings
+- Job scheduler to run every night
+- Check if scraper works with fixtures in the future, rather than the past
+- Basic front end of some sort
+- Bulk out tests (both unit and functional)
