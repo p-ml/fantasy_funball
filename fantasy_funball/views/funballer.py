@@ -10,14 +10,14 @@ from core.exceptions import FunballerNotFoundError
 from fantasy_funball.models import Funballer
 
 
-def _get_funballer_by_id(id: int) -> Union[Funballer, Response]:
+def _get_funballer_by_id(id: int) -> Union[Funballer, None]:
     try:
         return Funballer.objects.get(id=id)
     except Funballer.DoesNotExist:
         raise FunballerNotFoundError(f"Funballer with id {id} not found")
 
 
-class CreateFunballerView(APIView):
+class FunballerView(APIView):
     """Viewset to handle funballers"""
 
     def post(self, request: WSGIRequest) -> Response:
@@ -33,8 +33,19 @@ class CreateFunballerView(APIView):
             data=formatted_funballer,
         )
 
+    def get(self, request: WSGIRequest) -> Response:
+        """Retrieve all funballers from MongoDB"""
+        funballers = Funballer.objects.all()
 
-class ModifyFunballerView(APIView):
+        formatted_funballers = [model_to_dict(funballer) for funballer in funballers]
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=formatted_funballers,
+        )
+
+
+class SingleFunballerView(APIView):
     def get(self, request: WSGIRequest, id: int) -> Response:
         """Retrieve a funballer from MongoDB"""
         funballer = _get_funballer_by_id(id=id)
