@@ -13,4 +13,4 @@ venv/
 __pycache__/
 
 # Personal .env file
-.env
+**/.env

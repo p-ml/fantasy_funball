@@ -1,3 +1,5 @@
+import os
+
 from pymongo import MongoClient
 
 from fantasy_funball.helpers.mappers.scraper_to_mongo import (
@@ -11,7 +13,9 @@ from fantasy_funball.scraping.fixture_scraper import FixtureScraper
 
 def setup_fixtures():
     # Wipe mongo db fixture collection before adding setting up
-    mongo_client = MongoClient("mongodb://localhost:27017")
+    mongodb_url = os.environ.get("MONGO_DB_URL")
+    mongo_client = MongoClient(mongodb_url)
+
     mongo_db = mongo_client.fantasy_funball_db
     mongo_db.fantasy_funball_fixture.drop()
     mongo_db.fantasy_funball_gameday.drop()
