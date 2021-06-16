@@ -4,7 +4,7 @@ from typing import Dict
 import pytz
 
 
-def scraper_deadline_to_datetime_mongo(date: Dict) -> datetime:
+def scraper_deadline_to_datetime_postgres(date: Dict) -> datetime:
     """
     Converts date from FPL website in format:
         "Mon 1 Oct 10:00" (str)
@@ -28,7 +28,7 @@ def scraper_deadline_to_datetime_mongo(date: Dict) -> datetime:
     return datetime_obj
 
 
-def scraper_date_to_datetime_mongo(date: str) -> datetime:
+def scraper_date_to_datetime_postgres(date: str) -> datetime:
     """
     Converts date from FPL website in format:
         "Monday 1 October 2021" (str)
@@ -46,7 +46,7 @@ def scraper_date_to_datetime_mongo(date: str) -> datetime:
     return datetime_obj
 
 
-def scraper_fixture_to_mongo(data: Dict) -> Dict:
+def scraper_fixture_to_postgres(data: Dict) -> Dict:
     fixture_data = list(data.values())[0]
 
     # fixture_data will be in format:

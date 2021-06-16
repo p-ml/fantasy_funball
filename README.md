@@ -12,16 +12,16 @@ Once set up, install required packages using requirements.txt
 To run database locally, use Docker :whale:. Install both 
 [Docker](https://docs.docker.com/get-docker/) and 
 [Docker Compose](https://docs.docker.com/compose/install/). Then navigate to 
-`fantasy_funball` directory and `docker-compose up`. Voila MongoDB instance up and 
-running. You can now mess around with your local MongoDB instance. If you want to
+`fantasy_funball` directory and `docker-compose up`. Voila Postgres instance up and 
+running. You can now mess around with your local Postgres instance. If you want to
 reset & add test data, run `fantasy_funball/scripts/setup_database.py`
 
-Alternatively, you could install MongoDB locally, and point the env. var `MONGO_DB_URL`
-at your local MongoDB.
+Alternatively, you could install PostgreSQL locally, and fill out the environment
+variables within `.env` to point at your local postgres db
 
 ### Environment Variables
 Environment variables needed are listed in `.env.sample`. Make a copy called `.env`.
-You'll need to add a path to your chrome driver for Selenium, and MongoDB URL.
+You'll need to add a path to your chrome driver for Selenium, and Postgres creds.
 If running PyCharm, get the `EnvFile` plugin, which allows you to attach an `.env` file to any run
 configuration.
 
@@ -37,6 +37,6 @@ of the application code.
 ## Todo
 - Logic to check results, update funballer points, determine standings
 - Job scheduler to run every night
-- Check if scraper works with fixtures in the future, rather than the past
+- Check if scraper works with fixtures in the future, rather than the past **(21/22 fixtures released 16th June, waiting for FPL website to be updated)**
 - Basic front end of some sort
 - Bulk out tests (both unit and functional)

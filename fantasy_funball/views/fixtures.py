@@ -16,7 +16,7 @@ class RetrieveFixture(APIView):
     """Viewset to handle fixtures"""
 
     def get(self, request: WSGIRequest, id: int) -> Response:
-        """Retrieve fixture from MongoDB"""
+        """Retrieve fixture from postgres"""
         # TODO: Might want to do this by team name and date
 
         try:
@@ -37,7 +37,7 @@ class RetrieveGameday(APIView):
     """Viewset to handle gamedays"""
 
     def get(self, request: WSGIRequest, id: int) -> Response:
-        """Retrieve gameday from MongoDB"""
+        """Retrieve gameday from postgres"""
         # TODO: Might want to do this by date
 
         try:
@@ -58,7 +58,7 @@ class RetrieveGameweek(APIView):
     """Viewset to handle gameweeks"""
 
     def get(self, request: WSGIRequest, id: int) -> Response:
-        """Retrieve gameweek from MongoDB"""
+        """Retrieve gameweek from postgres"""
         # TODO: Might want to do this by gameweek no. (1-38)
 
         try:

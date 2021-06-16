@@ -1,43 +1,53 @@
 import os
 
-from pymongo import MongoClient
+import psycopg2
 
-from fantasy_funball.helpers.mappers.scraper_to_mongo import (
-    scraper_date_to_datetime_mongo,
-    scraper_deadline_to_datetime_mongo,
-    scraper_fixture_to_mongo,
+from fantasy_funball.helpers.mappers.scraper_to_postgres import (
+    scraper_date_to_datetime_postgres,
+    scraper_deadline_to_datetime_postgres,
+    scraper_fixture_to_postgres,
 )
 from fantasy_funball.models import Fixture, Gameday, Gameweek
 from fantasy_funball.scraping.fixture_scraper import FixtureScraper
 
 
 def setup_fixtures():
-    # Wipe mongo db fixture collection before adding setting up
-    mongodb_url = os.environ.get("MONGO_DB_URL")
-    mongo_client = MongoClient(mongodb_url)
+    # Wipe postgres db fixture collection before adding setting up
+    postgres_creds = {
+        "database": os.environ.get("DATABASE_NAME"),
+        "host": os.environ.get("DATABASE_HOST"),
+        "port": os.environ.get("DATABASE_PORT"),
+        "user": os.environ.get("DATABASE_USER"),
+        "password": os.environ.get("DATABASE_PASSWORD"),
+    }
 
-    mongo_db = mongo_client.fantasy_funball_db
-    mongo_db.fantasy_funball_fixture.drop()
-    mongo_db.fantasy_funball_gameday.drop()
-    mongo_db.fantasy_funball_gameweek.drop()
+    conn = psycopg2.connect(**postgres_creds)
+    cur = conn.cursor()
+    cur.execute(
+        "truncate fantasy_funball_fixture, "
+        "fantasy_funball_gameday, "
+        "fantasy_funball_gameweek;"
+    )
+    conn.commit()
+    conn.close()
 
     # TODO: Refactor, v. messy
     fixture_scraper = FixtureScraper()
     gameweek_one = fixture_scraper.get_yearly_fixtures(until_week=1)[0]
 
     # Map retrieved weekly fixtures to Django model format
-    deadline_mongo_format = scraper_deadline_to_datetime_mongo(
+    deadline_postgres_format = scraper_deadline_to_datetime_postgres(
         date=gameweek_one["gameweek_1_deadline"]
     )
-    gameweek = Gameweek(deadline=deadline_mongo_format)
+    gameweek = Gameweek(deadline=deadline_postgres_format)
 
     gameweek_one_fixtures = gameweek_one["gameweek_1_fixtures"]
     gameday_one = gameweek_one_fixtures[0]
-    gameday_date_mongo_format = scraper_date_to_datetime_mongo(
+    gameday_date_postgres_format = scraper_date_to_datetime_postgres(
         date=gameday_one["date"],
     )
     gameday = Gameday(
-        date=gameday_date_mongo_format,
+        date=gameday_date_postgres_format,
         gameweek=gameweek,
     )
 
@@ -46,15 +56,15 @@ def setup_fixtures():
     gameday.save()
 
     for fixture in gameday_one["matches"]:
-        fixture_mongo_format = scraper_fixture_to_mongo(
+        fixture_postgres_format = scraper_fixture_to_postgres(
             data=fixture,
         )
 
         fixture = Fixture(
-            home_team=fixture_mongo_format["home_team"],
-            home_score=fixture_mongo_format["home_score"],
-            away_team=fixture_mongo_format["away_team"],
-            away_score=fixture_mongo_format["away_score"],
+            home_team=fixture_postgres_format["home_team"],
+            home_score=fixture_postgres_format["home_score"],
+            away_team=fixture_postgres_format["away_team"],
+            away_score=fixture_postgres_format["away_score"],
             gameday=gameday,
         )
 

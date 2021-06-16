@@ -21,7 +21,7 @@ class FunballerView(APIView):
     """Viewset to handle funballers"""
 
     def post(self, request: WSGIRequest) -> Response:
-        """Add a funballer to MongoDB"""
+        """Add a funballer to postgres"""
         funballer = Funballer(**request.data)
         funballer.save()
 
@@ -34,7 +34,7 @@ class FunballerView(APIView):
         )
 
     def get(self, request: WSGIRequest) -> Response:
-        """Retrieve all funballers from MongoDB"""
+        """Retrieve all funballers from postgres"""
         funballers = Funballer.objects.all()
 
         formatted_funballers = [model_to_dict(funballer) for funballer in funballers]
@@ -47,7 +47,7 @@ class FunballerView(APIView):
 
 class SingleFunballerView(APIView):
     def get(self, request: WSGIRequest, id: int) -> Response:
-        """Retrieve a funballer from MongoDB"""
+        """Retrieve a funballer from postgres"""
         funballer = _get_funballer_by_id(id=id)
 
         # Convert to json for output
@@ -59,7 +59,7 @@ class SingleFunballerView(APIView):
         )
 
     def patch(self, request: WSGIRequest, id: int) -> Response:
-        """Update a funballer in MongoDB"""
+        """Update a funballer in postgres"""
         funballer = _get_funballer_by_id(id=id)
 
         # Parse update payload
@@ -81,7 +81,7 @@ class SingleFunballerView(APIView):
         )
 
     def delete(self, request: WSGIRequest, id: int) -> Response:
-        """Delete a funballer from MongoDB"""
+        """Delete a funballer from postgres"""
         funballer = _get_funballer_by_id(id=id)
         funballer.delete()
 

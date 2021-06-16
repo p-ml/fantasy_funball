@@ -1,9 +1,8 @@
 selenium
 requests
 django
-djongo
 djangorestframework
-pymongo
+psycopg2
 
 pytest
 isort

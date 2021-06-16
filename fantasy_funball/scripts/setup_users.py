@@ -1,18 +1,25 @@
 import os
 
-from pymongo import MongoClient
+import psycopg2
 
 from fantasy_funball.models import Funballer
 
 
 def setup_users() -> None:
-    # Wipe mongo db user collection before adding setting up
-    mongodb_url = os.environ.get("MONGO_DB_URL")
-    mongo_client = MongoClient(mongodb_url)
+    # Wipe postgres user collection before adding setting up
+    postgres_creds = {
+        "database": os.environ.get("DATABASE_NAME"),
+        "host": os.environ.get("DATABASE_HOST"),
+        "port": os.environ.get("DATABASE_PORT"),
+        "user": os.environ.get("DATABASE_USER"),
+        "password": os.environ.get("DATABASE_PASSWORD"),
+    }
 
-    mongo_db = mongo_client.fantasy_funball_db
-    users_col = mongo_db.fantasy_funball_funballer
-    users_col.drop()
+    conn = psycopg2.connect(**postgres_creds)
+    cur = conn.cursor()
+    cur.execute("truncate fantasy_funball_choices, fantasy_funball_funballer;")
+    conn.commit()
+    conn.close()
 
     people = [
         {

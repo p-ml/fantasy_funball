@@ -76,11 +76,12 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "djongo",
-        "NAME": "fantasy_funball_db",
-        "CLIENT": {
-            "host": os.environ.get("MONGO_DB_URL"),
-        },
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "postgres",
+        'USER': "postgres",
+        'PASSWORD': "postgres",
+        'HOST': "localhost",
+        'PORT': "5433",
     }
 }
 
