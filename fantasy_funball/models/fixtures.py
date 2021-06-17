@@ -15,4 +15,4 @@ class Fixture(models.Model):
     home_score = models.IntegerField()
     away_team = models.CharField(max_length=20)
     away_score = models.IntegerField()
-    gameday = models.ForeignKey(Gameday, on_delete=models.CASCADE)
+    gameday = models.ForeignKey(Gameday, on_delete=models.DO_NOTHING)
