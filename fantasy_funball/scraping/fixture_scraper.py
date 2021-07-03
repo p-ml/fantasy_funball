@@ -7,8 +7,6 @@ from selenium.webdriver.chrome.options import Options
 BASE_URL = "https://fantasy.premierleague.com/fixtures"
 N_GAMEWEEKS = 38
 
-# TODO: Write unit tests for these functions
-
 
 class FixtureScraper:
     def __init__(self):
@@ -29,7 +27,7 @@ class FixtureScraper:
 
         gameweek_raw_text = [x.text for x in gameweek_fixtures_raw]
 
-        gameweek_data = self.parse_fixtures(gameweek_raw_text=gameweek_raw_text)
+        gameweek_data = self.parse_results(gameweek_raw_text=gameweek_raw_text)
 
         return gameweek_data
 
@@ -80,6 +78,10 @@ class FixtureScraper:
         gameweek_start_time = gameweek_start_time_raw.split("-")[1][1:]
 
         return {f"gameweek_{week}_start_time": gameweek_start_time}
+
+    # TODO
+    def get_yearly_fixtures(self, until_week: int = None) -> List[Dict]:
+        pass
 
     def get_yearly_results(self, until_week: int = None) -> List[Dict]:
         if not until_week:

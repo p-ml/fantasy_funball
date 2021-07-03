@@ -1,37 +1,26 @@
+import os
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from fantasy_funball.scraping.fixture_scraper import FixtureScraper
 
 FIXTURE_SCRAPER_MODULE_PATH = "fantasy_funball.scraping.fixture_scraper"
 
 
-class MockWebElement:
-    """Dummy class for mocking return values"""
-
-    pass
-
-
+@patch.dict(os.environ, {"SELENIUM_DRIVER_PATH": "dummy_path"}, clear=True)
+@patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.webdriver.Chrome")
 class TestGetFixtures(TestCase):
-    @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.webdriver")
-    def setUp(self, mock_webdriver) -> None:
-        mock_webdriver_inst = mock_webdriver.return_value
-        mock_webdriver_inst.return_value = {}
-        self.fixture_scraper = FixtureScraper()
+    def setUp(self) -> None:
+        pass
 
-    @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.webdriver.Chrome")
     def test_get_gameweek_start_time(self, mock_webdriver):
-        mock_webdriver_inst = mock_webdriver.return_value
-        mock_webdriver_inst.return_value = {}
-
-        mock_web_element = MockWebElement()
+        mock_web_element = Mock()
         mock_web_element.text = "Gameweek 1 - Sat 12 Sep 11:00"
 
-        mock_webdriver_inst.get.return_value = {}
-        mock_webdriver_inst.find_elements_by_xpath.return_value = [mock_web_element]
+        mock_webdriver().get.return_value = {}
+        mock_webdriver().find_elements_by_xpath.return_value = [mock_web_element]
 
         fixture_scraper = FixtureScraper()
-
         response = fixture_scraper.get_gameweek_start_time(
             week=1,
         )
@@ -40,15 +29,108 @@ class TestGetFixtures(TestCase):
 
         self.assertEqual(response, expected_output)
 
-    # TODO
-    def test_get_weekly_fixtures(self):
-        pass
+    @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.FixtureScraper.parse_fixtures")
+    def test_get_weekly_fixtures(self, mock_parse_fixtures, mock_webdriver):
+        mock_web_element = Mock()
+        mock_web_element.text = (
+            "Friday 13 August 2021\n" "Brentford\n" "20:00\n" "Arsenal"
+        )
+
+        mock_webdriver().get.return_value = {}
+        mock_webdriver().find_elements_by_xpath.return_value = [mock_web_element]
+
+        expected_output = [
+            {
+                "date": "Friday 13 August 2021",
+                "matches": [
+                    {
+                        "game_0": "Brentford v Arsenal",
+                        "kickoff": "20:00",
+                    }
+                ],
+            }
+        ]
+
+        mock_parse_fixtures.return_value = expected_output
+
+        fixture_scraper = FixtureScraper()
+        response = fixture_scraper.get_weekly_fixtures(
+            week=1,
+        )
+        self.assertEqual(response, expected_output)
+
+    @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.FixtureScraper.parse_results")
+    def test_get_weekly_results(self, mock_parse_results, mock_webdriver):
+        mock_web_element = Mock()
+        mock_web_element.text = (
+            "Friday 13 August 2021\n" "Brentford\n" "3\n" "0\n" "Arsenal"
+        )
+
+        mock_webdriver().get.return_value = {}
+        mock_webdriver().find_elements_by_xpath.return_value = [mock_web_element]
+
+        expected_output = [
+            {
+                "date": "Friday 13 August 2021",
+                "matches": [
+                    {
+                        "game_0": "Brentford 3:0 Arsenal",
+                    }
+                ],
+            }
+        ]
+
+        mock_parse_results.return_value = expected_output
+
+        fixture_scraper = FixtureScraper()
+        response = fixture_scraper.get_weekly_results(
+            week=1,
+        )
+        self.assertEqual(response, expected_output)
 
     # TODO
-    def test_get_yearly_fixtures(self):
+    def test_get_yearly_fixtures(self, mock_webdriver):
         pass
 
-    def test_parse_results(self):
+    @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.FixtureScraper.get_gameweek_start_time")
+    @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.FixtureScraper.get_weekly_results")
+    def test_get_yearly_results(
+        self,
+        mock_get_weekly_results,
+        mock_get_gameweek_start_time,
+        mock_webdriver,
+    ):
+
+        mock_get_gameweek_start_time.return_value = {
+            "gameweek_1_start_time": "Fri 13 Aug 18:30"
+        }
+
+        mock_weekly_results = [
+            {
+                "date": "Friday 13 August 2021",
+                "matches": [
+                    {
+                        "game_1": "Brentford 3:0 Arsenal",
+                    }
+                ],
+            }
+        ]
+
+        mock_get_weekly_results.return_value = mock_weekly_results
+
+        expected_output = [
+            {
+                "gameweek_1_fixtures": mock_weekly_results,
+                "gameweek_1_deadline": {"gameweek_1_start_time": "Fri 13 Aug 18:30"},
+            }
+        ]
+
+        fixture_scraper = FixtureScraper()
+        response = fixture_scraper.get_yearly_results(until_week=1)
+
+        self.assertEqual(response, expected_output)
+
+    def test_parse_results(self, mock_webdriver):
         mock_raw_gameweek_text = [
             "Saturday 12 September 2020\n"
             "Fulham\n0\n3\nArsenal\n"
@@ -89,10 +171,11 @@ class TestGetFixtures(TestCase):
             },
         ]
 
-        response = self.fixture_scraper.parse_results(mock_raw_gameweek_text)
+        fixture_scraper = FixtureScraper()
+        response = fixture_scraper.parse_results(mock_raw_gameweek_text)
         self.assertEqual(response, expected_output)
 
-    def test_parse_fixtures(self):
+    def test_parse_fixtures(self, mock_webdriver):
         mock_raw_gameweek_text = [
             "Friday 13 August 2021\n" "Brentford\n20:00\nArsenal\n",
             "Saturday 14 August 2021\n"
@@ -134,5 +217,6 @@ class TestGetFixtures(TestCase):
             },
         ]
 
-        response = self.fixture_scraper.parse_fixtures(mock_raw_gameweek_text)
+        fixture_scraper = FixtureScraper()
+        response = fixture_scraper.parse_fixtures(mock_raw_gameweek_text)
         self.assertEqual(response, expected_output)
