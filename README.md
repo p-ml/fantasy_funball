@@ -36,8 +36,7 @@ of the application code.
 
 ## Todo
 - Logic to check results, update funballer points, determine standings
-- Job scheduler to run every night
-- Check if scraper works with fixtures in the future, rather than the past **(21/22 fixtures released 16th June, waiting for FPL website to be updated)**
+- Job scheduler to update on set dates (end of each gameweek?)
 - Basic front end of some sort
 - Bulk out tests (both unit and functional)
 - Pull down players, lineups etc.

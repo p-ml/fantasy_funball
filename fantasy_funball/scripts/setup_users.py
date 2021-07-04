@@ -25,21 +25,29 @@ def setup_users() -> None:
         {
             "first_name": "Patrick",
             "surname": "McLaughlin",
+            "player_points": 0,
+            "team_points": 0,
             "points": 0,
         },
         {
             "first_name": "Ben",
             "surname": "Webster",
+            "player_points": 0,
+            "team_points": 0,
             "points": 0,
         },
         {
             "first_name": "Henry",
             "surname": "Crossman",
+            "player_points": 0,
+            "team_points": 0,
             "points": 0,
         },
         {
             "first_name": "Will",
             "surname": "Cobbett",
+            "player_points": 0,
+            "team_points": 0,
             "points": 0,
         },
     ]
@@ -49,5 +57,7 @@ def setup_users() -> None:
             first_name=person["first_name"],
             surname=person["surname"],
             points=person["points"],
+            player_points=person["player_points"],
+            team_points=person["team_points"],
         )
         funballer.save()

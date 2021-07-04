@@ -7,17 +7,22 @@ from fantasy_funball.helpers.mappers.scraper_to_postgres import (
     scraper_date_to_datetime_postgres,
     scraper_deadline_to_datetime_postgres,
     scraper_fixture_to_postgres,
+    scraper_result_to_postgres,
 )
 
 
-class TestScraperTopostgres(TestCase):
+class TestScraperToPostgres(TestCase):
     def setUp(self) -> None:
         self.mock_scraper_deadline = {
             "date": "Mon 1 Oct 10:00",
         }
         self.mock_scraper_date = "Monday 1 October 2021"
-        self.mock_scraper_fixture = {
+        self.mock_scraper_result = {
             "game": "Tottenham Hotspur 6:0 Arsenal",
+        }
+        self.mock_scraper_fixture = {
+            "game": "Leicester v Chelsea",
+            "kickoff": "12:00",
         }
 
         self.timezone = pytz.timezone("Europe/London")
@@ -42,12 +47,25 @@ class TestScraperTopostgres(TestCase):
 
         self.assertEqual(result, expected_output)
 
-    def test_scraper_fixture_to_postgres(self):
+    def test_scraper_result_to_postgres(self):
         expected_output = {
             "home_team": "Tottenham Hotspur",
             "home_score": "6",
             "away_team": "Arsenal",
             "away_score": "0",
+        }
+
+        result = scraper_result_to_postgres(
+            data=self.mock_scraper_result,
+        )
+
+        self.assertEqual(result, expected_output)
+
+    def test_scraper_fixture_to_postgres(self):
+        expected_output = {
+            "home_team": "Leicester",
+            "away_team": "Chelsea",
+            "kickoff": "12:00",
         }
 
         result = scraper_fixture_to_postgres(
