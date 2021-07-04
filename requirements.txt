@@ -3,6 +3,9 @@ requests
 django
 djangorestframework
 psycopg2
+dj-database-url
+gunicorn
+django-heroku
 
 pytest
 isort
