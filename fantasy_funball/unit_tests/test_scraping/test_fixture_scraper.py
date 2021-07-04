@@ -88,9 +88,41 @@ class TestGetFixtures(TestCase):
         )
         self.assertEqual(response, expected_output)
 
-    # TODO
-    def test_get_yearly_fixtures(self, mock_webdriver):
-        pass
+    @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.FixtureScraper.get_gameweek_start_time")
+    @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.FixtureScraper.get_weekly_fixtures")
+    def test_get_yearly_fixtures(
+        self, mock_get_weekly_fixtures, mock_get_gameweek_start_time, mock_webdriver
+    ):
+
+        mock_get_gameweek_start_time.return_value = {
+            "gameweek_1_start_time": "Fri 13 Aug 18:30"
+        }
+
+        mock_weekly_fixtures = [
+            {
+                "date": "Friday 13 August 2021",
+                "matches": [
+                    {
+                        "game_1": "Brentford v Arsenal",
+                        "kickoff": "12:00",
+                    }
+                ],
+            }
+        ]
+
+        mock_get_weekly_fixtures.return_value = mock_weekly_fixtures
+
+        expected_output = [
+            {
+                "gameweek_1_fixtures": mock_weekly_fixtures,
+                "gameweek_1_deadline": {"gameweek_1_start_time": "Fri 13 Aug 18:30"},
+            }
+        ]
+
+        fixture_scraper = FixtureScraper()
+        response = fixture_scraper.get_yearly_fixtures(until_week=1)
+
+        self.assertEqual(response, expected_output)
 
     @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.FixtureScraper.get_gameweek_start_time")
     @patch(f"{FIXTURE_SCRAPER_MODULE_PATH}.FixtureScraper.get_weekly_results")
@@ -100,7 +132,6 @@ class TestGetFixtures(TestCase):
         mock_get_gameweek_start_time,
         mock_webdriver,
     ):
-
         mock_get_gameweek_start_time.return_value = {
             "gameweek_1_start_time": "Fri 13 Aug 18:30"
         }
