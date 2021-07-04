@@ -25,7 +25,9 @@ def setup_fixtures():
     cur = conn.cursor()
     cur.execute(
         "truncate fantasy_funball_fixture, "
-        "fantasy_funball_gameday, "
+        "fantasy_funball_result,"
+        "fantasy_funball_gameday,"
+        "fantasy_funball_choices, "
         "fantasy_funball_gameweek;"
     )
     conn.commit()
@@ -62,9 +64,8 @@ def setup_fixtures():
 
         fixture = Fixture(
             home_team=fixture_postgres_format["home_team"],
-            home_score=fixture_postgres_format["home_score"],
             away_team=fixture_postgres_format["away_team"],
-            away_score=fixture_postgres_format["away_score"],
+            kickoff=fixture_postgres_format["kickoff"],
             gameday=gameday,
         )
 

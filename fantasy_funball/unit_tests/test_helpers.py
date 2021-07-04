@@ -6,7 +6,7 @@ import pytz
 from fantasy_funball.helpers.mappers.scraper_to_postgres import (
     scraper_date_to_datetime_postgres,
     scraper_deadline_to_datetime_postgres,
-    scraper_fixture_to_postgres,
+    scraper_result_to_postgres,
 )
 
 
@@ -50,7 +50,7 @@ class TestScraperTopostgres(TestCase):
             "away_score": "0",
         }
 
-        result = scraper_fixture_to_postgres(
+        result = scraper_result_to_postgres(
             data=self.mock_scraper_fixture,
         )
 

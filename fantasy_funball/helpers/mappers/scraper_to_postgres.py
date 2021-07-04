@@ -46,18 +46,32 @@ def scraper_date_to_datetime_postgres(date: str) -> datetime:
     return datetime_obj
 
 
-def scraper_fixture_to_postgres(data: Dict) -> Dict:
-    fixture_data = list(data.values())[0]
+def scraper_result_to_postgres(data: Dict) -> Dict:
+    result_data = list(data.values())[0]
 
     # fixture_data will be in format:
     # home_team home_score:away_score away_team
-    fixture_split = fixture_data.split(":")
+    result_split = result_data.split(":")
 
     output_format = {
-        "home_team": fixture_split[0][0:-2],
-        "home_score": fixture_split[0][-1],
-        "away_team": fixture_split[1][2:],
-        "away_score": fixture_split[1][0],
+        "home_team": result_split[0][0:-2],
+        "home_score": result_split[0][-1],
+        "away_team": result_split[1][2:],
+        "away_score": result_split[1][0],
+    }
+
+    return output_format
+
+
+def scraper_fixture_to_postgres(data: Dict) -> Dict:
+    fixture_data = list(data.values())[0]
+
+    fixture_split = fixture_data.split("v")
+
+    output_format = {
+        "home_team": fixture_split[0][0:-1],
+        "away_team": fixture_split[1][1:],
+        "kickoff": data["kickoff"],
     }
 
     return output_format
