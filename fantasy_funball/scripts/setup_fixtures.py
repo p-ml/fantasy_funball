@@ -26,6 +26,7 @@ def setup_fixtures():
         }
 
         conn = psycopg2.connect(**postgres_creds)
+
     cur = conn.cursor()
     cur.execute(
         "truncate fantasy_funball_fixture, "

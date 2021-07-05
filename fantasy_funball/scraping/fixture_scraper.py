@@ -15,6 +15,11 @@ class FixtureScraper:
         options.headless = True
         options.add_argument("--window-size=1920,1080")
 
+        # Heroku specific (I think)
+        chrome_path = os.environ.get("GOOGLE_CHROME_PATH")
+        if chrome_path is not None:
+            options.binary_location = chrome_path
+
         # Get driver path set in .env
         driver_path = os.getenv("SELENIUM_DRIVER_PATH")
         self.driver = webdriver.Chrome(options=options, executable_path=driver_path)
