@@ -46,7 +46,10 @@ def setup_fixtures():
     deadline_postgres_format = scraper_deadline_to_datetime_postgres(
         date=gameweek_one["gameweek_1_deadline"]
     )
-    gameweek = Gameweek(deadline=deadline_postgres_format)
+    gameweek = Gameweek(
+        deadline=deadline_postgres_format,
+        gameweek_no=1,
+    )
 
     gameweek_one_fixtures = gameweek_one["gameweek_1_fixtures"]
     gameday_one = gameweek_one_fixtures[0]

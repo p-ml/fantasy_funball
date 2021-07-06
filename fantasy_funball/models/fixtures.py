@@ -3,6 +3,7 @@ from django.db import models
 
 class Gameweek(models.Model):
     deadline = models.DateTimeField()
+    gameweek_no = models.IntegerField()
 
 
 class Gameday(models.Model):
