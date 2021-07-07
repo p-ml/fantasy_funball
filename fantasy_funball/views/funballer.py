@@ -10,18 +10,20 @@ from core.exceptions import FunballerNotFoundError
 from fantasy_funball.models import Funballer
 
 
-def _get_funballer_by_id(id: int) -> Union[Funballer, None]:
-    try:
-        return Funballer.objects.get(id=id)
-    except Funballer.DoesNotExist:
-        raise FunballerNotFoundError(f"Funballer with id {id} not found")
+class FunballerViewMixin:
+    @staticmethod
+    def _get_funballer_by_id(id: int) -> Union[Funballer, None]:
+        try:
+            return Funballer.objects.get(id=id)
+        except Funballer.DoesNotExist:
+            raise FunballerNotFoundError(f"Funballer with id {id} not found")
 
 
-class FunballerView(APIView):
+class FunballerView(APIView, FunballerViewMixin):
     """Viewset to handle funballers"""
 
     def post(self, request: WSGIRequest) -> Response:
-        """Add a funballer to postgres"""
+        """Add a funballer to postgres db"""
         funballer = Funballer(**request.data)
         funballer.save()
 
@@ -34,7 +36,7 @@ class FunballerView(APIView):
         )
 
     def get(self, request: WSGIRequest) -> Response:
-        """Retrieve all funballers from postgres"""
+        """Retrieve all funballers from postgres db"""
         funballers = Funballer.objects.all()
 
         formatted_funballers = [model_to_dict(funballer) for funballer in funballers]
@@ -45,10 +47,10 @@ class FunballerView(APIView):
         )
 
 
-class SingleFunballerView(APIView):
+class SingleFunballerView(APIView, FunballerViewMixin):
     def get(self, request: WSGIRequest, id: int) -> Response:
-        """Retrieve a funballer from postgres"""
-        funballer = _get_funballer_by_id(id=id)
+        """Retrieve a funballer from postgres db"""
+        funballer = self._get_funballer_by_id(id=id)
 
         # Convert to json for output
         formatted_funballer = model_to_dict(funballer)
@@ -59,8 +61,8 @@ class SingleFunballerView(APIView):
         )
 
     def patch(self, request: WSGIRequest, id: int) -> Response:
-        """Update a funballer in postgres"""
-        funballer = _get_funballer_by_id(id=id)
+        """Update a funballer in postgres db"""
+        funballer = self._get_funballer_by_id(id=id)
 
         # Parse update payload
         update_payload = [
@@ -81,8 +83,8 @@ class SingleFunballerView(APIView):
         )
 
     def delete(self, request: WSGIRequest, id: int) -> Response:
-        """Delete a funballer from postgres"""
-        funballer = _get_funballer_by_id(id=id)
+        """Delete a funballer from postgres db"""
+        funballer = self._get_funballer_by_id(id=id)
         funballer.delete()
 
         return Response(status=status.HTTP_200_OK)

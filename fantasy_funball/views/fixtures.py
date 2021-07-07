@@ -57,17 +57,21 @@ class RetrieveGameday(APIView):
 class RetrieveGameweek(APIView):
     """Viewset to handle gameweeks"""
 
-    def get(self, request: WSGIRequest, id: int) -> Response:
-        """Retrieve gameweek from postgres"""
-        # TODO: Might want to do this by gameweek no. (1-38)
+    def get(self, request: WSGIRequest, gameweek_no: int) -> Response:
+        """Retrieve all matches from a gameweek from postgres by
+        gameweek number (1-38)"""
 
         try:
-            gameweek = Gameweek.objects.get(id=id)
+            # Get gameweek id using gameweek no
+            gameweek = Gameweek.objects.get(gameweek_no=gameweek_no)
+            gameweek_fixtures = Fixture.objects.filter(
+                gameday__gameweek_id=gameweek.id,
+            ).values()
         except Gameweek.DoesNotExist:
-            raise GameweekNotFoundError(f"Gameweek with id {id} not found")
+            raise GameweekNotFoundError(f"Gameweek number {gameweek_no} not found")
 
         # Convert to json for output
-        formatted_gameweek = model_to_dict(gameweek)
+        formatted_gameweek = list(gameweek_fixtures)
 
         return Response(
             status=status.HTTP_200_OK,
