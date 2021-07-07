@@ -66,11 +66,11 @@ def scraper_result_to_postgres(data: Dict) -> Dict:
 def scraper_fixture_to_postgres(data: Dict) -> Dict:
     fixture_data = list(data.values())[0]
 
-    fixture_split = fixture_data.split("v")
+    fixture_split = fixture_data.split(" v ")
 
     output_format = {
-        "home_team": fixture_split[0][0:-1],
-        "away_team": fixture_split[1][1:],
+        "home_team": fixture_split[0],
+        "away_team": fixture_split[1],
         "kickoff": data["kickoff"],
     }
 

@@ -51,33 +51,35 @@ def setup_fixtures():
         gameweek_no=1,
     )
 
-    gameweek_one_fixtures = gameweek_one["gameweek_1_fixtures"]
-    gameday_one = gameweek_one_fixtures[0]
-    gameday_date_postgres_format = scraper_date_to_datetime_postgres(
-        date=gameday_one["date"],
-    )
-    gameday = Gameday(
-        date=gameday_date_postgres_format,
-        gameweek=gameweek,
-    )
-
-    # save gameweek & gameday objects
     gameweek.save()
-    gameday.save()
 
-    for fixture in gameday_one["matches"]:
-        fixture_postgres_format = scraper_fixture_to_postgres(
-            data=fixture,
+    gameweek_one_fixtures = gameweek_one["gameweek_1_fixtures"]
+    gamedays = [gameday for gameday in gameweek_one_fixtures]
+
+    for gameday_data in gamedays:
+        gameday_date_postgres_format = scraper_date_to_datetime_postgres(
+            date=gameday_data["date"],
+        )
+        gameday = Gameday(
+            date=gameday_date_postgres_format,
+            gameweek=gameweek,
         )
 
-        fixture = Fixture(
-            home_team=fixture_postgres_format["home_team"],
-            away_team=fixture_postgres_format["away_team"],
-            kickoff=fixture_postgres_format["kickoff"],
-            gameday=gameday,
-        )
+        gameday.save()
 
-        fixture.save()
+        for match_data in gameday_data["matches"]:
+            fixture_postgres_format = scraper_fixture_to_postgres(
+                data=match_data,
+            )
+
+            fixture = Fixture(
+                home_team=fixture_postgres_format["home_team"],
+                away_team=fixture_postgres_format["away_team"],
+                kickoff=fixture_postgres_format["kickoff"],
+                gameday=gameday,
+            )
+
+            fixture.save()
 
 
 if __name__ == "__main__":
