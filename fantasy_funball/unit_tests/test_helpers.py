@@ -21,7 +21,7 @@ class TestScraperToPostgres(TestCase):
             "game": "Tottenham Hotspur 6:0 Arsenal",
         }
         self.mock_scraper_fixture = {
-            "game": "Leicester v Chelsea",
+            "game": "Everton v Chelsea",
             "kickoff": "12:00",
         }
 
@@ -63,7 +63,7 @@ class TestScraperToPostgres(TestCase):
 
     def test_scraper_fixture_to_postgres(self):
         expected_output = {
-            "home_team": "Leicester",
+            "home_team": "Everton",
             "away_team": "Chelsea",
             "kickoff": "12:00",
         }
