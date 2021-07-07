@@ -31,7 +31,3 @@ jobs:
     - name: Unit tests
       run: |
         pytest fantasy_funball/unit_tests/
-
-    - name: Functional tests
-      run: |
-        pytest functional_tests/
