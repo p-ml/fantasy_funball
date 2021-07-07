@@ -54,6 +54,7 @@ class FixtureScraper:
     def parse_fixtures(gameweek_raw_text: List[str]) -> List[Dict]:
         game_data = []
         for matchday in gameweek_raw_text:
+            matchday = matchday.replace("Opens in new tab\n", "")
             split_text = matchday.split("\n")
 
             int_data = {"date": split_text[0], "matches": []}
