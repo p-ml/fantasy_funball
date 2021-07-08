@@ -26,6 +26,10 @@ class FixtureScraper:
         driver_path = os.getenv("SELENIUM_DRIVER_PATH")
         self.driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
+        # Set driver timezone to London
+        tz_params = {"timezoneId": "Europe/London"}
+        self.driver.execute_cdp_cmd("Emulation.setTimezoneOverride", tz_params)
+
     def get_weekly_results(self, week: int) -> List[Dict]:
         self.driver.get(f"{BASE_URL}/{week}/")
         gameweek_fixtures_raw = self.driver.find_elements_by_xpath(
