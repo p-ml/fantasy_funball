@@ -1,5 +1,9 @@
 # Fantasy Funball 2: Electric Boogaloo
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](http://fantasy-funball-streamlit.herokuapp.com/)
+![Testing Workflow](https://github.com/p-ml/fantasy_funball/actions/workflows/testing_workflow.yml/badge.svg)
+
+
 ## Setup
 ### Python Environment
 Consider using a virtual environment; navigate to `fantasy_funball` directory and:
@@ -26,8 +30,8 @@ If running PyCharm, get the `EnvFile` plugin, which allows you to attach an `.en
 configuration.
 
 ## Notes
-Project has been set up with a default Django template, idea being that eventually 
-this repo will be hosted somewhere (in the :cloud:) so need to be able to hit that.
+Project has been set up with a default Django template, as both backend (this repo) 
+and frontend are currently hosted with Heroku (in the :cloud:).
 `core/` contains generic django files, whereas `fantasy_funball/` contains the bulk
 of the application code.
 
@@ -37,6 +41,5 @@ of the application code.
 ## Todo
 - Logic to check results, update funballer points, determine standings
 - Job scheduler to update on set dates (end of each gameweek?)
-- Basic front end of some sort
 - Bulk out tests (both unit and functional)
 - Pull down players, lineups etc.
