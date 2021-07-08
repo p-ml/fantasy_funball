@@ -40,46 +40,47 @@ def setup_fixtures():
 
     # TODO: Refactor, v. messy
     fixture_scraper = FixtureScraper()
-    gameweek_one = fixture_scraper.get_yearly_fixtures(until_week=1)[0]
+    gameweeks = fixture_scraper.get_yearly_fixtures(until_week=38)
 
-    # Map retrieved weekly fixtures to Django model format
-    deadline_postgres_format = scraper_deadline_to_datetime_postgres(
-        date=gameweek_one["gameweek_1_deadline"]
-    )
-    gameweek = Gameweek(
-        deadline=deadline_postgres_format,
-        gameweek_no=1,
-    )
-
-    gameweek.save()
-
-    gameweek_one_fixtures = gameweek_one["gameweek_1_fixtures"]
-    gamedays = [gameday for gameday in gameweek_one_fixtures]
-
-    for gameday_data in gamedays:
-        gameday_date_postgres_format = scraper_date_to_datetime_postgres(
-            date=gameday_data["date"],
+    for gameweek_no, gameweek_data in enumerate(gameweeks):
+        # Map retrieved weekly fixtures to Django model format
+        deadline_postgres_format = scraper_deadline_to_datetime_postgres(
+            date=gameweek_data["gameweek_deadline"]
         )
-        gameday = Gameday(
-            date=gameday_date_postgres_format,
-            gameweek=gameweek,
+        gameweek = Gameweek(
+            deadline=deadline_postgres_format,
+            gameweek_no=gameweek_no + 1,  # enumerate() uses zero indexing
         )
 
-        gameday.save()
+        gameweek.save()
 
-        for match_data in gameday_data["matches"]:
-            fixture_postgres_format = scraper_fixture_to_postgres(
-                data=match_data,
+        gameweek_fixtures = gameweek_data["gameweek_fixtures"]
+        gamedays = [gameday for gameday in gameweek_fixtures]
+
+        for gameday_data in gamedays:
+            gameday_date_postgres_format = scraper_date_to_datetime_postgres(
+                date=gameday_data["date"],
+            )
+            gameday = Gameday(
+                date=gameday_date_postgres_format,
+                gameweek=gameweek,
             )
 
-            fixture = Fixture(
-                home_team=fixture_postgres_format["home_team"],
-                away_team=fixture_postgres_format["away_team"],
-                kickoff=fixture_postgres_format["kickoff"],
-                gameday=gameday,
-            )
+            gameday.save()
 
-            fixture.save()
+            for match_data in gameday_data["matches"]:
+                fixture_postgres_format = scraper_fixture_to_postgres(
+                    data=match_data,
+                )
+
+                fixture = Fixture(
+                    home_team=fixture_postgres_format["home_team"],
+                    away_team=fixture_postgres_format["away_team"],
+                    kickoff=fixture_postgres_format["kickoff"],
+                    gameday=gameday,
+                )
+
+                fixture.save()
 
 
 if __name__ == "__main__":
