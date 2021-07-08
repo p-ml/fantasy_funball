@@ -89,7 +89,7 @@ class FixtureScraper:
         # Strip "Gameweek N"
         gameweek_start_time = gameweek_start_time_raw.split("-")[1][1:]
 
-        return {f"gameweek_{week}_start_time": gameweek_start_time}
+        return {f"gameweek_start_time": gameweek_start_time}
 
     def get_yearly_fixtures(self, until_week: int = N_GAMEWEEKS) -> List[Dict]:
         yearly_data = []
@@ -98,8 +98,8 @@ class FixtureScraper:
 
             week_data = self.get_weekly_fixtures(week=i)
             yearly_int_data = {
-                f"gameweek_{i}_fixtures": week_data,
-                f"gameweek_{i}_deadline": gameweek_start_time,
+                f"gameweek_fixtures": week_data,
+                f"gameweek_deadline": gameweek_start_time,
             }
             yearly_data.append(yearly_int_data)
 
@@ -112,8 +112,8 @@ class FixtureScraper:
 
             week_data = self.get_weekly_results(week=i)
             yearly_int_data = {
-                f"gameweek_{i}_fixtures": week_data,
-                f"gameweek_{i}_deadline": gameweek_start_time,
+                f"gameweek_fixtures": week_data,
+                f"gameweek_deadline": gameweek_start_time,
             }
             yearly_data.append(yearly_int_data)
 

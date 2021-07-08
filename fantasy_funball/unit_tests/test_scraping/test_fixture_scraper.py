@@ -25,7 +25,7 @@ class TestGetFixtures(TestCase):
             week=1,
         )
 
-        expected_output = {"gameweek_1_start_time": "Sat 12 Sep 11:00"}
+        expected_output = {"gameweek_start_time": "Sat 12 Sep 11:00"}
 
         self.assertEqual(response, expected_output)
 
@@ -95,7 +95,7 @@ class TestGetFixtures(TestCase):
     ):
 
         mock_get_gameweek_start_time.return_value = {
-            "gameweek_1_start_time": "Fri 13 Aug 18:30"
+            "gameweek_start_time": "Fri 13 Aug 18:30"
         }
 
         mock_weekly_fixtures = [
@@ -114,8 +114,8 @@ class TestGetFixtures(TestCase):
 
         expected_output = [
             {
-                "gameweek_1_fixtures": mock_weekly_fixtures,
-                "gameweek_1_deadline": {"gameweek_1_start_time": "Fri 13 Aug 18:30"},
+                "gameweek_fixtures": mock_weekly_fixtures,
+                "gameweek_deadline": {"gameweek_start_time": "Fri 13 Aug 18:30"},
             }
         ]
 
@@ -133,7 +133,7 @@ class TestGetFixtures(TestCase):
         mock_webdriver,
     ):
         mock_get_gameweek_start_time.return_value = {
-            "gameweek_1_start_time": "Fri 13 Aug 18:30"
+            "gameweek_start_time": "Fri 13 Aug 18:30"
         }
 
         mock_weekly_results = [
@@ -151,8 +151,8 @@ class TestGetFixtures(TestCase):
 
         expected_output = [
             {
-                "gameweek_1_fixtures": mock_weekly_results,
-                "gameweek_1_deadline": {"gameweek_1_start_time": "Fri 13 Aug 18:30"},
+                "gameweek_fixtures": mock_weekly_results,
+                "gameweek_deadline": {"gameweek_start_time": "Fri 13 Aug 18:30"},
             }
         ]
 
