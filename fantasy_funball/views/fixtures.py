@@ -66,12 +66,22 @@ class RetrieveGameweek(APIView):
             gameweek = Gameweek.objects.get(gameweek_no=gameweek_no)
             gameweek_fixtures = Fixture.objects.filter(
                 gameday__gameweek_id=gameweek.id,
-            ).values()
+            ).values(
+                "id",
+                "home_team",
+                "away_team",
+                "kickoff",
+                "gameday__date",
+            )
         except Gameweek.DoesNotExist:
             raise GameweekNotFoundError(f"Gameweek number {gameweek_no} not found")
 
         # Convert to json for output
         formatted_gameweek = list(gameweek_fixtures)
+
+        # Parse game date from datetime obj to str
+        for game in formatted_gameweek:
+            game["gameday__date"] = game["gameday__date"].strftime("%a %-d %b %-y")
 
         return Response(
             status=status.HTTP_200_OK,
