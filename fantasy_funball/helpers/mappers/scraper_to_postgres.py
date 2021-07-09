@@ -22,8 +22,8 @@ def scraper_deadline_to_datetime_postgres(date: Dict) -> datetime:
     datetime_obj_unaware = datetime.strptime(date_data, "%Y %a %d %b %H:%M")
 
     # Make datetime tz aware
-    bst = pytz.timezone("Europe/London")
-    datetime_obj = bst.localize(datetime_obj_unaware)
+    utc = pytz.timezone("UTC")
+    datetime_obj = utc.localize(datetime_obj_unaware)
 
     return datetime_obj
 
@@ -40,8 +40,8 @@ def scraper_date_to_datetime_postgres(date: str) -> datetime:
     datetime_obj_unaware = datetime.strptime(date, "%A %d %B %Y")
 
     # Make datetime tz aware
-    bst = pytz.timezone("Europe/London")
-    datetime_obj = bst.localize(datetime_obj_unaware)
+    utc = pytz.timezone("UTC")
+    datetime_obj = utc.localize(datetime_obj_unaware)
 
     return datetime_obj
 
