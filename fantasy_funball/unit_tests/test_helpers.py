@@ -25,11 +25,11 @@ class TestScraperToPostgres(TestCase):
             "kickoff": "12:00",
         }
 
-        self.timezone = pytz.timezone("Europe/London")
+        self.timezone = pytz.timezone("UTC")
 
     def test_scraper_deadline_to_datetime_postgres(self):
         expected_output_no_tz = datetime(2021, 10, 1, 10, 0, 0)
-        expected_output = self.timezone.localize(expected_output_no_tz)
+        expected_output = expected_output_no_tz.replace(tzinfo=pytz.UTC)
 
         result = scraper_deadline_to_datetime_postgres(
             date=self.mock_scraper_deadline,
