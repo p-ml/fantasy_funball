@@ -6,7 +6,7 @@ from fantasy_funball.models import Funballer
 
 
 def setup_users() -> None:
-    # Wipe postgres user collection before adding setting up
+    # Wipe postgres user table before adding setting up
     db_url = os.environ.get("DATABASE_URL")
     if db_url is not None:
         conn = psycopg2.connect(db_url, sslmode="require")

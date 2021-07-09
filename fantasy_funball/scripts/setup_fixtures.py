@@ -12,7 +12,7 @@ from fantasy_funball.scraping.fixture_scraper import FixtureScraper
 
 
 def setup_fixtures():
-    # Wipe postgres db fixture collection before adding setting up
+    # Wipe postgres db fixture table before adding setting up
     db_url = os.environ.get("DATABASE_URL")
     if db_url is not None:
         conn = psycopg2.connect(db_url, sslmode="require")
