@@ -6,8 +6,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.exceptions import FunballerNotFoundError
-from fantasy_funball.models import Funballer
+from core.exceptions import ChoicesNotFoundError, FunballerNotFoundError
+from fantasy_funball.models import Choices, Funballer, Gameweek
+from fantasy_funball.models.players import Player
+from fantasy_funball.models.teams import Team
 
 
 class FunballerViewMixin:
@@ -88,3 +90,70 @@ class SingleFunballerView(APIView, FunballerViewMixin):
         funballer.delete()
 
         return Response(status=status.HTTP_200_OK)
+
+
+class FunballerChoiceView(APIView):
+    def get(self, request: WSGIRequest, funballer_name: str) -> Response:
+        """Retrieve all of a funballers choices from postgres db"""
+
+        try:
+            choices = Choices.objects.filter(
+                funballer_id__first_name=funballer_name,
+            ).values(
+                "funballer_id__first_name",
+                "gameweek_id__gameweek_no",
+                "team_choice__team_name",
+                "player_choice__first_name",
+                "player_choice__surname",
+            )
+        except Choices.DoesNotExist:
+            raise ChoicesNotFoundError(f"Choices for {funballer_name} not found")
+        formatted_choices = sorted(
+            list(choices), key=lambda x: x["gameweek_id__gameweek_no"]
+        )
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=formatted_choices,
+        )
+
+    def post(self, request: WSGIRequest, funballer_name: str) -> Response:
+        """Adds a funballer's choice to postgres db"""
+
+        # Check if selection for this gameweek has already been submitted
+        try:
+            existing_choice = Choices.objects.get(
+                funballer_id=Funballer.objects.get(first_name=funballer_name),
+                gameweek_id=Gameweek.objects.get(
+                    gameweek_no=request.data["gameweek_no"]
+                ),
+            )
+
+            updated_team = Team.objects.get(team_name=request.data["team_choice"])
+            updated_player = Player.objects.get(
+                first_name=request.data["player_choice"].split(" ")[0],
+                surname=request.data["player_choice"].split(" ")[1],
+            )
+
+            existing_choice.team_choice = updated_team
+            existing_choice.player_choice = updated_player
+            existing_choice.save()
+
+            return Response(status=status.HTTP_200_OK, data="Choice updated")
+
+        except Choices.DoesNotExist:
+            # Create new choice if it doesn't already exist
+            choice = Choices(
+                funballer_id=Funballer.objects.get(first_name=funballer_name),
+                gameweek_id=Gameweek.objects.get(
+                    gameweek_no=request.data["gameweek_no"]
+                ),
+                team_choice=Team.objects.get(team_name=request.data["team_choice"]),
+                player_choice=Player.objects.get(
+                    first_name=request.data["player_choice"].split(" ")[0],
+                    surname=request.data["player_choice"].split(" ")[1],
+                ),
+            )
+            choice.save()
+
+            return Response(status=status.HTTP_201_CREATED, data="Choice submitted")
