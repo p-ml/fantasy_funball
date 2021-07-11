@@ -6,6 +6,7 @@ psycopg2
 dj-database-url
 gunicorn
 django-heroku
+sentry-sdk
 
 pytest
 isort
