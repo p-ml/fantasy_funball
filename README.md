@@ -40,6 +40,7 @@ of the application code.
 
 ## Todo
 - Logic to check results, update funballer points, determine standings
-- Job scheduler to update on set dates (end of each gameweek?)
+- Job scheduler to update on set dates (end of each gameweek?) - Can be done with 
+Heroku add-on
 - Bulk out tests (both unit and functional)
-- Pull down players, lineups etc.
+- Pull down lineups etc - Can be done with FPL API?
