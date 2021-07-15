@@ -24,34 +24,28 @@ def setup_choices() -> None:
         conn = psycopg2.connect(**postgres_creds)
 
     cur = conn.cursor()
-    cur.execute(
-        "truncate fantasy_funball_choices,"
-        "fantasy_funball_team,"
-        "fantasy_funball_player;"
-    )
+    cur.execute("truncate fantasy_funball_choices;")
     conn.commit()
     conn.close()
 
     funballer = Funballer.objects.get(first_name="Patrick")
     gameweek_one = Gameweek.objects.get(gameweek_no=1)
 
-    team_one = Team(team_name="Tottenham Hotspur")
-    player_one = Player(
+    player_one = Player.objects.get(
         first_name="Hugo",
         surname="Lloris",
-        team=team_one,
+        team_id__team_name="Spurs",
     )
-    team_two = Team(team_name="Brentford")
-    player_two = Player(
+    player_two = Player.objects.get(
         first_name="Tanguy",
         surname="Ndombele",
-        team=team_one,
+        team_id__team_name="Spurs",
     )
 
-    team_one.save()
-    team_two.save()
     player_one.save()
     player_two.save()
+
+    team_one = Team.objects.get(team_name="Spurs")
 
     choices = [
         {

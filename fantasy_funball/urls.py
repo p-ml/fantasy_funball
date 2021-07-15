@@ -1,15 +1,11 @@
 from django.urls import path
 
-from fantasy_funball.views.fixtures import (
-    RetrieveFixture,
-    RetrieveGameday,
-    RetrieveGameweek,
-)
-from fantasy_funball.views.funballer import (
-    FunballerChoiceView,
-    FunballerView,
-    SingleFunballerView,
-)
+from fantasy_funball.views.fixtures import (RetrieveFixture, RetrieveGameday,
+                                            RetrieveGameweek)
+from fantasy_funball.views.funballer import (FunballerChoiceView,
+                                             FunballerView,
+                                             SingleFunballerView)
+from fantasy_funball.views.player import PlayerTeamView
 
 urlpatterns = [
     path("funballer/<int:id>", SingleFunballerView.as_view(), name="funballer-detail"),
@@ -26,4 +22,5 @@ urlpatterns = [
         RetrieveGameweek.as_view(),
         name="retrieve-gameweek",
     ),
+    path("<str:team_name>/players/", PlayerTeamView.as_view(), name="retrieve-players"),
 ]
