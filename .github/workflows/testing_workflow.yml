@@ -29,5 +29,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Unit tests
+      env:
+        DJANGO_SETTINGS_MODULE: core.settings
+        SECRET_KEY: 4f9f3c25588aee577070fef8ca075457298490f621c8a061bd  # dummy
       run: |
         pytest fantasy_funball/unit_tests/
