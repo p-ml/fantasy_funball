@@ -1,7 +1,7 @@
-from .fixtures import Fixture, Gameday, Gameweek
+from .teams import Team  # isort:skip
+from .fixtures import Fixture, Gameday, Gameweek, Result
 from .funballer import Choices, Funballer
 from .players import Player
-from .teams import Team
 
 __all__ = [
     Choices,
@@ -11,4 +11,5 @@ __all__ = [
     Gameweek,
     Player,
     Team,
+    Result,
 ]
