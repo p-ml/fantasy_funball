@@ -108,6 +108,7 @@ class FunballerChoiceView(APIView):
             )
         except Choices.DoesNotExist:
             raise ChoicesNotFoundError(f"Choices for {funballer_name} not found")
+
         formatted_choices = sorted(
             list(choices), key=lambda x: x["gameweek_id__gameweek_no"]
         )
