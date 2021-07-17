@@ -62,7 +62,7 @@ def update_standings(gameweek_no: int):
         if pick.team_choice_id in gameweek_winner_ids:
             # Increment funballer team_points
             funballer = Funballer.objects.get(
-                id=pick.funballer_id_id,
+                id=pick.funballer_id,
             )
             funballer.team_points += 1
             funballer.save()
