@@ -7,7 +7,7 @@ from fantasy_funball.helpers.mappers.scraper_to_postgres import (
     scraper_deadline_to_datetime_postgres,
     scraper_fixture_to_postgres,
 )
-from fantasy_funball.models import Fixture, Gameday, Gameweek
+from fantasy_funball.models import Fixture, Gameday, Gameweek, Team
 from fantasy_funball.scraping.fixture_scraper import FixtureScraper
 
 
@@ -40,7 +40,7 @@ def setup_fixtures():
 
     # TODO: Refactor, v. messy
     fixture_scraper = FixtureScraper()
-    gameweeks = fixture_scraper.get_yearly_fixtures(until_week=38)
+    gameweeks = fixture_scraper.get_yearly_fixtures(until_week=1)
 
     for gameweek_no, gameweek_data in enumerate(gameweeks):
         # Map retrieved weekly fixtures to Django model format
@@ -74,8 +74,12 @@ def setup_fixtures():
                 )
 
                 fixture = Fixture(
-                    home_team=fixture_postgres_format["home_team"],
-                    away_team=fixture_postgres_format["away_team"],
+                    home_team=Team.objects.get(
+                        team_name=fixture_postgres_format["home_team"]
+                    ),
+                    away_team=Team.objects.get(
+                        team_name=fixture_postgres_format["away_team"]
+                    ),
                     kickoff=fixture_postgres_format["kickoff"],
                     gameday=gameday,
                 )

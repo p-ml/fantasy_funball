@@ -1,5 +1,7 @@
 from django.db import models
 
+from fantasy_funball.models import Team
+
 
 class Gameweek(models.Model):
     deadline = models.DateTimeField()
@@ -12,15 +14,23 @@ class Gameday(models.Model):
 
 
 class Result(models.Model):
-    home_team = models.CharField(max_length=20)
+    home_team = models.ForeignKey(
+        Team, on_delete=models.DO_NOTHING, related_name="result_home_team"
+    )
     home_score = models.IntegerField()
-    away_team = models.CharField(max_length=20)
+    away_team = models.ForeignKey(
+        Team, on_delete=models.DO_NOTHING, related_name="result_away_team"
+    )
     away_score = models.IntegerField()
     gameday = models.ForeignKey(Gameday, on_delete=models.DO_NOTHING)
 
 
 class Fixture(models.Model):
-    home_team = models.CharField(max_length=20)
-    away_team = models.CharField(max_length=20)
+    home_team = models.ForeignKey(
+        Team, on_delete=models.DO_NOTHING, related_name="fixture_home_team"
+    )
+    away_team = models.ForeignKey(
+        Team, on_delete=models.DO_NOTHING, related_name="fixture_away_team"
+    )
     kickoff = models.CharField(max_length=20)
     gameday = models.ForeignKey(Gameday, on_delete=models.DO_NOTHING)

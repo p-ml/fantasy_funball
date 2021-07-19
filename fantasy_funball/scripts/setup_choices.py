@@ -49,8 +49,8 @@ def setup_choices() -> None:
 
     choices = [
         {
-            "funballer_id": funballer,
-            "gameweek_id": gameweek_one,
+            "funballer_id": funballer.id,
+            "gameweek_id": gameweek_one.id,
             "team_choice": team_one,
             "player_choice": player_one,
         },
