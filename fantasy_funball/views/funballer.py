@@ -1,12 +1,18 @@
+from datetime import datetime
 from typing import Union
 
+import pytz
 from django.core.handlers.wsgi import WSGIRequest
 from django.forms import model_to_dict
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.exceptions import ChoicesNotFoundError, FunballerNotFoundError
+from core.exceptions import (
+    ChoicesNotFoundError,
+    FunballerNotFoundError,
+    GameweekDeadlinePassedError,
+)
 from fantasy_funball.models import Choices, Funballer, Gameweek
 from fantasy_funball.models.players import Player
 from fantasy_funball.models.teams import Team
@@ -119,13 +125,25 @@ class FunballerChoiceView(APIView):
 
     def post(self, request: WSGIRequest, funballer_name: str) -> Response:
         """Adds a funballer's choice to postgres db"""
+        # Check if gameweek deadline has passed
+        gameweek_no = request.data["gameweek_no"]
+        gameweek_obj = Gameweek.objects.get(gameweek_no=gameweek_no)
+        gameweek_deadline = gameweek_obj.deadline
+
+        # Current utc time
+        current_time = datetime.now()
+        utc = pytz.UTC
+        current_time = utc.localize(current_time)
+
+        if current_time > gameweek_deadline:
+            raise GameweekDeadlinePassedError
 
         # Check if selection for this gameweek has already been submitted
         try:
             existing_choice = Choices.objects.get(
                 funballer_id=Funballer.objects.get(first_name=funballer_name),
                 gameweek_id=Gameweek.objects.get(
-                    gameweek_no=request.data["gameweek_no"]
+                    gameweek_no=gameweek_no,
                 ),
             )
 
@@ -146,7 +164,7 @@ class FunballerChoiceView(APIView):
             choice = Choices(
                 funballer_id=Funballer.objects.get(first_name=funballer_name),
                 gameweek_id=Gameweek.objects.get(
-                    gameweek_no=request.data["gameweek_no"]
+                    gameweek_no=gameweek_no,
                 ),
                 team_choice=Team.objects.get(team_name=request.data["team_choice"]),
                 player_choice=Player.objects.get(
