@@ -59,13 +59,18 @@ def update_standings(gameweek_no: int):
     gameweek_winner_ids = {team.id for team in gameweek_winners}
 
     for pick in weekly_team_picks:
-        if pick.team_choice_id in gameweek_winner_ids:
+        if pick.team_choice_id in gameweek_winner_ids and not pick.has_been_processed:
             # Increment funballer team_points
             funballer = Funballer.objects.get(
                 id=pick.funballer_id,
             )
             funballer.team_points += 1
+            funballer.points = funballer.team_points + funballer.player_points
             funballer.save()
+
+            # Mark choice as processed
+            pick.has_been_processed = True
+            pick.save()
 
 
 if __name__ == "__main__":
