@@ -1,0 +1,189 @@
+from unittest import TestCase
+from unittest.mock import Mock, patch
+
+import django
+from django.test import Client
+from rest_framework import status
+
+django.setup()
+
+from fantasy_funball.models import Choices, Player, Team
+
+FUNBALLER_VIEW_PATH = "fantasy_funball.views.funballer"
+
+
+class FunballerChoiceView(TestCase):
+    def setUp(self) -> None:
+        self.client = Client()
+
+    @patch(f"{FUNBALLER_VIEW_PATH}.Choices.objects.filter")
+    def test_get(self, mock_retrieve_choices):
+        expected_output = [
+            {
+                "funballer_id__first_name": "Patrick",
+                "gameweek_id__gameweek_no": 1,
+                "team_choice__team_name": "Spurs",
+                "player_choice__first_name": "Hugo",
+                "player_choice__surname": "Lloris",
+            }
+        ]
+
+        mock_retrieve_choices.return_value.values.return_value = expected_output
+
+        response = self.client.get("/fantasy_funball/funballer/choices/patrick")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, expected_output)
+
+    @patch(f"{FUNBALLER_VIEW_PATH}.Choices.objects.filter")
+    def test_get_choice_not_found(self, mock_retrieve_choices):
+        mock_retrieve_choices.side_effect = Choices.DoesNotExist
+        invalid_funballer_name = "tony"
+        response = self.client.get(
+            f"/fantasy_funball/funballer/choices/{invalid_funballer_name}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(response.exception)
+        self.assertEqual(
+            str(response.data["detail"]),
+            f"Choices for {invalid_funballer_name} not found",
+        )
+
+    @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Team.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Choices")
+    def test_post_update_existing_choice(
+        self,
+        mock_choice,
+        mock_retrieve_team,
+        mock_retrieve_funballer,
+        mock_retrieve_gameweek,
+        mock_retrieve_player,
+    ):
+        mock_choice.objects.get.return_value = Mock(spec=Choices)
+        mock_choice.return_value.save = {}
+        mock_retrieve_funballer.return_value = {}
+        mock_retrieve_gameweek.return_value = {}
+        mock_retrieve_team.return_value = {}
+        mock_retrieve_player.return_value = {}
+
+        response = self.client.post(
+            path="/fantasy_funball/funballer/choices/patrick",
+            data={
+                "gameweek_no": 1,
+                "team_choice": "Tottenham Hotspur",
+                "player_choice": "Hugo Lloris",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(str(response.data), f"Choice updated")
+
+    @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Team.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Choices.objects.get")
+    def test_post_update_existing_choice_team_not_found(
+        self,
+        mock_retrieve_choices,
+        mock_retrieve_team,
+        mock_retrieve_funballer,
+        mock_retrieve_gameweek,
+    ):
+        invalid_team_choice = "Barcelona"
+
+        mock_retrieve_choices.return_value = {}
+        mock_retrieve_funballer.return_value = {}
+        mock_retrieve_gameweek.return_value = {}
+        mock_retrieve_team.side_effect = Team.DoesNotExist
+
+        response = self.client.post(
+            path="/fantasy_funball/funballer/choices/patrick",
+            data={
+                "gameweek_no": 1,
+                "team_choice": invalid_team_choice,
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(response.exception)
+        self.assertEqual(
+            str(response.data["detail"]),
+            f"Team with name {invalid_team_choice} not found",
+        )
+
+    @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Team.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Choices.objects.get")
+    def test_post_update_existing_choice_player_not_found(
+        self,
+        mock_retrieve_choices,
+        mock_retrieve_team,
+        mock_retrieve_funballer,
+        mock_retrieve_gameweek,
+        mock_retrieve_player,
+    ):
+        invalid_player_choice = "Lionel Messi"
+
+        mock_retrieve_choices.return_value = {}
+        mock_retrieve_funballer.return_value = {}
+        mock_retrieve_gameweek.return_value = {}
+        mock_retrieve_team.return_value = {}
+        mock_retrieve_player.side_effect = Player.DoesNotExist
+
+        response = self.client.post(
+            path="/fantasy_funball/funballer/choices/patrick",
+            data={
+                "gameweek_no": 1,
+                "team_choice": "Barcelona",
+                "player_choice": invalid_player_choice,
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(response.exception)
+        self.assertEqual(
+            str(response.data["detail"]),
+            f"Player with name {invalid_player_choice} not found",
+        )
+
+    @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Team.objects.get")
+    @patch(f"{FUNBALLER_VIEW_PATH}.Choices")
+    def test_post_new_choice(
+        self,
+        mock_choices,
+        mock_retrieve_team,
+        mock_retrieve_funballer,
+        mock_retrieve_gameweek,
+        mock_retrieve_player,
+    ):
+        mock_choices.DoesNotExist = BaseException
+        mock_choices.objects.get.side_effect = Choices.DoesNotExist
+
+        mock_choices.return_value = Mock(spec=Choices)
+        mock_choices.save = {}
+
+        mock_retrieve_funballer.return_value = {}
+        mock_retrieve_gameweek.return_value = {}
+        mock_retrieve_team.return_value = {}
+        mock_retrieve_player.return_value = {}
+
+        response = self.client.post(
+            path="/fantasy_funball/funballer/choices/patrick",
+            data={
+                "gameweek_no": 1,
+                "team_choice": "Tottenham Hotspur",
+                "player_choice": "Hugo Lloris",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(str(response.data), f"Choice submitted")

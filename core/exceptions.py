@@ -36,3 +36,9 @@ class TeamNotFoundError(APIException):
     status_code = status.HTTP_404_NOT_FOUND
     default_detail = "not found"
     default_code = "not_found"
+
+
+class PlayerNotFoundError(APIException):
+    status_code = status.HTTP_404_NOT_FOUND
+    default_detail = "not found"
+    default_code = "not_found"
