@@ -6,7 +6,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.exceptions import ChoicesNotFoundError, FunballerNotFoundError
+from core.exceptions import (
+    ChoicesNotFoundError,
+    FunballerNotFoundError,
+    PlayerNotFoundError,
+    TeamNotFoundError,
+)
 from fantasy_funball.models import Choices, Funballer, Gameweek
 from fantasy_funball.models.players import Player
 from fantasy_funball.models.teams import Team
@@ -130,11 +135,22 @@ class FunballerChoiceView(APIView):
                 ),
             )
 
-            updated_team = Team.objects.get(team_name=request.data["team_choice"])
-            updated_player = Player.objects.get(
-                first_name=request.data["player_choice"].split(" ")[0],
-                surname=request.data["player_choice"].split(" ")[1],
-            )
+            try:
+                updated_team = Team.objects.get(team_name=request.data["team_choice"])
+            except Team.DoesNotExist:
+                raise TeamNotFoundError(
+                    f"Team with name {request.data['team_choice']} not found"
+                )
+
+            try:
+                updated_player = Player.objects.get(
+                    first_name=request.data["player_choice"].split(" ")[0],
+                    surname=request.data["player_choice"].split(" ")[1],
+                )
+            except Player.DoesNotExist:
+                raise PlayerNotFoundError(
+                    f"Player with name {request.data['player_choice']} not found"
+                )
 
             existing_choice.team_choice = updated_team
             existing_choice.player_choice = updated_player
