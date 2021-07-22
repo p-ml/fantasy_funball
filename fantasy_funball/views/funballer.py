@@ -15,6 +15,7 @@ from core.exceptions import (
 from fantasy_funball.models import Choices, Funballer, Gameweek
 from fantasy_funball.models.players import Player
 from fantasy_funball.models.teams import Team
+from fantasy_funball.views.helpers import check_for_passed_deadline
 
 
 class FunballerViewMixin:
@@ -125,14 +126,16 @@ class FunballerChoiceView(APIView):
 
     def post(self, request: WSGIRequest, funballer_name: str) -> Response:
         """Adds a funballer's choice to postgres db"""
+        gameweek_no = request.data["gameweek_no"]
+        gameweek_obj = Gameweek.objects.get(gameweek_no=gameweek_no)
+
+        check_for_passed_deadline(gameweek_deadline=gameweek_obj.deadline)
 
         # Check if selection for this gameweek has already been submitted
         try:
             existing_choice = Choices.objects.get(
                 funballer_id=Funballer.objects.get(first_name=funballer_name),
-                gameweek_id=Gameweek.objects.get(
-                    gameweek_no=request.data["gameweek_no"]
-                ),
+                gameweek_id=gameweek_obj,
             )
 
             try:
@@ -162,9 +165,7 @@ class FunballerChoiceView(APIView):
             # Create new choice if it doesn't already exist
             choice = Choices(
                 funballer_id=Funballer.objects.get(first_name=funballer_name),
-                gameweek_id=Gameweek.objects.get(
-                    gameweek_no=request.data["gameweek_no"]
-                ),
+                gameweek_id=gameweek_obj,
                 team_choice=Team.objects.get(team_name=request.data["team_choice"]),
                 player_choice=Player.objects.get(
                     first_name=request.data["player_choice"].split(" ")[0],

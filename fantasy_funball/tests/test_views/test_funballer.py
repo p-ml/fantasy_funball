@@ -7,7 +7,7 @@ from rest_framework import status
 
 django.setup()
 
-from fantasy_funball.models import Choices, Player, Team
+from fantasy_funball.models import Choices, Gameweek, Player, Team
 
 FUNBALLER_VIEW_PATH = "fantasy_funball.views.funballer"
 
@@ -50,6 +50,7 @@ class FunballerChoiceView(TestCase):
             f"Choices for {invalid_funballer_name} not found",
         )
 
+    @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
     @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
@@ -62,13 +63,18 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_funballer,
         mock_retrieve_gameweek,
         mock_retrieve_player,
+        mock_check_for_passed_deadline,
     ):
+        mock_gameweek_obj = Mock(spec=Gameweek)
+        mock_gameweek_obj.deadline = "mock date goes here"
+        mock_retrieve_gameweek.return_value = mock_gameweek_obj
+
         mock_choice.objects.get.return_value = Mock(spec=Choices)
         mock_choice.return_value.save = {}
         mock_retrieve_funballer.return_value = {}
-        mock_retrieve_gameweek.return_value = {}
         mock_retrieve_team.return_value = {}
         mock_retrieve_player.return_value = {}
+        mock_check_for_passed_deadline.return_value = {}
 
         response = self.client.post(
             path="/fantasy_funball/funballer/choices/patrick",
@@ -82,6 +88,7 @@ class FunballerChoiceView(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(str(response.data), f"Choice updated")
 
+    @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
     @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Team.objects.get")
@@ -92,12 +99,17 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_team,
         mock_retrieve_funballer,
         mock_retrieve_gameweek,
+        mock_check_for_passed_deadline,
     ):
         invalid_team_choice = "Barcelona"
 
+        mock_gameweek_obj = Mock(spec=Gameweek)
+        mock_gameweek_obj.deadline = "mock date goes here"
+        mock_retrieve_gameweek.return_value = mock_gameweek_obj
+
         mock_retrieve_choices.return_value = {}
         mock_retrieve_funballer.return_value = {}
-        mock_retrieve_gameweek.return_value = {}
+        mock_check_for_passed_deadline.return_value = {}
         mock_retrieve_team.side_effect = Team.DoesNotExist
 
         response = self.client.post(
@@ -115,6 +127,7 @@ class FunballerChoiceView(TestCase):
             f"Team with name {invalid_team_choice} not found",
         )
 
+    @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
     @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
@@ -127,14 +140,19 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_funballer,
         mock_retrieve_gameweek,
         mock_retrieve_player,
+        mock_check_for_passed_deadline,
     ):
         invalid_player_choice = "Lionel Messi"
 
+        mock_gameweek_obj = Mock(spec=Gameweek)
+        mock_gameweek_obj.deadline = "mock date goes here"
+        mock_retrieve_gameweek.return_value = mock_gameweek_obj
+
         mock_retrieve_choices.return_value = {}
         mock_retrieve_funballer.return_value = {}
-        mock_retrieve_gameweek.return_value = {}
         mock_retrieve_team.return_value = {}
         mock_retrieve_player.side_effect = Player.DoesNotExist
+        mock_check_for_passed_deadline.return_value = {}
 
         response = self.client.post(
             path="/fantasy_funball/funballer/choices/patrick",
@@ -152,6 +170,7 @@ class FunballerChoiceView(TestCase):
             f"Player with name {invalid_player_choice} not found",
         )
 
+    @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
     @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
@@ -164,7 +183,12 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_funballer,
         mock_retrieve_gameweek,
         mock_retrieve_player,
+        mock_check_for_passed_deadline,
     ):
+        mock_gameweek_obj = Mock(spec=Gameweek)
+        mock_gameweek_obj.deadline = "mock date goes here"
+        mock_retrieve_gameweek.return_value = mock_gameweek_obj
+
         mock_choices.DoesNotExist = BaseException
         mock_choices.objects.get.side_effect = Choices.DoesNotExist
 
@@ -172,9 +196,9 @@ class FunballerChoiceView(TestCase):
         mock_choices.save = {}
 
         mock_retrieve_funballer.return_value = {}
-        mock_retrieve_gameweek.return_value = {}
         mock_retrieve_team.return_value = {}
         mock_retrieve_player.return_value = {}
+        mock_check_for_passed_deadline.return_value = {}
 
         response = self.client.post(
             path="/fantasy_funball/funballer/choices/patrick",
