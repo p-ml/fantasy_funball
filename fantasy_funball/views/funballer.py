@@ -1,7 +1,5 @@
-from datetime import datetime
 from typing import Union
 
-import pytz
 from django.core.handlers.wsgi import WSGIRequest
 from django.forms import model_to_dict
 from rest_framework import status
@@ -11,13 +9,13 @@ from rest_framework.views import APIView
 from core.exceptions import (
     ChoicesNotFoundError,
     FunballerNotFoundError,
-    GameweekDeadlinePassedError,
     PlayerNotFoundError,
     TeamNotFoundError,
 )
 from fantasy_funball.models import Choices, Funballer, Gameweek
 from fantasy_funball.models.players import Player
 from fantasy_funball.models.teams import Team
+from fantasy_funball.views.helpers import check_for_passed_deadline
 
 
 class FunballerViewMixin:
@@ -128,26 +126,16 @@ class FunballerChoiceView(APIView):
 
     def post(self, request: WSGIRequest, funballer_name: str) -> Response:
         """Adds a funballer's choice to postgres db"""
-        # Check if gameweek deadline has passed
         gameweek_no = request.data["gameweek_no"]
         gameweek_obj = Gameweek.objects.get(gameweek_no=gameweek_no)
-        gameweek_deadline = gameweek_obj.deadline
 
-        # Current utc time
-        current_time = datetime.now()
-        utc = pytz.UTC
-        current_time = utc.localize(current_time)
-
-        if current_time > gameweek_deadline:
-            raise GameweekDeadlinePassedError
+        check_for_passed_deadline(gameweek_deadline=gameweek_obj.deadline)
 
         # Check if selection for this gameweek has already been submitted
         try:
             existing_choice = Choices.objects.get(
                 funballer_id=Funballer.objects.get(first_name=funballer_name),
-                gameweek_id=Gameweek.objects.get(
-                    gameweek_no=gameweek_no,
-                ),
+                gameweek_id=gameweek_obj,
             )
 
             try:
@@ -177,9 +165,7 @@ class FunballerChoiceView(APIView):
             # Create new choice if it doesn't already exist
             choice = Choices(
                 funballer_id=Funballer.objects.get(first_name=funballer_name),
-                gameweek_id=Gameweek.objects.get(
-                    gameweek_no=gameweek_no,
-                ),
+                gameweek_id=gameweek_obj,
                 team_choice=Team.objects.get(team_name=request.data["team_choice"]),
                 player_choice=Player.objects.get(
                     first_name=request.data["player_choice"].split(" ")[0],
