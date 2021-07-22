@@ -21,7 +21,7 @@ def determine_gameweek_winners(gameweek_results: List[Result]) -> List:
 
         else:
             # Draw
-            winner = None
+            continue
 
         winning_teams.append(winner)
 
