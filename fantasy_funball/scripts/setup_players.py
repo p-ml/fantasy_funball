@@ -26,6 +26,8 @@ def setup_players() -> None:
     cur.execute(
         "truncate fantasy_funball_player, "
         "fantasy_funball_team,"
+        "fantasy_funball_result,"
+        "fantasy_funball_fixture,"
         "fantasy_funball_choices;"
     )
     conn.commit()
