@@ -52,8 +52,6 @@ class TestFPLInterface(TestCase):
                 "first_name": "Hugo",
                 "surname": "Lloris",
                 "team": "Spurs",
-                "goals": 0,
-                "assists": 0,
             }
         ]
 

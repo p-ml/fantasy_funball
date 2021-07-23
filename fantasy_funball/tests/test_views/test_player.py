@@ -21,8 +21,6 @@ class TestPlayerViewSet(TestCase):
                 id=1,
                 first_name="Hugo",
                 surname="Lloris",
-                goals=0,
-                assists=0,
                 team_id=1,
             )
         ]
@@ -30,8 +28,6 @@ class TestPlayerViewSet(TestCase):
             {
                 "first_name": "Hugo",
                 "surname": "Lloris",
-                "goals": 0,
-                "assists": 0,
                 "team": 1,
                 "id": 1,
             }
