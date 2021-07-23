@@ -39,7 +39,7 @@ of the application code.
 ![Potential Structure](docs/fantasy_funball_structure.png)
 
 ## Todo
-- Logic to check results, update funballer points, determine standings
+- Logic to get determine weekly results, scorers, assisters & update standings at the end of each gameweek
 - Job scheduler to update on set dates (end of each gameweek?) - Can be done with 
 Heroku add-on
 - Bulk out tests (both unit and functional)

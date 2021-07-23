@@ -1,3 +1,4 @@
+from collections import namedtuple
 from typing import List
 
 import django
@@ -5,6 +6,8 @@ import django
 django.setup()
 
 from fantasy_funball.models import Choices, Funballer, Result
+
+ScorerAssistIds = namedtuple("ScorerAssistIds", ["scorer_ids", "assist_ids"])
 
 
 def determine_gameweek_winners(gameweek_results: List[Result]) -> List:
@@ -29,12 +32,10 @@ def determine_gameweek_winners(gameweek_results: List[Result]) -> List:
 
 
 def get_gameweek_results(gameweek_no: int) -> List:
-    gameweek_results_queryset = Result.objects.filter(
-        gameday__gameweek__gameweek_no=gameweek_no
-    )
+    gameweek_results = Result.objects.filter(gameday__gameweek__gameweek_no=gameweek_no)
 
     # Convert queryset to list of results
-    gameweek_results = list(gameweek_results_queryset)
+    gameweek_results = list(gameweek_results)
 
     winning_teams = determine_gameweek_winners(gameweek_results=gameweek_results)
 
@@ -51,6 +52,45 @@ def get_weekly_team_picks(gameweek_no: int) -> List:
     return weekly_team_picks
 
 
+def get_weekly_scorers(weekly_result_data: List) -> set:
+    """Get ids of players who scored in given gameweek"""
+    weekly_scorer_data = [list(result.scorers.all()) for result in weekly_result_data]
+    scorer_ids = set()
+    for result in weekly_scorer_data:
+        int_scorer_ids = {scorer.id for scorer in result}
+        scorer_ids.update(int_scorer_ids)
+
+    return scorer_ids
+
+
+def get_weekly_assists(weekly_result_data: List) -> set:
+    """Get ids of players who assisted in given gameweek"""
+    weekly_assist_data = [list(result.assists.all()) for result in weekly_result_data]
+    assist_ids = set()
+    for result in weekly_assist_data:
+        int_assist_ids = {assist.id for assist in result}
+        assist_ids.update(int_assist_ids)
+
+    return assist_ids
+
+
+def get_weekly_scorers_assists(gameweek_no: int) -> ScorerAssistIds:
+    weekly_result_data = Result.objects.filter(
+        gameday__gameweek__gameweek_no=gameweek_no
+    )
+
+    # Convert QuerySet to list
+    weekly_result_data = list(weekly_result_data)
+
+    scorer_ids = get_weekly_scorers(weekly_result_data=weekly_result_data)
+    assist_ids = get_weekly_assists(weekly_result_data=weekly_result_data)
+
+    return ScorerAssistIds(
+        scorer_ids=scorer_ids,
+        assist_ids=assist_ids,
+    )
+
+
 def update_standings(gameweek_no: int):
     gameweek_winners = get_gameweek_results(gameweek_no=gameweek_no)
     weekly_team_picks = get_weekly_team_picks(gameweek_no=gameweek_no)
@@ -58,21 +98,34 @@ def update_standings(gameweek_no: int):
     # Extract winning team ids
     gameweek_winner_ids = {team.id for team in gameweek_winners}
 
+    scorer_assist_ids = get_weekly_scorers_assists(gameweek_no=gameweek_no)
+    scorer_ids = scorer_assist_ids.scorer_ids
+    assist_ids = scorer_assist_ids.assist_ids
+
     for pick in weekly_team_picks:
-        if pick.team_choice_id in gameweek_winner_ids and not pick.has_been_processed:
-            # Increment funballer team_points
+        if not pick.has_been_processed:
+            if pick.team_choice_id in gameweek_winner_ids:
+                # Increment funballer team_points
+                funballer = Funballer.objects.get(
+                    id=pick.funballer_id,
+                )
+                funballer.team_points += 1
+                funballer.points = funballer.team_points + funballer.player_points
+                funballer.save()
+
+        if pick.player_choice_id in scorer_ids or pick.player_choice_id in assist_ids:
+            # Increment funballer player_points
             funballer = Funballer.objects.get(
                 id=pick.funballer_id,
             )
-            funballer.team_points += 1
+            funballer.player_points += 1
             funballer.points = funballer.team_points + funballer.player_points
             funballer.save()
 
-            # Mark choice as processed
-            pick.has_been_processed = True
-            pick.save()
+        # Mark choice as processed
+        pick.has_been_processed = True
+        pick.save()
 
 
 if __name__ == "__main__":
-    results = get_gameweek_results(gameweek_no=1)
     update_standings(gameweek_no=1)
