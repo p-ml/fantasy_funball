@@ -1,9 +1,14 @@
+import json
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
 from requests import Response
 
 from fantasy_funball.fpl_interface.interface import FPLInterface
+from fantasy_funball.models import Player
+from fantasy_funball.tests.test_logic.mock_gameweek_live_data import (
+    mock_gameweek_live_data,
+)
 
 FPL_INTERFACE_PATH = "fantasy_funball.fpl_interface.interface"
 
@@ -11,6 +16,7 @@ FPL_INTERFACE_PATH = "fantasy_funball.fpl_interface.interface"
 class TestFPLInterface(TestCase):
     def setUp(self) -> None:
         self.interface = FPLInterface()
+        self.mock_gameweek_live_data = mock_gameweek_live_data()
 
     @patch(f"{FPL_INTERFACE_PATH}.requests.get")
     def test_retrieve_teams(self, mock_get_request):
@@ -58,3 +64,67 @@ class TestFPLInterface(TestCase):
         output = self.interface.retrieve_players()
 
         self.assertEqual(output, expected_output)
+
+    @patch(f"{FPL_INTERFACE_PATH}.Player.objects.get")
+    @patch(f"{FPL_INTERFACE_PATH}.FPLInterface.retrieve_players")
+    @patch(f"{FPL_INTERFACE_PATH}.requests.get")
+    def test_retrieve_weekly_scorers(
+        self,
+        mock_get_request,
+        mock_retrieve_players,
+        mock_get_player,
+    ):
+        mock_player = Mock(spec=Player)
+        mock_player.id = 1234
+        mock_get_player.return_value = mock_player
+
+        mock_retrieve_players.return_value = [
+            {
+                "id": 390,
+                "first_name": "Heung-Min",
+                "surname": "Son",
+                "team": "Spurs",
+            }
+        ]
+        mock_get_response = Mock(spec=Response)
+
+        # Convert dict from mock data to byte string
+        mock_get_response.content = json.dumps(self.mock_gameweek_live_data).encode(
+            "utf-8"
+        )
+        mock_get_request.return_value = mock_get_response
+
+        output = self.interface.retrieve_weekly_scorers(gameweek_no=1)
+        self.assertEqual(output, {1234})
+
+    @patch(f"{FPL_INTERFACE_PATH}.Player.objects.get")
+    @patch(f"{FPL_INTERFACE_PATH}.FPLInterface.retrieve_players")
+    @patch(f"{FPL_INTERFACE_PATH}.requests.get")
+    def test_retrieve_weekly_assists(
+        self,
+        mock_get_request,
+        mock_retrieve_players,
+        mock_get_player,
+    ):
+        mock_player = Mock(spec=Player)
+        mock_player.id = 4321
+        mock_get_player.return_value = mock_player
+
+        mock_retrieve_players.return_value = [
+            {
+                "id": 390,
+                "first_name": "Heung-Min",
+                "surname": "Son",
+                "team": "Spurs",
+            }
+        ]
+        mock_get_response = Mock(spec=Response)
+
+        # Convert dict from mock data to byte string
+        mock_get_response.content = json.dumps(self.mock_gameweek_live_data).encode(
+            "utf-8"
+        )
+        mock_get_request.return_value = mock_get_response
+
+        output = self.interface.retrieve_weekly_assists(gameweek_no=1)
+        self.assertEqual(output, {4321})
