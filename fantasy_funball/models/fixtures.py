@@ -1,6 +1,6 @@
 from django.db import models
 
-from fantasy_funball.models import Team
+from fantasy_funball.models import Player, Team
 
 
 class Gameweek(models.Model):
@@ -23,6 +23,9 @@ class Result(models.Model):
     )
     away_score = models.IntegerField()
     gameday = models.ForeignKey(Gameday, on_delete=models.DO_NOTHING)
+
+    scorers = models.ManyToManyField(Player, related_name="scorers")
+    assists = models.ManyToManyField(Player, related_name="assists")
 
 
 class Fixture(models.Model):

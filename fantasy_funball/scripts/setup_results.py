@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import psycopg2
 
-from fantasy_funball.models import Gameday, Result, Team
+from fantasy_funball.models import Gameday, Player, Result, Team
 
 
 def setup_results() -> None:
@@ -25,6 +25,7 @@ def setup_results() -> None:
     conn.commit()
     conn.close()
 
+    # Using team/player names for this script as ids are subject to change
     results = [
         {
             "home_team": "Spurs",
@@ -34,6 +35,8 @@ def setup_results() -> None:
             "date": datetime.strptime(
                 "2021-08-13 00:00:00.000000", "%Y-%m-%d %H:%M:%S.%f"
             ).replace(tzinfo=timezone.utc),
+            "scorers": ["Harry Kane", "Hugo Lloris"],
+            "assists": ["Tanguy Ndombele"],
         },
         {
             "home_team": "Chelsea",
@@ -43,10 +46,18 @@ def setup_results() -> None:
             "date": datetime.strptime(
                 "2021-08-13 00:00:00.000000", "%Y-%m-%d %H:%M:%S.%f"
             ).replace(tzinfo=timezone.utc),
+            "scorers": ["Timo Werner", "Ivan Toney"],
+            "assists": ["Ivan Toney"],
         },
     ]
 
     for result in results:
+        scorers_surnames = {x.split(" ")[1] for x in result["scorers"]}
+        assists_surnames = {x.split(" ")[1] for x in result["assists"]}
+
+        scorers = list(Player.objects.filter(surname__in=scorers_surnames))
+        assists = list(Player.objects.filter(surname__in=assists_surnames))
+
         result_inst = Result(
             home_team=Team.objects.get(team_name=result["home_team"]),
             home_score=result["home_score"],
@@ -55,6 +66,10 @@ def setup_results() -> None:
             gameday=Gameday.objects.get(date=result["date"]),
         )
         result_inst.save()
+
+        # Model obj must be saved before adding many-to-many fields
+        result_inst.scorers.add(*scorers)
+        result_inst.assists.add(*assists)
 
 
 if __name__ == "__main__":

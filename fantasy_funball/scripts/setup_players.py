@@ -25,6 +25,8 @@ def setup_players() -> None:
     cur = conn.cursor()
     cur.execute(
         "truncate fantasy_funball_player, "
+        "fantasy_funball_result_assists,"
+        "fantasy_funball_result_scorers,"
         "fantasy_funball_team,"
         "fantasy_funball_result,"
         "fantasy_funball_fixture,"
@@ -50,8 +52,8 @@ def setup_players() -> None:
             first_name=player["first_name"],
             surname=player["surname"],
             team=team_obj,
-            goals=player["goals"],
-            assists=player["assists"],
+            # goals=player["goals"],
+            # assists=player["assists"],
         )
 
         player_inst.save()

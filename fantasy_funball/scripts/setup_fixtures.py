@@ -31,6 +31,8 @@ def setup_fixtures():
     cur.execute(
         "truncate fantasy_funball_fixture, "
         "fantasy_funball_result,"
+        "fantasy_funball_result_assists,"
+        "fantasy_funball_result_scorers,"
         "fantasy_funball_gameday,"
         "fantasy_funball_choices, "
         "fantasy_funball_gameweek;"
