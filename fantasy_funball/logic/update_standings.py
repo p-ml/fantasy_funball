@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import List
+from typing import List, Set
 
 import django
 
@@ -52,7 +52,7 @@ def get_weekly_team_picks(gameweek_no: int) -> List:
     return weekly_team_picks
 
 
-def get_weekly_scorers(weekly_result_data: List) -> set:
+def get_weekly_scorers(weekly_result_data: List) -> Set:
     """Get ids of players who scored in given gameweek"""
     weekly_scorer_data = [list(result.scorers.all()) for result in weekly_result_data]
     scorer_ids = set()
@@ -63,7 +63,7 @@ def get_weekly_scorers(weekly_result_data: List) -> set:
     return scorer_ids
 
 
-def get_weekly_assists(weekly_result_data: List) -> set:
+def get_weekly_assists(weekly_result_data: List) -> Set:
     """Get ids of players who assisted in given gameweek"""
     weekly_assist_data = [list(result.assists.all()) for result in weekly_result_data]
     assist_ids = set()
@@ -74,7 +74,7 @@ def get_weekly_assists(weekly_result_data: List) -> set:
     return assist_ids
 
 
-def get_weekly_scorers_assists(gameweek_no: int) -> ScorerAssistIds:
+def get_weekly_scorers_and_assists(gameweek_no: int) -> ScorerAssistIds:
     weekly_result_data = Result.objects.filter(
         gameday__gameweek__gameweek_no=gameweek_no
     )
@@ -98,7 +98,7 @@ def update_standings(gameweek_no: int):
     # Extract winning team ids
     gameweek_winner_ids = {team.id for team in gameweek_winners}
 
-    scorer_assist_ids = get_weekly_scorers_assists(gameweek_no=gameweek_no)
+    scorer_assist_ids = get_weekly_scorers_and_assists(gameweek_no=gameweek_no)
     scorer_ids = scorer_assist_ids.scorer_ids
     assist_ids = scorer_assist_ids.assist_ids
 
@@ -128,4 +128,4 @@ def update_standings(gameweek_no: int):
 
 
 if __name__ == "__main__":
-    update_standings(gameweek_no=1)
+    get_weekly_scorers_and_assists(gameweek_no=1)

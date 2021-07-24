@@ -1,12 +1,23 @@
 from unittest import TestCase
+from unittest.mock import Mock, patch
 
 import django
 
-from fantasy_funball.logic.update_standings import determine_gameweek_winners
+from fantasy_funball.logic.update_standings import (
+    ScorerAssistIds,
+    determine_gameweek_winners,
+    get_gameweek_results,
+    get_weekly_assists,
+    get_weekly_scorers,
+    get_weekly_scorers_and_assists,
+    get_weekly_team_picks,
+)
 
 django.setup()
 
-from fantasy_funball.models import Result, Team
+from fantasy_funball.models import Choices, Player, Result, Team
+
+UPDATE_STANDINGS_PATH = "fantasy_funball.logic.update_standings"
 
 
 class TestUpdateStandings(TestCase):
@@ -52,3 +63,85 @@ class TestUpdateStandings(TestCase):
         ]
 
         self.assertEqual(output, expected_output)
+
+    @patch(f"{UPDATE_STANDINGS_PATH}.determine_gameweek_winners")
+    @patch(f"{UPDATE_STANDINGS_PATH}.Result.objects.filter")
+    def test_get_gameweek_results(
+        self,
+        mock_retrieve_results,
+        mock_determine_gameweek_winners,
+    ):
+        mock_retrieve_results.return_value = [self.mock_results[0]]
+
+        mock_determine_gameweek_winners.return_value = self.mock_teams[0]
+
+        response = get_gameweek_results(gameweek_no=1)
+
+        self.assertEqual(response, self.mock_teams[0])
+
+    @patch(f"{UPDATE_STANDINGS_PATH}.Choices.objects.filter")
+    def test_get_weekly_team_picks_results(
+        self,
+        mock_retrieve_choices,
+    ):
+        mock_choice = Mock(spec=Choices)
+        mock_choice.has_been_processed = False
+        mock_choice.funballer_id = 1
+        mock_choice.gameweek_id = 2
+        mock_choice.player_choice_id = 10
+        mock_choice.team_choice_id = 20
+
+        mock_retrieve_choices.return_value = [mock_choice]
+
+        response = get_weekly_team_picks(gameweek_no=1)
+
+        self.assertEqual(response, [mock_choice])
+
+    @patch(f"{UPDATE_STANDINGS_PATH}.list")
+    def test_get_weekly_scorers(self, mock_list):
+        mock_player = Mock(spec=Player)
+        mock_player.id = 123
+
+        mock_list.return_value = [mock_player]
+        mock_result = Mock(spec=Result)
+
+        response = get_weekly_scorers(weekly_result_data=[mock_result])
+
+        self.assertEqual(response, {123})
+
+    @patch(f"{UPDATE_STANDINGS_PATH}.list")
+    def test_get_weekly_assists(self, mock_list):
+        mock_player = Mock(spec=Player)
+        mock_player.id = 123
+
+        mock_list.return_value = [mock_player]
+        mock_result = Mock(spec=Result)
+
+        response = get_weekly_assists(weekly_result_data=[mock_result])
+
+        self.assertEqual(response, {123})
+
+    @patch(f"{UPDATE_STANDINGS_PATH}.get_weekly_assists")
+    @patch(f"{UPDATE_STANDINGS_PATH}.get_weekly_scorers")
+    @patch(f"{UPDATE_STANDINGS_PATH}.list")
+    @patch(f"{UPDATE_STANDINGS_PATH}.Result.objects.filter")
+    def test_get_weekly_scorers_assists(
+        self,
+        mock_retrieve_result,
+        mock_convert_queryset,
+        mock_get_weekly_scorers,
+        mock_get_weekly_assists,
+    ):
+        mock_result = Mock(spec=Result)
+        mock_retrieve_result.return_value = mock_result
+
+        mock_convert_queryset.return_value = [mock_result]
+
+        mock_get_weekly_scorers.return_value = {123}
+        mock_get_weekly_assists.return_value = {321}
+
+        output = get_weekly_scorers_and_assists(gameweek_no=1)
+
+        self.assertIsInstance(output, ScorerAssistIds)
+        self.assertEqual(output.scorer_ids, {123})
+        self.assertEqual(output.assist_ids, {321})
