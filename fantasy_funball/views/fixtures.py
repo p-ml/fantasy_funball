@@ -68,8 +68,8 @@ class RetrieveGameweek(APIView):
                 gameday__gameweek_id=gameweek.id,
             ).values(
                 "id",
-                "home_team",
-                "away_team",
+                "home_team__team_name",
+                "away_team__team_name",
                 "kickoff",
                 "gameday__date",
             )
