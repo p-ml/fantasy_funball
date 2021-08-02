@@ -46,7 +46,7 @@ class TestFPLInterface(TestCase):
         mock_response.content = (
             b'{"elements": [{"first_name": "Hugo", "id": 353,'
             b' "second_name": "Lloris", "team": 17, "goals_scored": 0,'
-            b' "assists": 0}]}'
+            b' "assists": 0, "element_type": 1}]}'
         )
         mock_get_request.return_value = mock_response
 
@@ -58,6 +58,7 @@ class TestFPLInterface(TestCase):
                 "first_name": "Hugo",
                 "surname": "Lloris",
                 "team": "Spurs",
+                "position": "Goalkeeper",
             }
         ]
 
