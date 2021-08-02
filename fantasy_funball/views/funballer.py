@@ -15,7 +15,11 @@ from core.exceptions import (
 from fantasy_funball.models import Choices, Funballer, Gameweek
 from fantasy_funball.models.players import Player
 from fantasy_funball.models.teams import Team
-from fantasy_funball.views.helpers import check_for_passed_deadline
+from fantasy_funball.views.helpers import (
+    check_for_passed_deadline,
+    player_selection_check,
+    team_selection_check,
+)
 
 
 class FunballerViewMixin:
@@ -130,6 +134,15 @@ class FunballerChoiceView(APIView):
         gameweek_obj = Gameweek.objects.get(gameweek_no=gameweek_no)
 
         check_for_passed_deadline(gameweek_deadline=gameweek_obj.deadline)
+
+        # Check if team/player has already been selected
+        team_selection_check(
+            funballer_first_name=funballer_name, team_name=request.data["team_choice"]
+        )
+        player_selection_check(
+            funballer_first_name=funballer_name,
+            player_name=request.data["player_choice"],
+        )
 
         # Check if selection for this gameweek has already been submitted
         try:

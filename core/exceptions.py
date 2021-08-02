@@ -48,3 +48,15 @@ class PlayerNotFoundError(APIException):
     status_code = status.HTTP_404_NOT_FOUND
     default_detail = "not found"
     default_code = "not_found"
+
+
+class TeamSelectedTooManyTimes(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "bad_request"
+    default_code = "bad_request"
+
+
+class PlayerSelectedTooManyTimes(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "bad_request"
+    default_code = "bad_request"

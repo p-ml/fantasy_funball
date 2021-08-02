@@ -50,6 +50,8 @@ class FunballerChoiceView(TestCase):
             f"Choices for {invalid_funballer_name} not found",
         )
 
+    @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
+    @patch(f"{FUNBALLER_VIEW_PATH}.player_selection_check")
     @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
     @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
@@ -64,6 +66,8 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_gameweek,
         mock_retrieve_player,
         mock_check_for_passed_deadline,
+        mock_player_selection_check,
+        mock_team_selection_check,
     ):
         mock_gameweek_obj = Mock(spec=Gameweek)
         mock_gameweek_obj.deadline = "mock date goes here"
@@ -76,6 +80,9 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_player.return_value = {}
         mock_check_for_passed_deadline.return_value = {}
 
+        mock_player_selection_check.return_value = None
+        mock_team_selection_check.return_value = None
+
         response = self.client.post(
             path="/fantasy_funball/funballer/choices/patrick",
             data={
@@ -86,8 +93,10 @@ class FunballerChoiceView(TestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(str(response.data), f"Choice updated")
+        self.assertEqual(str(response.data), "Choice updated")
 
+    @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
+    @patch(f"{FUNBALLER_VIEW_PATH}.player_selection_check")
     @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
     @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
@@ -100,6 +109,8 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_funballer,
         mock_retrieve_gameweek,
         mock_check_for_passed_deadline,
+        mock_player_selection_check,
+        mock_team_selection_check,
     ):
         invalid_team_choice = "Barcelona"
 
@@ -110,6 +121,9 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_choices.return_value = {}
         mock_retrieve_funballer.return_value = {}
         mock_check_for_passed_deadline.return_value = {}
+        mock_player_selection_check.return_value = None
+        mock_team_selection_check.return_value = None
+
         mock_retrieve_team.side_effect = Team.DoesNotExist
 
         response = self.client.post(
@@ -117,6 +131,7 @@ class FunballerChoiceView(TestCase):
             data={
                 "gameweek_no": 1,
                 "team_choice": invalid_team_choice,
+                "player_choice": "",
             },
         )
 
@@ -127,6 +142,8 @@ class FunballerChoiceView(TestCase):
             f"Team with name {invalid_team_choice} not found",
         )
 
+    @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
+    @patch(f"{FUNBALLER_VIEW_PATH}.player_selection_check")
     @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
     @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
@@ -141,6 +158,8 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_gameweek,
         mock_retrieve_player,
         mock_check_for_passed_deadline,
+        mock_player_selection_check,
+        mock_team_selection_check,
     ):
         invalid_player_choice = "Lionel Messi"
 
@@ -151,6 +170,9 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_choices.return_value = {}
         mock_retrieve_funballer.return_value = {}
         mock_retrieve_team.return_value = {}
+        mock_player_selection_check.return_value = None
+        mock_team_selection_check.return_value = None
+
         mock_retrieve_player.side_effect = Player.DoesNotExist
         mock_check_for_passed_deadline.return_value = {}
 
@@ -169,7 +191,8 @@ class FunballerChoiceView(TestCase):
             str(response.data["detail"]),
             f"Player with name {invalid_player_choice} not found",
         )
-
+    @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
+    @patch(f"{FUNBALLER_VIEW_PATH}.player_selection_check")
     @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
     @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
     @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
@@ -184,6 +207,8 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_gameweek,
         mock_retrieve_player,
         mock_check_for_passed_deadline,
+        mock_player_selection_check,
+        mock_team_selection_check,
     ):
         mock_gameweek_obj = Mock(spec=Gameweek)
         mock_gameweek_obj.deadline = "mock date goes here"
@@ -200,6 +225,9 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_player.return_value = {}
         mock_check_for_passed_deadline.return_value = {}
 
+        mock_player_selection_check.return_value = None
+        mock_team_selection_check.return_value = None
+
         response = self.client.post(
             path="/fantasy_funball/funballer/choices/patrick",
             data={
@@ -210,4 +238,4 @@ class FunballerChoiceView(TestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(str(response.data), f"Choice submitted")
+        self.assertEqual(str(response.data), "Choice submitted")
