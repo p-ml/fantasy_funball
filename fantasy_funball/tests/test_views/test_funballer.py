@@ -9,7 +9,7 @@ django.setup()
 
 from fantasy_funball.models import Choices, Gameweek, Player, Team
 
-FUNBALLER_VIEW_PATH = "fantasy_funball.views.funballer"
+FUNBALLER_VIEW_PATH = "fantasy_funball.views.choices"
 
 
 class FunballerChoiceView(TestCase):
@@ -191,6 +191,7 @@ class FunballerChoiceView(TestCase):
             str(response.data["detail"]),
             f"Player with name {invalid_player_choice} not found",
         )
+
     @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
     @patch(f"{FUNBALLER_VIEW_PATH}.player_selection_check")
     @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
