@@ -52,6 +52,7 @@ def setup_players() -> None:
             first_name=player["first_name"],
             surname=player["surname"],
             team=team_obj,
+            position=player["position"],
         )
 
         player_inst.save()

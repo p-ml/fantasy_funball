@@ -13,6 +13,12 @@ class FPLInterface:
     def __init__(self):
         self.base_url = "https://fantasy.premierleague.com/api"
         self.url = "https://fantasy.premierleague.com/api/bootstrap-static/"
+        self.position_dict = {
+            1: "Goalkeeper",
+            2: "Defender",
+            3: "Midfielder",
+            4: "Forward",
+        }
 
     def retrieve_teams(self) -> Dict:
         request_response = requests.get(url=f"{self.base_url}/bootstrap-static/")
@@ -33,6 +39,7 @@ class FPLInterface:
                 "first_name": player["first_name"],
                 "surname": player["second_name"],
                 "team": team_data[player["team"]],
+                "position": self.position_dict[player["element_type"]],
             }
             for player in raw_player_data
         ]
