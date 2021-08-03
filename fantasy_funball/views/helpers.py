@@ -23,7 +23,7 @@ def check_for_passed_deadline(gameweek_deadline: datetime):
 
     if current_time > gameweek_deadline:
         raise GameweekDeadlinePassedError(
-            "Choice cannot be updated/submitted once a gameweek" "deadline has passed"
+            "Choice cannot be updated/submitted once a gameweek deadline has passed"
         )
 
 
