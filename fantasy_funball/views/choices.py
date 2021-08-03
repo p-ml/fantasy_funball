@@ -15,7 +15,6 @@ from fantasy_funball.views.helpers import (
 class FunballerChoiceView(APIView):
     def get(self, request: WSGIRequest, funballer_name: str) -> Response:
         """Retrieve all of a funballers choices from postgres db"""
-
         try:
             choices = Choices.objects.filter(
                 funballer_id__first_name=funballer_name,
