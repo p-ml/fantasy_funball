@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import django
 from django.test import Client
@@ -7,12 +7,12 @@ from rest_framework import status
 
 django.setup()
 
-from fantasy_funball.models import Team
+from fantasy_funball.models import Player, Team
 
 PLAYER_VIEW_PATH = "fantasy_funball.views.player"
 
 
-class TestPlayerViewSet(TestCase):
+class TestPlayerTeamViewSet(TestCase):
     def setUp(self) -> None:
         self.client = Client()
 
@@ -45,3 +45,22 @@ class TestPlayerViewSet(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue(response.exception)
         self.assertEqual(str(response.data["detail"]), f"{invalid_team_name} not found")
+
+
+class TestPlayerViewSet(TestCase):
+    def setUp(self) -> None:
+        self.client = Client()
+
+    @patch(f"{PLAYER_VIEW_PATH}.Player.objects.all")
+    def test_get(self, mock_retrieve_all_players):
+        mock_player = Mock(spec=Player)
+        mock_player.first_name = "Hugo"
+        mock_player.surname = "Lloris"
+
+        expected_output = [{"name": "Hugo Lloris"}]
+
+        mock_retrieve_all_players.return_value = [mock_player]
+
+        response = self.client.get("/fantasy_funball/players/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, expected_output)
