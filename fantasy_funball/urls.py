@@ -1,6 +1,9 @@
 from django.urls import path
 
-from fantasy_funball.views.choices import FunballerChoiceView
+from fantasy_funball.views.choices import (
+    FunballerGetChoiceView,
+    FunballerPostChoiceView,
+)
 from fantasy_funball.views.fixtures import (
     RetrieveFixture,
     RetrieveGameday,
@@ -13,9 +16,14 @@ urlpatterns = [
     path("funballer/<int:id>", SingleFunballerView.as_view(), name="funballer-detail"),
     path("funballer/", FunballerView.as_view(), name="funballer"),
     path(
+        "funballer/choices/submit/<str:pin>",
+        FunballerPostChoiceView.as_view(),
+        name="funballer-post-choices",
+    ),
+    path(
         "funballer/choices/<str:funballer_name>",
-        FunballerChoiceView.as_view(),
-        name="funballer-choices",
+        FunballerGetChoiceView.as_view(),
+        name="funballer-get-choices",
     ),
     path("fixture/<int:id>", RetrieveFixture.as_view(), name="retrieve-fixture"),
     path("gameday/<int:id>", RetrieveGameday.as_view(), name="retrieve-gameday"),
