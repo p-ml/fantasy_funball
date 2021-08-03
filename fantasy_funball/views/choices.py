@@ -12,10 +12,9 @@ from fantasy_funball.views.helpers import (
 )
 
 
-class FunballerChoiceView(APIView):
+class FunballerGetChoiceView(APIView):
     def get(self, request: WSGIRequest, funballer_name: str) -> Response:
         """Retrieve all of a funballers choices from postgres db"""
-
         try:
             choices = Choices.objects.filter(
                 funballer_id__first_name=funballer_name,
@@ -38,10 +37,16 @@ class FunballerChoiceView(APIView):
             data=formatted_choices,
         )
 
-    def post(self, request: WSGIRequest, funballer_name: str) -> Response:
+
+class FunballerPostChoiceView(APIView):
+    def post(self, request: WSGIRequest, pin: str) -> Response:
         """Adds a funballer's choice to postgres db"""
         gameweek_no = request.data["gameweek_no"]
         gameweek_obj = Gameweek.objects.get(gameweek_no=gameweek_no)
+
+        # Get funballer by pin
+        funballer = Funballer.objects.get(pin=pin)
+        funballer_name = funballer.first_name
 
         check_for_passed_deadline(gameweek_deadline=gameweek_obj.deadline)
 

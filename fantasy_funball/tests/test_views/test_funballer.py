@@ -7,7 +7,7 @@ from rest_framework import status
 
 django.setup()
 
-from fantasy_funball.models import Choices, Gameweek, Player, Team
+from fantasy_funball.models import Choices, Funballer, Gameweek, Player, Team
 
 FUNBALLER_VIEW_PATH = "fantasy_funball.views.choices"
 
@@ -75,7 +75,11 @@ class FunballerChoiceView(TestCase):
 
         mock_choice.objects.get.return_value = Mock(spec=Choices)
         mock_choice.return_value.save = {}
-        mock_retrieve_funballer.return_value = {}
+
+        mock_funballer = Mock(spec=Funballer)
+        mock_funballer.first_name = "Mock"
+
+        mock_retrieve_funballer.return_value = mock_funballer
         mock_retrieve_team.return_value = {}
         mock_retrieve_player.return_value = {}
         mock_check_for_passed_deadline.return_value = {}
@@ -84,7 +88,7 @@ class FunballerChoiceView(TestCase):
         mock_team_selection_check.return_value = None
 
         response = self.client.post(
-            path="/fantasy_funball/funballer/choices/patrick",
+            path="/fantasy_funball/funballer/choices/submit/0000",
             data={
                 "gameweek_no": 1,
                 "team_choice": "Tottenham Hotspur",
@@ -119,7 +123,11 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_gameweek.return_value = mock_gameweek_obj
 
         mock_retrieve_choices.return_value = {}
-        mock_retrieve_funballer.return_value = {}
+
+        mock_funballer = Mock(spec=Funballer)
+        mock_funballer.first_name = "Mock"
+
+        mock_retrieve_funballer.return_value = mock_funballer
         mock_check_for_passed_deadline.return_value = {}
         mock_player_selection_check.return_value = None
         mock_team_selection_check.return_value = None
@@ -127,7 +135,7 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_team.side_effect = Team.DoesNotExist
 
         response = self.client.post(
-            path="/fantasy_funball/funballer/choices/patrick",
+            path="/fantasy_funball/funballer/choices/submit/0000",
             data={
                 "gameweek_no": 1,
                 "team_choice": invalid_team_choice,
@@ -168,7 +176,11 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_gameweek.return_value = mock_gameweek_obj
 
         mock_retrieve_choices.return_value = {}
-        mock_retrieve_funballer.return_value = {}
+
+        mock_funballer = Mock(spec=Funballer)
+        mock_funballer.first_name = "Mock"
+
+        mock_retrieve_funballer.return_value = mock_funballer
         mock_retrieve_team.return_value = {}
         mock_player_selection_check.return_value = None
         mock_team_selection_check.return_value = None
@@ -177,7 +189,7 @@ class FunballerChoiceView(TestCase):
         mock_check_for_passed_deadline.return_value = {}
 
         response = self.client.post(
-            path="/fantasy_funball/funballer/choices/patrick",
+            path="/fantasy_funball/funballer/choices/submit/0000",
             data={
                 "gameweek_no": 1,
                 "team_choice": "Barcelona",
@@ -221,7 +233,10 @@ class FunballerChoiceView(TestCase):
         mock_choices.return_value = Mock(spec=Choices)
         mock_choices.save = {}
 
-        mock_retrieve_funballer.return_value = {}
+        mock_funballer = Mock(spec=Funballer)
+        mock_funballer.first_name = "Mock"
+
+        mock_retrieve_funballer.return_value = mock_funballer
         mock_retrieve_team.return_value = {}
         mock_retrieve_player.return_value = {}
         mock_check_for_passed_deadline.return_value = {}
@@ -230,7 +245,7 @@ class FunballerChoiceView(TestCase):
         mock_team_selection_check.return_value = None
 
         response = self.client.post(
-            path="/fantasy_funball/funballer/choices/patrick",
+            path="/fantasy_funball/funballer/choices/submit/0000",
             data={
                 "gameweek_no": 1,
                 "team_choice": "Tottenham Hotspur",

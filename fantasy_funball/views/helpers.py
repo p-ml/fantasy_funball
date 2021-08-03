@@ -15,7 +15,7 @@ from fantasy_funball.models import Choices
 
 
 def check_for_passed_deadline(gameweek_deadline: datetime):
-    """Raise an error if chosen gameweek has already happened"""
+    """Raise an error if chosen gameweek deadline has already passed"""
     # Get current utc time
     current_time = datetime.now()
     utc = pytz.UTC
@@ -23,8 +23,7 @@ def check_for_passed_deadline(gameweek_deadline: datetime):
 
     if current_time > gameweek_deadline:
         raise GameweekDeadlinePassedError(
-            "Choice cannot be updated/submitted for a gameweek"
-            "that has already passed"
+            "Choice cannot be updated/submitted once a gameweek deadline has passed"
         )
 
 

@@ -19,7 +19,6 @@ class TestHelpers(TestCase):
 
         self.assertEqual(
             str(ex.exception),
-            "Choice cannot be updated/submitted for a gameweek"
-            "that has already passed",
+            "Choice cannot be updated/submitted once a gameweek " "deadline has passed",
         )
         self.assertEqual(ex.exception.status_code, 400)
