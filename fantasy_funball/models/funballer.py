@@ -7,3 +7,4 @@ class Funballer(models.Model):
     player_points = models.IntegerField()
     team_points = models.IntegerField()
     points = models.IntegerField()
+    pin = models.CharField(max_length=4)

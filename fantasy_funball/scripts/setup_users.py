@@ -33,6 +33,7 @@ def setup_users() -> None:
             "player_points": 0,
             "team_points": 0,
             "points": 0,
+            "pin": "1050",
         },
         {
             "first_name": "Ben",
@@ -40,6 +41,7 @@ def setup_users() -> None:
             "player_points": 0,
             "team_points": 0,
             "points": 0,
+            "pin": "8251",
         },
         {
             "first_name": "Henry",
@@ -47,6 +49,7 @@ def setup_users() -> None:
             "player_points": 0,
             "team_points": 0,
             "points": 0,
+            "pin": "5064",
         },
         {
             "first_name": "Will",
@@ -54,6 +57,7 @@ def setup_users() -> None:
             "player_points": 0,
             "team_points": 0,
             "points": 0,
+            "pin": "8285",
         },
         {
             "first_name": "Theo",
@@ -61,6 +65,7 @@ def setup_users() -> None:
             "player_points": 0,
             "team_points": 0,
             "points": 0,
+            "pin": "9306",
         },
         {
             "first_name": "Gordon",
@@ -68,6 +73,7 @@ def setup_users() -> None:
             "player_points": 0,
             "team_points": 0,
             "points": 0,
+            "pin": "0625",
         },
         {
             "first_name": "Josh",
@@ -75,6 +81,7 @@ def setup_users() -> None:
             "player_points": 0,
             "team_points": 0,
             "points": 0,
+            "pin": "9839",
         },
         {
             "first_name": "Adam",
@@ -82,12 +89,14 @@ def setup_users() -> None:
             "player_points": 0,
             "team_points": 0,
             "points": 0,
+            "pin": "9308",
         },
         {
             "first_name": "Steve",
             "player_points": 0,
             "team_points": 0,
             "points": 0,
+            "pin": "2361",
         },
     ]
 
@@ -98,5 +107,6 @@ def setup_users() -> None:
             points=person["points"],
             player_points=person["player_points"],
             team_points=person["team_points"],
+            pin=person["pin"],
         )
         funballer.save()
