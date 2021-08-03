@@ -28,3 +28,18 @@ class PlayerTeamView(APIView):
             status=status.HTTP_200_OK,
             data=formatted_team_players,
         )
+
+
+class PlayerView(APIView):
+    def get(self, request: WSGIRequest) -> Response:
+        """Retrieve names of all players in db"""
+        all_players = Player.objects.all()
+
+        formatted_players = [
+            {"name": f"{player.first_name} {player.surname}"} for player in all_players
+        ]
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=formatted_players,
+        )

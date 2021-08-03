@@ -10,7 +10,7 @@ from fantasy_funball.views.fixtures import (
     RetrieveGameweek,
 )
 from fantasy_funball.views.funballer import FunballerView, SingleFunballerView
-from fantasy_funball.views.player import PlayerTeamView
+from fantasy_funball.views.player import PlayerTeamView, PlayerView
 
 urlpatterns = [
     path("funballer/<int:id>", SingleFunballerView.as_view(), name="funballer-detail"),
@@ -33,4 +33,5 @@ urlpatterns = [
         name="retrieve-gameweek",
     ),
     path("<str:team_name>/players/", PlayerTeamView.as_view(), name="retrieve-players"),
+    path("players/", PlayerView.as_view(), name="retrieve-all-players"),
 ]
