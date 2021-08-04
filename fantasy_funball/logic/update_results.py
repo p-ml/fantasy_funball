@@ -18,13 +18,24 @@ def update_results(gameweek_no: int):
     for result in gameweek_results:
         result_obj = Result(
             home_team=result["home_team"],
-            home_score=1,
+            home_score=result["home_score"],
             away_team=result["away_team"],
-            away_score=2,
+            away_score=result["away_score"],
             gameday_id=result["gameday"],
         )
 
-        result_obj.save()
+        # Only save if result doesn't already exist - may be a better solution
+        try:
+            Result.objects.get(
+                home_team=result["home_team"],
+                home_score=result["home_score"],
+                away_team=result["away_team"],
+                away_score=result["away_score"],
+                gameday_id=result["gameday"],
+            )
+
+        except Result.DoesNotExist:
+            result_obj.save()
 
 
 if __name__ == "__main__":
