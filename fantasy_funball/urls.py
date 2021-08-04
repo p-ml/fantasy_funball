@@ -11,6 +11,7 @@ from fantasy_funball.views.fixtures import (
 )
 from fantasy_funball.views.funballer import FunballerView, SingleFunballerView
 from fantasy_funball.views.player import PlayerTeamView, PlayerView
+from fantasy_funball.views.update_database import UpdateDatabaseView
 
 urlpatterns = [
     path("funballer/<int:id>", SingleFunballerView.as_view(), name="funballer-detail"),
@@ -34,4 +35,5 @@ urlpatterns = [
     ),
     path("<str:team_name>/players/", PlayerTeamView.as_view(), name="retrieve-players"),
     path("players/", PlayerView.as_view(), name="retrieve-all-players"),
+    path("update_database/", UpdateDatabaseView.as_view(), name="update-database"),
 ]
