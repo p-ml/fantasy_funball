@@ -74,9 +74,10 @@ class FunballerPostChoiceView(APIView):
                 )
 
             try:
+                player_name = request.data["player_choice"].split(" ", 1)
                 updated_player = Player.objects.get(
-                    first_name=request.data["player_choice"].split(" ")[0],
-                    surname=request.data["player_choice"].split(" ")[1],
+                    first_name=player_name[0],
+                    surname=player_name[1],
                 )
             except Player.DoesNotExist:
                 raise PlayerNotFoundError(
@@ -91,14 +92,22 @@ class FunballerPostChoiceView(APIView):
 
         except Choices.DoesNotExist:
             # Create new choice if it doesn't already exist
-            choice = Choices(
-                funballer_id=Funballer.objects.get(first_name=funballer_name),
-                gameweek_id=gameweek_obj,
-                team_choice=Team.objects.get(team_name=request.data["team_choice"]),
-                player_choice=Player.objects.get(
-                    first_name=request.data["player_choice"].split(" ")[0],
-                    surname=request.data["player_choice"].split(" ")[1],
+            funballer = Funballer.objects.get(first_name=funballer_name).id
+            team = Team.objects.get(team_name=request.data["team_choice"])
+
+            player_name = request.data["player_choice"].split(" ", 1)
+            player = (
+                Player.objects.get(
+                    first_name=player_name[0],
+                    surname=player_name[1],
                 ),
+            )
+
+            choice = Choices(
+                funballer_id=funballer.id,
+                gameweek_id=gameweek_obj.id,
+                team_choice=team,
+                player_choice=player,
             )
             choice.save()
 
