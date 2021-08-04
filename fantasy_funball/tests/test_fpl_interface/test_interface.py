@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 from requests import Response
 
 from fantasy_funball.fpl_interface.interface import FPLInterface
-from fantasy_funball.models import Player
+from fantasy_funball.models import Player, Team
 from fantasy_funball.tests.test_logic.mock_gameweek_live_data import (
     mock_gameweek_live_data,
 )
@@ -129,3 +129,50 @@ class TestFPLInterface(TestCase):
 
         output = self.interface.retrieve_weekly_assists(gameweek_no=1)
         self.assertEqual(output, {4321})
+
+    @patch(f"{FPL_INTERFACE_PATH}.FPLInterface._determine_gameday_from_teams")
+    @patch(f"{FPL_INTERFACE_PATH}.Team.objects.get")
+    @patch(f"{FPL_INTERFACE_PATH}.FPLInterface.retrieve_teams")
+    @patch(f"{FPL_INTERFACE_PATH}.requests.get")
+    def test_retrieve_gameweek_results(
+        self,
+        mock_get_request,
+        mock_retrieve_teams,
+        mock_get_team,
+        mock_determine_gameday_from_teams,
+    ):
+        mock_get_response = Mock(spec=Response)
+        mock_get_response.content = json.dumps(
+            [
+                {
+                    "finished": True,
+                    "kickoff_time": "2021-08-13T19:00:00Z",
+                    "team_a": 17,
+                    "team_a_score": 10,
+                    "team_h": 1,
+                    "team_h_score": 0,
+                }
+            ]
+        ).encode("utf-8")
+        mock_get_request.return_value = mock_get_response
+
+        mock_retrieve_teams.return_value = {1: "Arsenal", 17: "Spurs"}
+
+        mock_team = Mock(spec=Team)
+        mock_get_team.return_value = mock_team
+
+        mock_determine_gameday_from_teams.return_value = 3
+
+        expected_output = [
+            {
+                "home_team": mock_team,
+                "home_score": 0,
+                "away_team": mock_team,
+                "away_score": 10,
+                "gameday": 3,
+            }
+        ]
+
+        output = self.interface.retrieve_gameweek_results(gameweek_no=1)
+
+        self.assertEqual(expected_output, output)
