@@ -6,13 +6,12 @@ import requests
 
 django.setup()
 
-from fantasy_funball.models import Player
+from fantasy_funball.models import Fixture, Player, Team
 
 
 class FPLInterface:
     def __init__(self):
         self.base_url = "https://fantasy.premierleague.com/api"
-        self.url = "https://fantasy.premierleague.com/api/bootstrap-static/"
         self.position_dict = {
             1: "Goalkeeper",
             2: "Defender",
@@ -112,8 +111,55 @@ class FPLInterface:
 
         return ff_assist_ids
 
+    def _determine_gameday_from_teams(self, home_team: str, away_team: str):
+        # Check fixtures in db to get gameday_id
+        gameday = Fixture.objects.get(
+            home_team__team_name=home_team,
+            away_team__team_name=away_team,
+        )
+
+        return gameday.gameday_id
+
+    def retrieve_gameweek_results(self, gameweek_no: int) -> List[Dict]:
+        """Check gameweek results"""
+        request_response = requests.get(
+            url=f"{self.base_url}/fixtures?event={gameweek_no}"
+        )
+
+        raw_gameweek_results = json.loads(request_response.content)
+        team_ids = self.retrieve_teams()
+
+        # Pull out finished games
+        finished_games = [game for game in raw_gameweek_results if game["finished"]]
+
+        gameweek_results = []
+        for game in finished_games:
+            # Get team name from id
+            home_team_name = team_ids[game["team_h"]]
+            away_team_name = team_ids[game["team_a"]]
+
+            home_team = Team.objects.get(team_name=home_team_name)
+            away_team = Team.objects.get(team_name=away_team_name)
+
+            # Get gameday id using team names
+            gameday_id = self._determine_gameday_from_teams(
+                home_team=home_team_name,
+                away_team=away_team_name,
+            )
+
+            formatted_result = {
+                "home_team": home_team,
+                "home_score": game["team_h_score"],
+                "away_team": away_team,
+                "away_score": game["team_a_score"],
+                "gameday": gameday_id,
+            }
+
+            gameweek_results.append(formatted_result)
+
+        return gameweek_results
+
 
 if __name__ == "__main__":
     fpl_interface = FPLInterface()
-    players = fpl_interface.retrieve_players()
-    teams = fpl_interface.retrieve_teams()
+    results = fpl_interface.retrieve_gameweek_results(gameweek_no=1)
