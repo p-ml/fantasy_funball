@@ -21,6 +21,8 @@ class FPLInterface:
             4: "Forward",
         }
 
+        self.timezone = pytz.timezone("UTC")
+
     def retrieve_teams(self) -> Dict:
         request_response = requests.get(url=f"{self.base_url}/bootstrap-static/")
         raw_team_data = json.loads(request_response.content)["teams"]
@@ -183,20 +185,20 @@ class FPLInterface:
             away_team = Team.objects.get(team_name=away_team_name)
 
             # Convert kickoff_time to date obj, strip off H:M:S
-            date = datetime.strptime(game["kickoff_time"], "%Y-%m-%dT%H:%M:%SZ").date()
+            kickoff_time = datetime.strptime(game["kickoff_time"], "%Y-%m-%dT%H:%M:%SZ")
+            kickoff_date = kickoff_time.date()
 
             # Add back H:M:S, set to midnight
-            date_unaware = datetime.combine(date, datetime.min.time())
+            date_unaware = datetime.combine(kickoff_date, datetime.min.time())
 
-            utc = pytz.timezone("UTC")
-            date_aware = utc.localize(date_unaware)
+            date_aware = self.timezone.localize(date_unaware)
 
             gameday = Gameday.objects.get(date=date_aware)
 
             formatted_fixture = {
                 "home_team": home_team,
                 "away_team": away_team,
-                "kickoff": game["kickoff_time"],
+                "kickoff": kickoff_time,
                 "gameday": gameday,
             }
 
@@ -215,8 +217,7 @@ class FPLInterface:
             gameweek_deadline, "%Y-%m-%dT%H:%M:%SZ"
         )
 
-        utc = pytz.timezone("UTC")
-        gameweek_deadline_aware = utc.localize(gameweek_deadline_obj_unaware)
+        gameweek_deadline_aware = self.timezone.localize(gameweek_deadline_obj_unaware)
 
         return gameweek_deadline_aware
 
@@ -232,7 +233,6 @@ class FPLInterface:
             for fixture in raw_gameweek_data
         }
 
-        utc = pytz.timezone("UTC")
         gameday_dates_aware = set()
         for gameday_datetime in gameday_dates:
             # Reset H:M:S to midnight, add tzinfo to each datetime,
@@ -241,7 +241,7 @@ class FPLInterface:
                 gameday_date, datetime.min.time()
             )
 
-            gameday_datetime_aware = utc.localize(gameday_datetime_midnight)
+            gameday_datetime_aware = self.timezone.localize(gameday_datetime_midnight)
 
             gameday_dates_aware.add(gameday_datetime_aware)
 
