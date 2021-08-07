@@ -1,92 +1,46 @@
-import os
+import logging
 
-import psycopg2
+from fantasy_funball.fpl_interface.interface import FPLInterface
+from fantasy_funball.models import Fixture
+from fantasy_funball.scripts.db_connection import database_connection
 
-from fantasy_funball.helpers.mappers.scraper_to_postgres import (
-    scraper_date_to_datetime_postgres,
-    scraper_deadline_to_datetime_postgres,
-    scraper_fixture_to_postgres,
-)
-from fantasy_funball.models import Fixture, Gameday, Gameweek, Team
-from fantasy_funball.scraping.fixture_scraper import FixtureScraper
+N_GAMEWEEKS = 38
+
+logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().addHandler(logging.StreamHandler())
 
 
 def setup_fixtures():
     # Wipe postgres db fixture table before adding setting up
-    db_url = os.environ.get("DATABASE_URL")
-    if db_url is not None:
-        conn = psycopg2.connect(db_url, sslmode="require")
-    else:
-        postgres_creds = {
-            "database": os.environ.get("DATABASE_NAME"),
-            "host": os.environ.get("DATABASE_HOST"),
-            "port": os.environ.get("DATABASE_PORT"),
-            "user": os.environ.get("DATABASE_USER"),
-            "password": os.environ.get("DATABASE_PASSWORD"),
-        }
-
-        conn = psycopg2.connect(**postgres_creds)
-
+    conn = database_connection()
     cur = conn.cursor()
     cur.execute(
-        "truncate fantasy_funball_fixture, "
+        "truncate fantasy_funball_fixture,"
         "fantasy_funball_result,"
         "fantasy_funball_result_assists,"
         "fantasy_funball_result_scorers,"
-        "fantasy_funball_gameday,"
-        "fantasy_funball_choices, "
-        "fantasy_funball_gameweek;"
+        "fantasy_funball_choices;"
     )
     conn.commit()
     conn.close()
 
-    # TODO: Refactor, v. messy
-    fixture_scraper = FixtureScraper()
-    gameweeks = fixture_scraper.get_yearly_fixtures(until_week=38)
+    fpl_interface = FPLInterface()
 
-    for gameweek_no, gameweek_data in enumerate(gameweeks):
-        # Map retrieved weekly fixtures to Django model format
-        deadline_postgres_format = scraper_deadline_to_datetime_postgres(
-            date=gameweek_data["gameweek_deadline"]
-        )
-        gameweek = Gameweek(
-            deadline=deadline_postgres_format,
-            gameweek_no=gameweek_no + 1,  # enumerate() uses zero indexing
+    for gameweek_no in range(1, N_GAMEWEEKS + 1):
+        logging.info(f"Setting up fixtures for gameweek {gameweek_no}")
+        gameweek_fixtures = fpl_interface.retrieve_gameweek_fixtures(
+            gameweek_no=gameweek_no,
         )
 
-        gameweek.save()
-
-        gameweek_fixtures = gameweek_data["gameweek_fixtures"]
-        gamedays = [gameday for gameday in gameweek_fixtures]
-
-        for gameday_data in gamedays:
-            gameday_date_postgres_format = scraper_date_to_datetime_postgres(
-                date=gameday_data["date"],
-            )
-            gameday = Gameday(
-                date=gameday_date_postgres_format,
-                gameweek=gameweek,
+        for fixture in gameweek_fixtures:
+            fixture_obj = Fixture(
+                home_team=fixture["home_team"],
+                away_team=fixture["away_team"],
+                gameday=fixture["gameday"],
+                kickoff=fixture["kickoff"],
             )
 
-            gameday.save()
-
-            for match_data in gameday_data["matches"]:
-                fixture_postgres_format = scraper_fixture_to_postgres(
-                    data=match_data,
-                )
-
-                fixture = Fixture(
-                    home_team=Team.objects.get(
-                        team_name=fixture_postgres_format["home_team"]
-                    ),
-                    away_team=Team.objects.get(
-                        team_name=fixture_postgres_format["away_team"]
-                    ),
-                    kickoff=fixture_postgres_format["kickoff"],
-                    gameday=gameday,
-                )
-
-                fixture.save()
+            fixture_obj.save()
 
 
 if __name__ == "__main__":

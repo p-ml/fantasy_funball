@@ -1,12 +1,14 @@
 import json
+from datetime import datetime
 from typing import Dict, List, Set
 
 import django
+import pytz
 import requests
 
 django.setup()
 
-from fantasy_funball.models import Fixture, Player, Team
+from fantasy_funball.models import Fixture, Gameday, Player, Team
 
 
 class FPLInterface:
@@ -159,7 +161,93 @@ class FPLInterface:
 
         return gameweek_results
 
+    def retrieve_gameweek_fixtures(self, gameweek_no: int) -> List[Dict]:
+        """Get gameweek fixtures"""
+        request_response = requests.get(
+            url=f"{self.base_url}/fixtures?event={gameweek_no}"
+        )
+
+        raw_gameweek_data = json.loads(request_response.content)
+        team_ids = self.retrieve_teams()
+
+        # Pull out fixtures
+        fixtures = [game for game in raw_gameweek_data if not game["finished"]]
+
+        gameweek_fixtures = []
+        for game in fixtures:
+            # Get team name from id
+            home_team_name = team_ids[game["team_h"]]
+            away_team_name = team_ids[game["team_a"]]
+
+            home_team = Team.objects.get(team_name=home_team_name)
+            away_team = Team.objects.get(team_name=away_team_name)
+
+            # Convert kickoff_time to date obj, strip off H:M:S
+            date = datetime.strptime(game["kickoff_time"], "%Y-%m-%dT%H:%M:%SZ").date()
+
+            # Add back H:M:S, set to midnight
+            date_unaware = datetime.combine(date, datetime.min.time())
+
+            utc = pytz.timezone("UTC")
+            date_aware = utc.localize(date_unaware)
+
+            gameday = Gameday.objects.get(date=date_aware)
+
+            formatted_fixture = {
+                "home_team": home_team,
+                "away_team": away_team,
+                "kickoff": game["kickoff_time"],
+                "gameday": gameday,
+            }
+
+            gameweek_fixtures.append(formatted_fixture)
+
+        return gameweek_fixtures
+
+    def retrieve_gameweek_deadline(self, gameweek_no: int) -> datetime:
+        request_response = requests.get(url=f"{self.base_url}/bootstrap-static/")
+        raw_gameweek_data = json.loads(request_response.content)["events"]
+
+        gameweek_deadline = raw_gameweek_data[gameweek_no - 1]["deadline_time"]
+
+        # Convert to datetime obj
+        gameweek_deadline_obj_unaware = datetime.strptime(
+            gameweek_deadline, "%Y-%m-%dT%H:%M:%SZ"
+        )
+
+        utc = pytz.timezone("UTC")
+        gameweek_deadline_aware = utc.localize(gameweek_deadline_obj_unaware)
+
+        return gameweek_deadline_aware
+
+    def retrieve_gameday_dates(self, gameweek_no: int) -> Set[datetime]:
+        request_response = requests.get(
+            url=f"{self.base_url}/fixtures?event={gameweek_no}"
+        )
+
+        raw_gameweek_data = json.loads(request_response.content)
+
+        gameday_dates = {
+            datetime.strptime(fixture["kickoff_time"], "%Y-%m-%dT%H:%M:%SZ")
+            for fixture in raw_gameweek_data
+        }
+
+        utc = pytz.timezone("UTC")
+        gameday_dates_aware = set()
+        for gameday_datetime in gameday_dates:
+            # Reset H:M:S to midnight, add tzinfo to each datetime,
+            gameday_date = gameday_datetime.date()
+            gameday_datetime_midnight = datetime.combine(
+                gameday_date, datetime.min.time()
+            )
+
+            gameday_datetime_aware = utc.localize(gameday_datetime_midnight)
+
+            gameday_dates_aware.add(gameday_datetime_aware)
+
+        return gameday_dates_aware
+
 
 if __name__ == "__main__":
     fpl_interface = FPLInterface()
-    results = fpl_interface.retrieve_gameweek_results(gameweek_no=1)
+    results = fpl_interface.retrieve_gameday_dates(gameweek_no=1)

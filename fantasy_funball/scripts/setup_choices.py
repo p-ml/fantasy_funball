@@ -1,28 +1,12 @@
-import os
-
-import psycopg2
-
 from fantasy_funball.models import Choices, Funballer, Gameweek
 from fantasy_funball.models.players import Player
 from fantasy_funball.models.teams import Team
+from fantasy_funball.scripts.db_connection import database_connection
 
 
 def setup_choices() -> None:
     # Wipe postgres choices table before adding setting up
-    db_url = os.environ.get("DATABASE_URL")
-    if db_url is not None:
-        conn = psycopg2.connect(db_url, sslmode="require")
-    else:
-        postgres_creds = {
-            "database": os.environ.get("DATABASE_NAME"),
-            "host": os.environ.get("DATABASE_HOST"),
-            "port": os.environ.get("DATABASE_PORT"),
-            "user": os.environ.get("DATABASE_USER"),
-            "password": os.environ.get("DATABASE_PASSWORD"),
-        }
-
-        conn = psycopg2.connect(**postgres_creds)
-
+    conn = database_connection()
     cur = conn.cursor()
     cur.execute("truncate fantasy_funball_choices;")
     conn.commit()

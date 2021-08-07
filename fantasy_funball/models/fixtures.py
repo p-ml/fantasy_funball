@@ -10,7 +10,7 @@ class Gameweek(models.Model):
 
 class Gameday(models.Model):
     date = models.DateTimeField()
-    gameweek = models.ForeignKey(Gameweek, on_delete=models.CASCADE)
+    gameweek = models.ForeignKey(Gameweek, on_delete=models.DO_NOTHING)
 
 
 class Result(models.Model):

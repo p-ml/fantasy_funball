@@ -1,27 +1,12 @@
-import os
 from datetime import datetime, timezone
 
-import psycopg2
-
 from fantasy_funball.models import Gameday, Player, Result, Team
+from fantasy_funball.scripts.db_connection import database_connection
 
 
 def setup_results() -> None:
     # Wipe postgres result table before adding setting up
-    db_url = os.environ.get("DATABASE_URL")
-    if db_url is not None:
-        conn = psycopg2.connect(db_url, sslmode="require")
-    else:
-        postgres_creds = {
-            "database": os.environ.get("DATABASE_NAME"),
-            "host": os.environ.get("DATABASE_HOST"),
-            "port": os.environ.get("DATABASE_PORT"),
-            "user": os.environ.get("DATABASE_USER"),
-            "password": os.environ.get("DATABASE_PASSWORD"),
-        }
-
-        conn = psycopg2.connect(**postgres_creds)
-
+    conn = database_connection()
     conn.commit()
     conn.close()
 
