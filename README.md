@@ -25,7 +25,7 @@ variables within `.env` to point at your local postgres db
 
 ### Environment Variables
 Environment variables needed are listed in `.env.sample`. Make a copy called `.env`.
-You'll need to add a path to your chrome driver for Selenium, and Postgres creds.
+You'll need to add your Postgres creds here.
 If running PyCharm, get the `EnvFile` plugin, which allows you to attach an `.env` file to any run
 configuration.
 
