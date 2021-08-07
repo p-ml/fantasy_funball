@@ -1,11 +1,11 @@
-from random import randrange
+from random import randrange, shuffle
 from typing import List
 
 import django
 
 django.setup()
 
-from fantasy_funball.models import Player, Team
+from fantasy_funball.models import Choices, Funballer, Gameweek, Player, Team
 
 
 def get_random_team(non_permitted_teams: List[Team] = None) -> Team:
@@ -43,6 +43,40 @@ def get_random_player(non_permitted_players: List[Player] = None) -> Player:
     return permitted_players[player_index]
 
 
+def generate_steve_choices():
+    """
+    Generates Steve's picks for the season. Currently a fairly crude
+    implementation, room for improvement/more clever choices
+    """
+    all_teams = list(Team.objects.all())
+    all_players = list(
+        Player.objects.filter(
+            position__in={"Midfielder", "Forward"},
+        )
+    )
+
+    # Duplicate teams (each team can be selected twice per season)
+    all_teams.extend(all_teams)
+
+    shuffle(all_teams)
+    shuffle(all_players)
+
+    steve = Funballer.objects.get(first_name="Steve")
+
+    # Create a choice for each gameweek (starts at 1 for zero indexing)
+    for i in range(1, 39):
+        gameweek = Gameweek.objects.get(gameweek_no=i)
+        choice = Choices(
+            funballer=steve,
+            gameweek=gameweek,
+            team_choice=all_teams[i],
+            player_choice=all_players[i],
+        )
+        choice.save()
+
+
 if __name__ == "__main__":
     player = get_random_player()
     team = get_random_team()
+
+    generate_steve_choices()
