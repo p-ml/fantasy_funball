@@ -1,17 +1,21 @@
 """At midnight of deadline day, checks if all players have made a choice
 If they haven't, Steve them"""
-from datetime import date, timedelta
+import json
+from datetime import date, datetime, timedelta
 from typing import List
 
 import django
+import pytz
+import requests
 
+from fantasy_funball.fpl_interface.interface import FPLInterface
 from fantasy_funball.logic.random_generator import get_random_player, get_random_team
 
 django.setup()
 
 import logging
 
-from fantasy_funball.models import Choices, Funballer, Gameweek
+from fantasy_funball.models import Choices, Fixture, Funballer, Gameweek, Player
 
 log = logging.getLogger(__name__)
 
@@ -105,6 +109,92 @@ def allocate_choices(
         choice.save()
 
 
+# TODO: Needs tidy up/refactor
+def check_lineups(gameweek_no: int):
+    request_response = requests.get(
+        url=f"https://fantasy.premierleague.com/api/event/{gameweek_no}/live/"
+    )
+    raw_gameweek_player_data = json.loads(request_response.content).get("elements")
+
+    fpl_interface = FPLInterface()
+    fpl_players = fpl_interface.retrieve_players()
+
+    # Get players picked for this gameweek
+    weekly_picks = list(Choices.objects.filter(gameweek__gameweek_no=gameweek_no))
+
+    for pick in weekly_picks:
+        # Get player object using player_choice_id in choices
+        player = Player.objects.get(id=pick.player_choice_id)
+
+        # Has that player's team played yet this weekend?
+        # get weekly fixtures
+        weekly_fixtures = list(
+            Fixture.objects.filter(
+                gameday__gameweek__gameweek_no=gameweek_no,
+            )
+        )
+
+        players_fixture = next(
+            fixture
+            for fixture in weekly_fixtures
+            if player.team in {fixture.home_team, fixture.away_team}
+        )
+
+        # TODO: Stick this in function
+        # Has fixture finished?
+        players_fixture_kickoff = datetime.strptime(
+            players_fixture.kickoff, "%Y-%m-%d %H:%M:%S"
+        )
+
+        # Make utc aware
+        utc = pytz.timezone("UTC")
+        players_fixture_kickoff_aware = utc.localize(players_fixture_kickoff)
+        predicted_end_of_match = players_fixture_kickoff_aware + timedelta(hours=2)
+
+        # Compare with todays date, in UTC - TODO: check UTC is correct
+        current_datetime = datetime.now(tz=utc)
+
+        if current_datetime > predicted_end_of_match:
+            players_fixture_has_finished = True
+        else:
+            players_fixture_has_finished = False
+
+        if players_fixture_has_finished:
+            # Get players FPL API ID
+            player_fpl_api_data = next(
+                fpl_api_player
+                for fpl_api_player in fpl_players
+                if fpl_api_player["surname"] == player.surname
+                and fpl_api_player["team"] == player.team.team_name
+            )
+
+            player_fpl_api_id = player_fpl_api_data["id"]
+
+            # Check if player played in that fixture
+            players_fpl_gameweek_stats = next(
+                player
+                for player in raw_gameweek_player_data
+                if player["id"] == player_fpl_api_id
+            )
+
+            # Check minutes
+            if players_fpl_gameweek_stats["stats"]["minutes"] == 0:
+                # Player didn't play - allocate random player
+
+                # Get list of funballer's player picks so far
+                funballer_player_picks = list(
+                    Choices.objects.filter(
+                        funballer_id=pick.funballer_id,
+                    ).values("player_choice")
+                )
+
+                new_player = get_random_player(
+                    non_permitted_players=funballer_player_picks,
+                )
+
+                pick.player_choice = new_player
+                pick.save()
+
+
 if __name__ == "__main__":
-    all_funballers = list(Funballer.objects.all())
-    allocate_choices(funballers_with_no_choices=all_funballers, gameweek_no=1)
+    check_lineups(gameweek_no=1)
