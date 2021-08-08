@@ -6,6 +6,10 @@ from fantasy_funball.logic.update_standings import update_standings
 if __name__ == "__main__":
     # Run at midnight every day by Heroku Job Scheduler
     gameweek_no = determine_gameweek_no()
-    check_choices(gameweek_no=gameweek_no)
-    update_results(gameweek_no=gameweek_no)
-    update_standings(gameweek_no=gameweek_no)
+    if gameweek_no > 0:
+        check_choices(gameweek_no=gameweek_no)
+        update_results(gameweek_no=gameweek_no)
+        update_standings(gameweek_no=gameweek_no)
+
+    else:
+        print("Season has not started yet")
