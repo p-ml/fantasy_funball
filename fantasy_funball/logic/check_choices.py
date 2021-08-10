@@ -15,7 +15,14 @@ django.setup()
 
 import logging
 
-from fantasy_funball.models import Choices, Fixture, Funballer, Gameweek, Player
+from fantasy_funball.models import (
+    Choices,
+    Fixture,
+    Funballer,
+    Gameday,
+    Gameweek,
+    Player,
+)
 
 log = logging.getLogger(__name__)
 
@@ -38,6 +45,30 @@ def is_deadline_day(gameweek_no: int) -> bool:
 
     else:
         log.info("Today is not deadline day")
+        return False
+
+
+def is_final_gameweek_day(gameweek_no: int):
+    """Checks if today is final day of the gameweek"""
+    # Get all gamedays in gameweek
+    gameweek_gamedays = list(
+        Gameday.objects.filter(
+            gameweek__gameweek_no=gameweek_no,
+        )
+    )
+
+    # Sort by date
+    gameweek_gamedays.sort(key=lambda x: x.date, reverse=True)
+
+    final_gameday_date = gameweek_gamedays[0].date
+
+    # Get todays date, make UTC aware
+    utc = pytz.timezone("UTC")
+    todays_date = utc.localize(datetime.today())
+
+    if todays_date > final_gameday_date:
+        return True
+    else:
         return False
 
 
@@ -110,7 +141,11 @@ def allocate_choices(
 
 
 # TODO: Needs tidy up/refactor
-def check_lineups(gameweek_no: int):
+def check_player_picks_played(gameweek_no: int):
+    """
+    Checks that each player pick actually got on the pitch.
+    If not, a random player is allocated to them
+    """
     request_response = requests.get(
         url=f"https://fantasy.premierleague.com/api/event/{gameweek_no}/live/"
     )
@@ -196,5 +231,17 @@ def check_lineups(gameweek_no: int):
                 pick.save()
 
 
+# TODO: Handle updating of results if this scenario happens
+# If `has_been_processed` is just marked as True again, they will receive
+# double team points. Need separate team_has_been_processed, player_has_been_processed
+def check_lineups(gameweek_no: int):
+    """Runs once the gameweek has finished, checks each funballer's player
+    pick has played, if not, allocates a random player."""
+    final_gameweek_day = is_final_gameweek_day(gameweek_no=gameweek_no)
+
+    if final_gameweek_day:
+        check_player_picks_played(gameweek_no=gameweek_no)
+
+
 if __name__ == "__main__":
-    check_lineups(gameweek_no=1)
+    is_final_gameweek_day(gameweek_no=1)
