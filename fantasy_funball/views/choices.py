@@ -92,19 +92,17 @@ class FunballerPostChoiceView(APIView):
 
         except Choices.DoesNotExist:
             # Create new choice if it doesn't already exist
-            funballer = Funballer.objects.get(first_name=funballer_name).id
+            funballer_id = Funballer.objects.get(first_name=funballer_name).id
             team = Team.objects.get(team_name=request.data["team_choice"])
 
             player_name = request.data["player_choice"].split(" ", 1)
-            player = (
-                Player.objects.get(
-                    first_name=player_name[0],
-                    surname=player_name[1],
-                ),
+            player = Player.objects.get(
+                first_name=player_name[0],
+                surname=player_name[1],
             )
 
             choice = Choices(
-                funballer_id=funballer.id,
+                funballer_id=funballer_id,
                 gameweek_id=gameweek_obj.id,
                 team_choice=team,
                 player_choice=player,
