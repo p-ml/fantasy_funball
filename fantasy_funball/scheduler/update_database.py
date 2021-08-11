@@ -1,4 +1,4 @@
-from fantasy_funball.logic.check_choices import check_choices
+from fantasy_funball.logic.check_choices import check_choices, check_lineups
 from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
 from fantasy_funball.logic.update_results import update_results
 from fantasy_funball.logic.update_standings import update_standings
@@ -8,4 +8,5 @@ if __name__ == "__main__":
     gameweek_no = determine_gameweek_no()
     check_choices(gameweek_no=gameweek_no)
     update_results(gameweek_no=gameweek_no)
+    check_lineups(gameweek_no=gameweek_no)
     update_standings(gameweek_no=gameweek_no)

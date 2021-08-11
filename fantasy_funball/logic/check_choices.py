@@ -215,6 +215,10 @@ def check_player_picks_played(gameweek_no: int):
             # Check minutes
             if players_fpl_gameweek_stats["stats"]["minutes"] == 0:
                 # Player didn't play - allocate random player
+                print(
+                    f"{player.surname} did not play. Allocating random choice for"
+                    f"funballer with id {pick.funballer_id}"
+                )
 
                 # Get list of funballer's player picks so far
                 funballer_player_picks = list(
@@ -227,13 +231,16 @@ def check_player_picks_played(gameweek_no: int):
                     non_permitted_players=funballer_player_picks,
                 )
 
+                print(
+                    f"Funballer with id {pick.funballer_id} has been allocated"
+                    f"{new_player.surname}"
+                )
+
                 pick.player_choice = new_player
+                pick.player_has_been_processed = False
                 pick.save()
 
 
-# TODO: Handle updating of results if this scenario happens
-# If `has_been_processed` is just marked as True again, they will receive
-# double team points. Need separate team_has_been_processed, player_has_been_processed
 def check_lineups(gameweek_no: int):
     """Runs once the gameweek has finished, checks each funballer's player
     pick has played, if not, allocates a random player."""

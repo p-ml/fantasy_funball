@@ -10,4 +10,5 @@ class Choices(models.Model):
     team_choice = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
     player_choice = models.ForeignKey(Player, on_delete=models.DO_NOTHING)
 
-    has_been_processed = models.BooleanField(default=False)
+    team_has_been_processed = models.BooleanField(default=False)
+    player_has_been_processed = models.BooleanField(default=False)
