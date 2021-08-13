@@ -11,8 +11,6 @@ def setup_players() -> None:
         "truncate fantasy_funball_player, "
         "fantasy_funball_result_assists,"
         "fantasy_funball_result_scorers,"
-        "fantasy_funball_result,"
-        "fantasy_funball_fixture,"
         "fantasy_funball_choices;"
     )
     conn.commit()
@@ -32,3 +30,7 @@ def setup_players() -> None:
         )
 
         player_obj.save()
+
+
+if __name__ == "__main__":
+    setup_players()
