@@ -16,7 +16,7 @@ import django_heroku
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-VERSION = "v0.0.2"
+VERSION = "v0.0.3"
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
