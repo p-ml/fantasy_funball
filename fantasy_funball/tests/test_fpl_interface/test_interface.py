@@ -68,6 +68,7 @@ class TestFPLInterface(TestCase):
 
         self.assertEqual(output, expected_output)
 
+    @patch(f"{FPL_INTERFACE_PATH}.FPLInterface._generate_team_scorer_assist_structure")
     @patch(f"{FPL_INTERFACE_PATH}.Player.objects.get")
     @patch(f"{FPL_INTERFACE_PATH}.FPLInterface.retrieve_players")
     @patch(f"{FPL_INTERFACE_PATH}.requests.get")
@@ -76,7 +77,10 @@ class TestFPLInterface(TestCase):
         mock_get_request,
         mock_retrieve_players,
         mock_get_player,
+        mock_team_scorer_assist_structure,
     ):
+        mock_team_scorer_assist_structure.return_value = {"Spurs": set()}
+
         mock_player = Mock(spec=Player)
         mock_player.id = 1234
         mock_get_player.return_value = mock_player
@@ -98,8 +102,10 @@ class TestFPLInterface(TestCase):
         mock_get_request.return_value = mock_get_response
 
         output = self.interface.retrieve_weekly_scorers(gameweek_no=1)
-        self.assertEqual(output, {1234})
+        expected_output = {"Spurs": {1234}}
+        self.assertEqual(output, expected_output)
 
+    @patch(f"{FPL_INTERFACE_PATH}.FPLInterface._generate_team_scorer_assist_structure")
     @patch(f"{FPL_INTERFACE_PATH}.Player.objects.get")
     @patch(f"{FPL_INTERFACE_PATH}.FPLInterface.retrieve_players")
     @patch(f"{FPL_INTERFACE_PATH}.requests.get")
@@ -108,7 +114,10 @@ class TestFPLInterface(TestCase):
         mock_get_request,
         mock_retrieve_players,
         mock_get_player,
+        mock_team_scorer_assist_structure,
     ):
+        mock_team_scorer_assist_structure.return_value = {"Spurs": set()}
+
         mock_player = Mock(spec=Player)
         mock_player.id = 4321
         mock_get_player.return_value = mock_player
@@ -130,7 +139,9 @@ class TestFPLInterface(TestCase):
         mock_get_request.return_value = mock_get_response
 
         output = self.interface.retrieve_weekly_assists(gameweek_no=1)
-        self.assertEqual(output, {4321})
+        expected_output = {"Spurs": {4321}}
+
+        self.assertEqual(output, expected_output)
 
     @patch(f"{FPL_INTERFACE_PATH}.FPLInterface._determine_gameday_from_teams")
     @patch(f"{FPL_INTERFACE_PATH}.Team.objects.get")
