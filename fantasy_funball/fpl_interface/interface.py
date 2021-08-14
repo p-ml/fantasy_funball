@@ -49,7 +49,16 @@ class FPLInterface:
 
         return player_data
 
-    def retrieve_weekly_scorers(self, gameweek_no: int) -> Set[int]:
+    def _generate_team_scorer_assist_structure(self) -> Dict:
+        """Generates a dictionary of sets, to store each team's
+        scorers & assisters"""
+        teams = self.retrieve_teams()
+        team_names = list(teams.values())
+        team_scorer_assist_structure = {team_name: set() for team_name in team_names}
+
+        return team_scorer_assist_structure
+
+    def retrieve_weekly_scorers(self, gameweek_no: int) -> Dict:
         """Get fantasy funball IDs of gameweek scorers"""
         request_response = requests.get(
             url=f"{self.base_url}/event/{gameweek_no}/live/"
@@ -65,7 +74,7 @@ class FPLInterface:
                 fpl_scorer_ids.add(player_data["id"])
 
         # Get scorer info from retrieve_players()
-        ff_scorer_ids = set()
+        team_scorer_structure = self._generate_team_scorer_assist_structure()
         for id in fpl_scorer_ids:
             player_info = next(
                 player for player in all_player_data if player["id"] == id
@@ -78,11 +87,11 @@ class FPLInterface:
                 team__team_name=player_info["team"],
             )
 
-            ff_scorer_ids.add(ff_player.id)
+            team_scorer_structure[player_info["team"]].add(ff_player.id)
 
-        return ff_scorer_ids
+        return team_scorer_structure
 
-    def retrieve_weekly_assists(self, gameweek_no: int) -> Set[int]:
+    def retrieve_weekly_assists(self, gameweek_no: int) -> Dict:
         """Get fantasy funball IDs of gameweek assisters"""
         request_response = requests.get(
             url=f"{self.base_url}/event/{gameweek_no}/live/"
@@ -98,7 +107,7 @@ class FPLInterface:
                 fpl_assist_ids.add(player_data["id"])
 
         # Get assister info from retrieve_players()
-        ff_assist_ids = set()
+        team_assist_structure = self._generate_team_scorer_assist_structure()
         for id in fpl_assist_ids:
             player_info = next(
                 player for player in all_player_data if player["id"] == id
@@ -111,9 +120,9 @@ class FPLInterface:
                 team__team_name=player_info["team"],
             )
 
-            ff_assist_ids.add(ff_player.id)
+            team_assist_structure[player_info["team"]].add(ff_player.id)
 
-        return ff_assist_ids
+        return team_assist_structure
 
     def _determine_gameday_from_teams(self, home_team: str, away_team: str):
         # Check fixtures in db to get gameday_id
