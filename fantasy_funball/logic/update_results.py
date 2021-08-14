@@ -15,6 +15,13 @@ def update_results(gameweek_no: int):
         gameweek_no=gameweek_no,
     )
 
+    gameweek_scorers = fpl_interface.retrieve_weekly_scorers(
+        gameweek_no=gameweek_no,
+    )
+    gameweek_assists = fpl_interface.retrieve_weekly_assists(
+        gameweek_no=gameweek_no,
+    )
+
     for result in gameweek_results:
         result_obj = Result(
             home_team=result["home_team"],
@@ -36,6 +43,18 @@ def update_results(gameweek_no: int):
 
         except Result.DoesNotExist:
             result_obj.save()
+
+            home_scorers = gameweek_scorers[result["home_team"].team_name]
+            away_scorers = gameweek_scorers[result["away_team"].team_name]
+
+            home_assists = gameweek_assists[result["home_team"].team_name]
+            away_assists = gameweek_assists[result["away_team"].team_name]
+
+            for scorer_id in home_scorers.union(away_scorers):
+                result_obj.scorers.add(scorer_id)
+
+            for assist_id in home_assists.union(away_assists):
+                result_obj.assists.add(assist_id)
 
 
 if __name__ == "__main__":
