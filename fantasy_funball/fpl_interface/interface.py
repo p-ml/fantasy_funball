@@ -54,7 +54,7 @@ class FPLInterface:
         scorers & assisters"""
         teams = self.retrieve_teams()
         team_names = list(teams.values())
-        team_scorer_assist_structure = {team_name: set() for team_name in team_names}
+        team_scorer_assist_structure = {team_name: {} for team_name in team_names}
 
         return team_scorer_assist_structure
 
@@ -68,10 +68,12 @@ class FPLInterface:
         all_player_data = self.retrieve_players()
 
         # Get the FPL API ID of each goal scorer for requested gameweek
-        fpl_scorer_ids = set()
+        fpl_scorer_ids = {}
         for player_data in raw_weekly_data["elements"]:
             if player_data["stats"]["goals_scored"] > 0:
-                fpl_scorer_ids.add(player_data["id"])
+                fpl_scorer_ids[player_data["id"]] = (
+                    player_data["stats"]["goals_scored"]
+                )
 
         # Get scorer info from retrieve_players()
         team_scorer_structure = self._generate_team_scorer_assist_structure()
@@ -87,7 +89,9 @@ class FPLInterface:
                 team__team_name=player_info["team"],
             )
 
-            team_scorer_structure[player_info["team"]].add(ff_player.id)
+            team_scorer_structure[player_info["team"]][ff_player.id] = (
+                fpl_scorer_ids[id]
+            )
 
         return team_scorer_structure
 
@@ -101,10 +105,12 @@ class FPLInterface:
         all_player_data = self.retrieve_players()
 
         # Get the FPL API ID of each assister for requested gameweek
-        fpl_assist_ids = set()
+        fpl_assist_ids = {}
         for player_data in raw_weekly_data["elements"]:
             if player_data["stats"]["assists"] > 0:
-                fpl_assist_ids.add(player_data["id"])
+                fpl_assist_ids[player_data["id"]] = (
+                    player_data["stats"]["assists"]
+                )
 
         # Get assister info from retrieve_players()
         team_assist_structure = self._generate_team_scorer_assist_structure()
@@ -120,7 +126,9 @@ class FPLInterface:
                 team__team_name=player_info["team"],
             )
 
-            team_assist_structure[player_info["team"]].add(ff_player.id)
+            team_assist_structure[player_info["team"]][ff_player.id] = (
+                fpl_assist_ids[id]
+            )
 
         return team_assist_structure
 
@@ -259,4 +267,4 @@ class FPLInterface:
 
 if __name__ == "__main__":
     fpl_interface = FPLInterface()
-    results = fpl_interface.retrieve_gameday_dates(gameweek_no=1)
+    results = fpl_interface.retrieve_weekly_scorers(gameweek_no=1)
