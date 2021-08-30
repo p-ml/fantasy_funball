@@ -24,12 +24,12 @@ from fantasy_funball.models import (
     Player,
 )
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger("papertrail")
 
 
 def is_deadline_day(gameweek_no: int) -> bool:
     """Checks if today is gameweek deadline day"""
-    log.info("Checking if today is deadline day...")
+    logger.info("Checking if today is deadline day...")
 
     gameweek = Gameweek.objects.get(gameweek_no=gameweek_no)
     gameweek_deadline_date = gameweek.deadline.date()
@@ -40,11 +40,11 @@ def is_deadline_day(gameweek_no: int) -> bool:
     todays_date = todays_date - timedelta(days=1)
 
     if todays_date == gameweek_deadline_date:
-        log.info("Today is deadline day")
+        logger.info("Today is deadline day")
         return True
 
     else:
-        log.info("Today is not deadline day")
+        logger.info("Today is not deadline day")
         return False
 
 
@@ -77,7 +77,7 @@ def check_choices(gameweek_no: int):
     deadline_day = is_deadline_day(gameweek_no=gameweek_no)
 
     if deadline_day:
-        log.info("Checking for funballers who haven't submitted choices...")
+        logger.info("Checking for funballers who haven't submitted choices...")
 
         choices = list(
             Choices.objects.filter(
@@ -107,7 +107,7 @@ def allocate_choices(
 ):
     """Allocate a random team/player to each funballer who has not picked"""
     for funballer in funballers_with_no_choices:
-        log.info("Allocating random choices...")
+        logger.info("Allocating random choices...")
 
         # Get list of teams already chosen by funballer
         all_funballer_choices = list(Choices.objects.filter(funballer=funballer))
