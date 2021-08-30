@@ -216,7 +216,7 @@ def check_player_picks_played(gameweek_no: int):
             if players_fpl_gameweek_stats["stats"]["minutes"] == 0:
                 # Player didn't play - allocate random player
                 print(
-                    f"{player.surname} did not play. Allocating random choice for"
+                    f"{player.surname} did not play. Allocating random choice for "
                     f"funballer with id {pick.funballer_id}"
                 )
 
@@ -233,7 +233,7 @@ def check_player_picks_played(gameweek_no: int):
 
                 print(
                     f"Funballer with id {pick.funballer_id} has been allocated"
-                    f"{new_player.surname}"
+                    f" {new_player.surname}"
                 )
 
                 pick.player_choice = new_player
