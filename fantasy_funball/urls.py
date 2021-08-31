@@ -5,6 +5,7 @@ from fantasy_funball.views.choices import (
     FunballerPostChoiceView,
 )
 from fantasy_funball.views.fixtures import (
+    RetrieveAllGameweeks,
     RetrieveFixture,
     RetrieveGameday,
     RetrieveGameweek,
@@ -32,6 +33,11 @@ urlpatterns = [
         "gameweek/<int:gameweek_no>",
         RetrieveGameweek.as_view(),
         name="retrieve-gameweek",
+    ),
+    path(
+        "gameweek/all/",
+        RetrieveAllGameweeks.as_view(),
+        name="retrieve-all-gameweeks",
     ),
     path("<str:team_name>/players/", PlayerTeamView.as_view(), name="retrieve-players"),
     path("players/", PlayerView.as_view(), name="retrieve-all-players"),
