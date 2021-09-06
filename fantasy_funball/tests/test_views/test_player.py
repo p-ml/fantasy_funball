@@ -56,8 +56,14 @@ class TestPlayerViewSet(TestCase):
         mock_player = Mock(spec=Player)
         mock_player.first_name = "Hugo"
         mock_player.surname = "Lloris"
+        mock_player.id = 1
 
-        expected_output = [{"name": "Hugo Lloris"}]
+        expected_output = [
+            {
+                "name": "Hugo Lloris",
+                "id": 1,
+            }
+        ]
 
         mock_retrieve_all_players.return_value = [mock_player]
 
