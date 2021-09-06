@@ -36,7 +36,11 @@ class PlayerView(APIView):
         all_players = Player.objects.all()
 
         formatted_players = [
-            {"name": f"{player.first_name} {player.surname}"} for player in all_players
+            {
+                "name": f"{player.first_name} {player.surname}",
+                "id": player.id,
+            }
+            for player in all_players
         ]
 
         return Response(
