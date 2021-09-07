@@ -12,3 +12,6 @@ class Choices(models.Model):
 
     team_has_been_processed = models.BooleanField(default=False)
     player_has_been_processed = models.BooleanField(default=False)
+
+    team_has_been_steved = models.BooleanField(default=False)
+    player_has_been_steved = models.BooleanField(default=False)
