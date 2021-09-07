@@ -48,15 +48,20 @@ class FunballerPostChoiceView(APIView):
         funballer = Funballer.objects.get(pin=pin)
         funballer_name = funballer.first_name
 
+        team_choice = request.data["team_choice"]
+        player_choice = int(request.data["player_choice"])
+
         check_for_passed_deadline(gameweek_deadline=gameweek_obj.deadline)
 
         # Check if team/player has already been selected
         team_selection_check(
-            funballer_first_name=funballer_name, team_name=request.data["team_choice"]
+            funballer_first_name=funballer_name,
+            team_name=team_choice,
         )
+
         player_selection_check(
             funballer_first_name=funballer_name,
-            player_name=request.data["player_choice"],
+            player_id=player_choice,
         )
 
         # Check if selection for this gameweek has already been submitted
@@ -67,22 +72,14 @@ class FunballerPostChoiceView(APIView):
             )
 
             try:
-                updated_team = Team.objects.get(team_name=request.data["team_choice"])
+                updated_team = Team.objects.get(team_name=team_choice)
             except Team.DoesNotExist:
-                raise TeamNotFoundError(
-                    f"Team with name {request.data['team_choice']} not found"
-                )
+                raise TeamNotFoundError(f"Team with name {team_choice} not found")
 
             try:
-                player_name = request.data["player_choice"].split(" ", 1)
-                updated_player = Player.objects.get(
-                    first_name=player_name[0],
-                    surname=player_name[1],
-                )
+                updated_player = Player.objects.get(id=player_choice)
             except Player.DoesNotExist:
-                raise PlayerNotFoundError(
-                    f"Player with name {request.data['player_choice']} not found"
-                )
+                raise PlayerNotFoundError(f"Player with id {player_choice} not found")
 
             existing_choice.team_choice = updated_team
             existing_choice.player_choice = updated_player
@@ -95,11 +92,7 @@ class FunballerPostChoiceView(APIView):
             funballer_id = Funballer.objects.get(first_name=funballer_name).id
             team = Team.objects.get(team_name=request.data["team_choice"])
 
-            player_name = request.data["player_choice"].split(" ", 1)
-            player = Player.objects.get(
-                first_name=player_name[0],
-                surname=player_name[1],
-            )
+            player = Player.objects.get(id=player_choice)
 
             choice = Choices(
                 funballer_id=funballer_id,

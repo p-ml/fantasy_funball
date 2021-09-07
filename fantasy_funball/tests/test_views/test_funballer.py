@@ -92,7 +92,7 @@ class FunballerChoiceView(TestCase):
             data={
                 "gameweek_no": 1,
                 "team_choice": "Tottenham Hotspur",
-                "player_choice": "Hugo Lloris",
+                "player_choice": "3739",
             },
         )
 
@@ -139,7 +139,7 @@ class FunballerChoiceView(TestCase):
             data={
                 "gameweek_no": 1,
                 "team_choice": invalid_team_choice,
-                "player_choice": "",
+                "player_choice": "3739",
             },
         )
 
@@ -169,7 +169,7 @@ class FunballerChoiceView(TestCase):
         mock_player_selection_check,
         mock_team_selection_check,
     ):
-        invalid_player_choice = "Lionel Messi"
+        invalid_player_choice = "9999999"
 
         mock_gameweek_obj = Mock(spec=Gameweek)
         mock_gameweek_obj.deadline = "mock date goes here"
@@ -201,7 +201,7 @@ class FunballerChoiceView(TestCase):
         self.assertTrue(response.exception)
         self.assertEqual(
             str(response.data["detail"]),
-            f"Player with name {invalid_player_choice} not found",
+            f"Player with id {invalid_player_choice} not found",
         )
 
     @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
@@ -249,7 +249,7 @@ class FunballerChoiceView(TestCase):
             data={
                 "gameweek_no": 1,
                 "team_choice": "Tottenham Hotspur",
-                "player_choice": "Hugo Lloris",
+                "player_choice": "3739",
             },
         )
 

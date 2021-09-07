@@ -45,27 +45,37 @@ def team_selection_check(funballer_first_name: str, team_name: str):
         )
 
 
-def player_selection_check(funballer_first_name: str, player_name: str):
+def player_selection_check(funballer_first_name: str, player_id: int):
     """Checks that funballer has not already selected player"""
     # Get all players selected by funballer
     player_selections = Choices.objects.filter(
         funballer__first_name=funballer_first_name,
-    ).values("player_choice__first_name", "player_choice__surname")
+    ).values(
+        "player_choice__first_name",
+        "player_choice__surname",
+        "player_choice_id",
+    )
 
     # Extract player names
-    player_names = [
-        f"{player['player_choice__first_name']} {player['player_choice__surname']}"
-        for player in player_selections
-    ]
+    player_ids = [player["player_choice_id"] for player in player_selections]
 
-    selected_player_name_count = player_names.count(player_name)
+    selected_player_name_count = player_ids.count(player_id)
 
     if selected_player_name_count >= 1:
+        # Get player name by id
+        player = next(
+            player
+            for player in player_selections
+            if player["player_choice_id"] == player_id
+        )
+        player_name = (
+            f"{player['player_choice__first_name']} {player['player_choice__surname']}"
+        )
+
         raise PlayerSelectedTooManyTimes(
             f"{funballer_first_name} has selected {player_name} more than once"
         )
 
 
 if __name__ == "__main__":
-    team_selection_check(funballer_first_name="Patrick", team_name="Spurs")
-    player_selection_check(funballer_first_name="Patrick", player_name="Hugo Lloris")
+    player_selection_check(funballer_first_name="Patrick", player_id=3739)

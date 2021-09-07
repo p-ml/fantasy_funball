@@ -87,3 +87,24 @@ class RetrieveGameweek(APIView):
             status=status.HTTP_200_OK,
             data=formatted_gameweek,
         )
+
+
+class RetrieveAllGameweeks(APIView):
+    """Viewset for retrieving all gameweeks"""
+
+    def get(self, request: WSGIRequest) -> Response:
+        """Retrieve data stored about all gameweeks (1-38)"""
+
+        # Get all gameweeks
+        gameweeks = Gameweek.objects.all().values(
+            "gameweek_no",
+            "deadline",
+        )
+
+        # Convert to json for output
+        formatted_gameweeks = list(gameweeks)
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=formatted_gameweeks,
+        )

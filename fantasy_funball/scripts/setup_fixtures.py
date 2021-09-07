@@ -5,9 +5,7 @@ from fantasy_funball.models import Fixture
 from fantasy_funball.scripts.db_connection import database_connection
 
 N_GAMEWEEKS = 38
-
-logging.getLogger().setLevel(logging.INFO)
-logging.getLogger().addHandler(logging.StreamHandler())
+logger = logging.getLogger("papertrail")
 
 
 def setup_fixtures():
@@ -27,7 +25,7 @@ def setup_fixtures():
     fpl_interface = FPLInterface()
 
     for gameweek_no in range(1, N_GAMEWEEKS + 1):
-        logging.info(f"Setting up fixtures for gameweek {gameweek_no}")
+        logger.info(f"Setting up fixtures for gameweek {gameweek_no}")
         gameweek_fixtures = fpl_interface.retrieve_gameweek_fixtures(
             gameweek_no=gameweek_no,
         )
