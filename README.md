@@ -39,7 +39,4 @@ of the application code.
 ![Potential Structure](docs/fantasy_funball_structure.png)
 
 ## Todo
-- Logic to get determine weekly results, scorers, assisters & update standings at the end of each gameweek
 - Bulk out tests (both unit and functional)
-- Pull down lineups etc - Can be done with FPL API?
-- Random team/player if funballer doesn't choose before deadline
