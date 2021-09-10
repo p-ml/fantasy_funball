@@ -1,9 +1,5 @@
-import os
-
-import psycopg2
-
 from fantasy_funball.models import Funballer
-from fantasy_funball.scripts.db_connection import database_connection
+from fantasy_funball.dev_tools.scripts.db_connection import database_connection
 
 
 def setup_users() -> None:
