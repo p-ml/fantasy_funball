@@ -140,8 +140,9 @@ def allocate_choices(
         )
         choice.save()
         logger.info(
-            f"Funballer with id {funballer.id} has been allocated team with name"
-            f"{random_team.team_name} and player {random_player.first_name} {random_player.surname}"
+            f"Funballer {funballer.first_name}, with id {funballer.id}, has been "
+            f"allocated team: {random_team.team_name} and player: "
+            f"{random_player.first_name} {random_player.surname}"
         )
 
 

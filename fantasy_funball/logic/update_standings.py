@@ -1,3 +1,4 @@
+import logging
 from collections import namedtuple
 from typing import List, Set
 
@@ -8,6 +9,8 @@ django.setup()
 from fantasy_funball.models import Choices, Funballer, Result
 
 ScorerAssistIds = namedtuple("ScorerAssistIds", ["scorer_ids", "assist_ids"])
+
+logger = logging.getLogger("papertrail")
 
 
 def determine_gameweek_winners(gameweek_results: List[Result]) -> List:
@@ -113,9 +116,14 @@ def update_standings(gameweek_no: int):
                 funballer.points = funballer.team_points + funballer.player_points
                 funballer.save()
 
-                # Mark team choice as processed
-                pick.team_has_been_processed = True
-                pick.save()
+                logger.info(
+                    f"Funballer {funballer.first_name}, with id {funballer.id}, has "
+                    f"been awarded 1 point as their team won."
+                )
+
+            # Mark team choice as processed
+            pick.team_has_been_processed = True
+            pick.save()
 
         if not pick.player_has_been_processed:
             if (
@@ -130,9 +138,14 @@ def update_standings(gameweek_no: int):
                 funballer.points = funballer.team_points + funballer.player_points
                 funballer.save()
 
-                # Mark player choice as processed
-                pick.player_has_been_processed = True
-                pick.save()
+                logger.info(
+                    f"Funballer {funballer.first_name}, with id {funballer.id}, has "
+                    f"been awarded 1 point as their player scored or assisted."
+                )
+
+            # Mark player choice as processed
+            pick.player_has_been_processed = True
+            pick.save()
 
 
 if __name__ == "__main__":
