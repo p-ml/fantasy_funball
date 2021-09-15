@@ -1,12 +1,13 @@
+import logging
+
 from fantasy_funball.fpl_interface.interface import FPLInterface
 from fantasy_funball.models import Player, Team
 
+logger = logging.getLogger("papertrail")
 
-def update_players():
-    """
-    Keeps players in the db up to date.
-    Will only run during transfer window.
-    """
+
+def add_players():
+    """Adds new players to the database"""
     fpl_interface = FPLInterface()
     players = fpl_interface.retrieve_players()
 
@@ -42,6 +43,39 @@ def update_players():
 
         else:
             continue
+
+
+def remove_players():
+    """Removes players in db that are not present in FPL API"""
+    fpl_interface = FPLInterface()
+    fpl_players = fpl_interface.retrieve_players()
+
+    db_players = list(Player.objects.all())
+    for db_player in db_players:
+        try:
+            _ = next(
+                player
+                for player in fpl_players
+                if player["first_name"] == db_player.first_name
+                and player["surname"] == db_player.surname
+                and player["team"] == db_player.team.team_name
+            )
+        except StopIteration:
+            # If player doesn't exist in FPL API, then delete from db
+            logger.info(
+                f"{db_player.first_name} {db_player.surname} playing for "
+                f"{db_player.team.team_name} has been removed"
+            )
+            db_player.delete()
+
+
+def update_players():
+    """
+    Keeps players in the db up to date.
+    Will only run during transfer window.
+    """
+    add_players()
+    remove_players()
 
 
 if __name__ == "__main__":
