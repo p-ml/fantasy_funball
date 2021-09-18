@@ -4,7 +4,7 @@ from fantasy_funball.logic.random_generator import generate_steve_choices
 
 django.setup()
 
-from fantasy_funball.scripts import (
+from fantasy_funball.dev_tools.scripts import (
     setup_choices,
     setup_fixtures,
     setup_gamedays,

@@ -1,6 +1,6 @@
 from fantasy_funball.fpl_interface.interface import FPLInterface
 from fantasy_funball.models import Team
-from fantasy_funball.scripts.db_connection import database_connection
+from fantasy_funball.dev_tools.scripts.db_connection import database_connection
 
 
 def setup_teams() -> None:
