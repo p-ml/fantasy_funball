@@ -15,7 +15,7 @@ from fantasy_funball.logic.update_standings import (
 
 django.setup()
 
-from fantasy_funball.models import Choices, Player, Result, Team
+from fantasy_funball.models import Assists, Choices, Goals, Result, Team
 
 UPDATE_STANDINGS_PATH = "fantasy_funball.logic.update_standings"
 
@@ -99,11 +99,12 @@ class TestUpdateStandings(TestCase):
 
     @patch(f"{UPDATE_STANDINGS_PATH}.list")
     def test_get_weekly_scorers(self, mock_list):
-        mock_player = Mock(spec=Player)
-        mock_player.id = 123
+        mock_goal = Mock(spec=Goals)
+        mock_goal.player_id = 123
 
-        mock_list.return_value = [mock_player]
+        mock_list.return_value = [mock_goal]
         mock_result = Mock(spec=Result)
+        mock_result.id = 1
 
         response = get_weekly_scorers(weekly_result_data=[mock_result])
 
@@ -111,15 +112,16 @@ class TestUpdateStandings(TestCase):
 
     @patch(f"{UPDATE_STANDINGS_PATH}.list")
     def test_get_weekly_assists(self, mock_list):
-        mock_player = Mock(spec=Player)
-        mock_player.id = 123
+        mock_assist = Mock(spec=Assists)
+        mock_assist.player_id = 321
 
-        mock_list.return_value = [mock_player]
+        mock_list.return_value = [mock_assist]
         mock_result = Mock(spec=Result)
+        mock_result.id = 2
 
         response = get_weekly_assists(weekly_result_data=[mock_result])
 
-        self.assertEqual(response, {123})
+        self.assertEqual(response, {321})
 
     @patch(f"{UPDATE_STANDINGS_PATH}.get_weekly_assists")
     @patch(f"{UPDATE_STANDINGS_PATH}.get_weekly_scorers")

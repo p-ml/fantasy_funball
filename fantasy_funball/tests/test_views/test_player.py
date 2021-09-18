@@ -16,9 +16,15 @@ class TestPlayerTeamViewSet(TestCase):
     def setUp(self) -> None:
         self.client = Client()
 
-    @patch(f"{PLAYER_VIEW_PATH}.Result.objects.filter")
+    @patch(f"{PLAYER_VIEW_PATH}.Assists.objects.filter")
+    @patch(f"{PLAYER_VIEW_PATH}.Goals.objects.filter")
     @patch(f"{PLAYER_VIEW_PATH}.Player.objects.filter")
-    def test_get(self, mock_retrieve_player, mock_retrieve_result):
+    def test_get(
+        self,
+        mock_retrieve_player,
+        mock_retrieve_goals,
+        mock_retrieve_assists,
+    ):
         expected_output = [
             {
                 "first_name": "Hugo",
@@ -28,9 +34,14 @@ class TestPlayerTeamViewSet(TestCase):
             }
         ]
 
-        mock_retrieve_result.return_value.count.return_value = 0
-
         mock_retrieve_player.return_value.values.return_value = expected_output
+
+        mock_retrieve_goals.return_value.aggregate.return_value = {
+            "goals_scored__sum": 1,
+        }
+        mock_retrieve_assists.return_value.aggregate.return_value = {
+            "assists_made__sum": 1,
+        }
 
         response = self.client.get("/fantasy_funball/spurs/players/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
