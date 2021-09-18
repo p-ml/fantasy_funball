@@ -79,7 +79,7 @@ class TestFPLInterface(TestCase):
         mock_get_player,
         mock_team_scorer_assist_structure,
     ):
-        mock_team_scorer_assist_structure.return_value = {"Spurs": {}}
+        mock_team_scorer_assist_structure.return_value = {"Spurs": []}
 
         mock_player = Mock(spec=Player)
         mock_player.id = 1234
@@ -102,7 +102,14 @@ class TestFPLInterface(TestCase):
         mock_get_request.return_value = mock_get_response
 
         output = self.interface.retrieve_weekly_scorers(gameweek_no=1)
-        expected_output = {"Spurs": {1234: 2}}
+        expected_output = {
+            "Spurs": [
+                {
+                    "player_id": 1234,
+                    "goals_scored": 2,
+                }
+            ]
+        }
         self.assertEqual(output, expected_output)
 
     @patch(f"{FPL_INTERFACE_PATH}.FPLInterface._generate_team_scorer_assist_structure")
@@ -116,7 +123,7 @@ class TestFPLInterface(TestCase):
         mock_get_player,
         mock_team_scorer_assist_structure,
     ):
-        mock_team_scorer_assist_structure.return_value = {"Spurs": {}}
+        mock_team_scorer_assist_structure.return_value = {"Spurs": []}
 
         mock_player = Mock(spec=Player)
         mock_player.id = 4321
@@ -139,7 +146,14 @@ class TestFPLInterface(TestCase):
         mock_get_request.return_value = mock_get_response
 
         output = self.interface.retrieve_weekly_assists(gameweek_no=1)
-        expected_output = {"Spurs": {4321: 1}}
+        expected_output = {
+            "Spurs": [
+                {
+                    "player_id": 4321,
+                    "assists_made": 1,
+                }
+            ]
+        }
 
         self.assertEqual(output, expected_output)
 

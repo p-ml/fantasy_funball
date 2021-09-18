@@ -16,9 +16,8 @@ class TestPlayerTeamViewSet(TestCase):
     def setUp(self) -> None:
         self.client = Client()
 
-    @patch(f"{PLAYER_VIEW_PATH}.Result.objects.filter")
     @patch(f"{PLAYER_VIEW_PATH}.Player.objects.filter")
-    def test_get(self, mock_retrieve_player, mock_retrieve_result):
+    def test_get(self, mock_retrieve_player):
         expected_output = [
             {
                 "first_name": "Hugo",
@@ -27,8 +26,6 @@ class TestPlayerTeamViewSet(TestCase):
                 "id": 1,
             }
         ]
-
-        mock_retrieve_result.return_value.count.return_value = 0
 
         mock_retrieve_player.return_value.values.return_value = expected_output
 

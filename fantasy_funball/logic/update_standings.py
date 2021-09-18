@@ -7,6 +7,7 @@ import django
 django.setup()
 
 from fantasy_funball.models import Choices, Funballer, Result
+from fantasy_funball.models.players import Assists, Goals
 
 ScorerAssistIds = namedtuple("ScorerAssistIds", ["scorer_ids", "assist_ids"])
 
@@ -57,22 +58,24 @@ def get_weekly_team_picks(gameweek_no: int) -> List:
 
 def get_weekly_scorers(weekly_result_data: List) -> Set:
     """Get ids of players who scored in given gameweek"""
-    weekly_scorer_data = [list(result.scorers.all()) for result in weekly_result_data]
     scorer_ids = set()
-    for result in weekly_scorer_data:
-        int_scorer_ids = {scorer.id for scorer in result}
-        scorer_ids.update(int_scorer_ids)
+    for result in weekly_result_data:
+        result_scorer_data = list(Goals.objects.filter(result_id=result.id))
+        result_scorer_ids = {goal.player_id for goal in result_scorer_data}
+
+        scorer_ids.update(result_scorer_ids)
 
     return scorer_ids
 
 
 def get_weekly_assists(weekly_result_data: List) -> Set:
     """Get ids of players who assisted in given gameweek"""
-    weekly_assist_data = [list(result.assists.all()) for result in weekly_result_data]
     assist_ids = set()
-    for result in weekly_assist_data:
-        int_assist_ids = {assist.id for assist in result}
-        assist_ids.update(int_assist_ids)
+    for result in weekly_result_data:
+        result_assist_data = list(Assists.objects.filter(result_id=result.id))
+        result_assist_ids = {assist.player_id for assist in result_assist_data}
+
+        assist_ids.update(result_assist_ids)
 
     return assist_ids
 
@@ -149,4 +152,4 @@ def update_standings(gameweek_no: int):
 
 
 if __name__ == "__main__":
-    get_weekly_scorers_and_assists(gameweek_no=1)
+    get_weekly_scorers_and_assists(gameweek_no=4)
