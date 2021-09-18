@@ -54,7 +54,7 @@ class FPLInterface:
         scorers & assisters"""
         teams = self.retrieve_teams()
         team_names = list(teams.values())
-        team_scorer_assist_structure = {team_name: {} for team_name in team_names}
+        team_scorer_assist_structure = {team_name: [] for team_name in team_names}
 
         return team_scorer_assist_structure
 
@@ -65,21 +65,27 @@ class FPLInterface:
         )
         raw_weekly_data = json.loads(request_response.content)
 
-        all_player_data = self.retrieve_players()
-
         # Get the FPL API ID of each goal scorer for requested gameweek
-        fpl_scorer_ids = {}
+        fpl_scorer_data = []
         for player_data in raw_weekly_data["elements"]:
-            if player_data["stats"]["goals_scored"] > 0:
-                fpl_scorer_ids[player_data["id"]] = (
-                    player_data["stats"]["goals_scored"]
+            goals_scored = player_data["stats"]["goals_scored"]
+            if goals_scored > 0:
+                fpl_scorer_data.append(
+                    {
+                        "fpl_id": player_data["id"],
+                        "goals_scored": goals_scored,
+                    }
                 )
+
+        all_player_data = self.retrieve_players()
 
         # Get scorer info from retrieve_players()
         team_scorer_structure = self._generate_team_scorer_assist_structure()
-        for id in fpl_scorer_ids:
+        for fpl_scorer in fpl_scorer_data:
             player_info = next(
-                player for player in all_player_data if player["id"] == id
+                player
+                for player in all_player_data
+                if player["id"] == fpl_scorer["fpl_id"]
             )
 
             # Get fantasy_funball ID assigned to that player
@@ -89,8 +95,11 @@ class FPLInterface:
                 team__team_name=player_info["team"],
             )
 
-            team_scorer_structure[player_info["team"]][ff_player.id] = (
-                fpl_scorer_ids[id]
+            team_scorer_structure[player_info["team"]].append(
+                {
+                    "player_id": ff_player.id,
+                    "goals_scored": fpl_scorer["goals_scored"],
+                }
             )
 
         return team_scorer_structure
@@ -102,21 +111,27 @@ class FPLInterface:
         )
         raw_weekly_data = json.loads(request_response.content)
 
-        all_player_data = self.retrieve_players()
-
         # Get the FPL API ID of each assister for requested gameweek
-        fpl_assist_ids = {}
+        fpl_assist_data = []
         for player_data in raw_weekly_data["elements"]:
-            if player_data["stats"]["assists"] > 0:
-                fpl_assist_ids[player_data["id"]] = (
-                    player_data["stats"]["assists"]
+            assists_made = player_data["stats"]["assists"]
+            if assists_made > 0:
+                fpl_assist_data.append(
+                    {
+                        "fpl_id": player_data["id"],
+                        "assists_made": assists_made,
+                    }
                 )
+
+        all_player_data = self.retrieve_players()
 
         # Get assister info from retrieve_players()
         team_assist_structure = self._generate_team_scorer_assist_structure()
-        for id in fpl_assist_ids:
+        for fpl_assist in fpl_assist_data:
             player_info = next(
-                player for player in all_player_data if player["id"] == id
+                player
+                for player in all_player_data
+                if player["id"] == fpl_assist["fpl_id"]
             )
 
             # Get fantasy_funball ID assigned to that player
@@ -126,8 +141,11 @@ class FPLInterface:
                 team__team_name=player_info["team"],
             )
 
-            team_assist_structure[player_info["team"]][ff_player.id] = (
-                fpl_assist_ids[id]
+            team_assist_structure[player_info["team"]].append(
+                {
+                    "player_id": ff_player.id,
+                    "assists_made": fpl_assist["assists_made"],
+                }
             )
 
         return team_assist_structure
