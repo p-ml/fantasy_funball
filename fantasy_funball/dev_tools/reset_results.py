@@ -2,8 +2,7 @@ import django
 
 django.setup()
 
-from fantasy_funball.models import Result
-from fantasy_funball.models.players import Assists, Goals
+from fantasy_funball.models import Assists, Goals, Result
 
 
 def reset_goals():

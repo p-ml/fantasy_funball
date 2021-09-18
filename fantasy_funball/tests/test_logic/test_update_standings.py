@@ -12,11 +12,10 @@ from fantasy_funball.logic.update_standings import (
     get_weekly_scorers_and_assists,
     get_weekly_team_picks,
 )
-from fantasy_funball.models.players import Assists, Goals
 
 django.setup()
 
-from fantasy_funball.models import Choices, Result, Team
+from fantasy_funball.models import Assists, Choices, Goals, Result, Team
 
 UPDATE_STANDINGS_PATH = "fantasy_funball.logic.update_standings"
 

@@ -5,8 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.exceptions import TeamNotFoundError
-from fantasy_funball.models import Player, Team
-from fantasy_funball.models.players import Assists, Goals
+from fantasy_funball.models import Assists, Goals, Player, Team
 
 
 class PlayerTeamView(APIView):

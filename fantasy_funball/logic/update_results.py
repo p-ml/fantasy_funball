@@ -56,22 +56,22 @@ def update_results(gameweek_no: int):
             for scorer in scorers:
                 from fantasy_funball.models.players import Goals
 
-                ps = Goals(
+                goal_obj = Goals(
                     player_id=scorer["player_id"],
                     result_id=result_obj.id,
                     goals_scored=scorer["goals_scored"],
                 )
-                ps.save()
+                goal_obj.save()
 
             for assist in assists:
                 from fantasy_funball.models.players import Assists
 
-                pa = Assists(
+                assist_obj = Assists(
                     player_id=assist["player_id"],
                     result_id=result_obj.id,
                     assists_made=assist["assists_made"],
                 )
-                pa.save()
+                assist_obj.save()
 
 
 if __name__ == "__main__":
