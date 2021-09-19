@@ -124,9 +124,9 @@ def update_standings(gameweek_no: int):
                     f"been awarded 1 point as their team won."
                 )
 
-            # Mark team choice as processed
-            pick.team_has_been_processed = True
-            pick.save()
+                # Mark team choice as processed
+                pick.team_has_been_processed = True
+                pick.save()
 
         if not pick.player_has_been_processed:
             if (
@@ -146,9 +146,9 @@ def update_standings(gameweek_no: int):
                     f"been awarded 1 point as their player scored or assisted."
                 )
 
-            # Mark player choice as processed
-            pick.player_has_been_processed = True
-            pick.save()
+                # Mark player choice as processed
+                pick.player_has_been_processed = True
+                pick.save()
 
 
 if __name__ == "__main__":
