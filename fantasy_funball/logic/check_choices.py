@@ -9,6 +9,7 @@ import pytz
 import requests
 
 from fantasy_funball.fpl_interface.interface import FPLInterface
+from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
 from fantasy_funball.logic.random_generator import get_random_player, get_random_team
 
 django.setup()
@@ -73,32 +74,36 @@ def is_final_gameweek_day(gameweek_no: int):
 
 
 def check_choices(gameweek_no: int):
+    logger.info("Checking for funballers who haven't submitted choices...")
+
+    choices = list(
+        Choices.objects.filter(
+            gameweek__gameweek_no=gameweek_no,
+        )
+    )
+
+    funballer_with_choice_ids = [choice.funballer_id for choice in choices]
+
+    all_funballers = list(Funballer.objects.all())
+
+    funballers_with_no_choices = [
+        funballer
+        for funballer in all_funballers
+        if funballer.id not in funballer_with_choice_ids
+    ]
+
+    allocate_choices(
+        funballers_with_no_choices=funballers_with_no_choices,
+        gameweek_no=gameweek_no,
+    )
+
+
+def check_choices_if_deadline_day(gameweek_no: int):
     """If we're in deadline day, check all funballers have submitted a choice"""
     deadline_day = is_deadline_day(gameweek_no=gameweek_no)
 
     if deadline_day:
-        logger.info("Checking for funballers who haven't submitted choices...")
-
-        choices = list(
-            Choices.objects.filter(
-                gameweek__gameweek_no=gameweek_no,
-            )
-        )
-
-        funballer_with_choice_ids = [choice.funballer_id for choice in choices]
-
-        all_funballers = list(Funballer.objects.all())
-
-        funballers_with_no_choices = [
-            funballer
-            for funballer in all_funballers
-            if funballer.id not in funballer_with_choice_ids
-        ]
-
-        allocate_choices(
-            funballers_with_no_choices=funballers_with_no_choices,
-            gameweek_no=gameweek_no,
-        )
+        check_choices(gameweek_no=gameweek_no)
 
 
 def allocate_choices(
@@ -327,4 +332,6 @@ def check_lineups(gameweek_no: int):
 
 
 if __name__ == "__main__":
-    check_lineups(gameweek_no=1)
+    prev_gameweek_no = determine_gameweek_no()
+    check_choices(gameweek_no=prev_gameweek_no)
+    check_player_picks_played(gameweek_no=prev_gameweek_no)
