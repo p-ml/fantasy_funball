@@ -10,8 +10,8 @@ class Choices(models.Model):
     team_choice = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
     player_choice = models.ForeignKey(Player, on_delete=models.DO_NOTHING)
 
-    team_has_been_processed = models.BooleanField(default=False)
-    player_has_been_processed = models.BooleanField(default=False)
+    team_point_awarded = models.BooleanField(default=False)
+    player_point_awarded = models.BooleanField(default=False)
 
     team_has_been_steved = models.BooleanField(default=False)
     player_has_been_steved = models.BooleanField(default=False)

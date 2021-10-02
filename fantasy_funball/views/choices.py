@@ -24,6 +24,8 @@ class FunballerGetChoiceView(APIView):
                 "team_choice__team_name",
                 "player_choice__first_name",
                 "player_choice__surname",
+                "player_point_awarded",
+                "team_point_awarded",
             )
         except Choices.DoesNotExist:
             raise ChoicesNotFoundError(f"Choices for {funballer_name} not found")
