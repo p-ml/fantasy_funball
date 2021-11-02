@@ -8,6 +8,8 @@ logger = logging.getLogger("papertrail")
 
 def add_players():
     """Adds new players to the database"""
+    logger.info("Checking for players to be added...")
+
     fpl_interface = FPLInterface()
     players = fpl_interface.retrieve_players()
 
@@ -36,7 +38,7 @@ def add_players():
             )
             player_obj.save()
 
-            print(
+            logger.info(
                 f"{player['first_name']} {player['surname']}, playing for "
                 f"{player['team']} has been added."
             )
@@ -47,6 +49,8 @@ def add_players():
 
 def remove_players():
     """Removes players in db that are not present in FPL API"""
+    logger.info("Checking for players to be removed...")
+
     fpl_interface = FPLInterface()
     fpl_players = fpl_interface.retrieve_players()
 

@@ -1,4 +1,3 @@
-from fantasy_funball.helpers.date import determine_if_transfer_window
 from fantasy_funball.logic.check_choices import (
     check_choices_if_deadline_day,
     check_lineups,
@@ -10,6 +9,7 @@ from fantasy_funball.scheduler.update_players import update_players
 
 if __name__ == "__main__":
     # Run at midnight every day by Heroku Job Scheduler
+    update_players()
     gameweek_no = determine_gameweek_no()
     if gameweek_no > 0:
         check_choices_if_deadline_day(gameweek_no=gameweek_no)
@@ -19,7 +19,3 @@ if __name__ == "__main__":
 
     else:
         print("Season has not started yet")
-
-    is_transfer_window = determine_if_transfer_window()
-    if is_transfer_window:
-        update_players()
