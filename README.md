@@ -6,11 +6,12 @@
 
 ## Setup
 ### Python Environment
-Consider using a virtual environment; navigate to `fantasy_funball` directory and:
-```python -m venv <virtual env name>```
-
-Once set up, install required packages using requirements.txt
-`pip install -r requirements.txt`. Please add to this as you need more packages.
+Poetry is used for dependency/environment manager. Once poetry is installed, 
+navigate to the `fantasy_funball` directory and run 
+```
+poetry shell
+poetry install
+```
 
 ### Database Setup
 To run database locally, use Docker :whale:. Install both 
@@ -26,8 +27,8 @@ variables within `.env` to point at your local postgres db
 ### Environment Variables
 Environment variables needed are listed in `.env.sample`. Make a copy called `.env`.
 You'll need to add your Postgres creds here.
-If running PyCharm, get the `EnvFile` plugin, which allows you to attach an `.env` file to any run
-configuration.
+If running PyCharm, get the `EnvFile` plugin, which allows you to attach an `.env` 
+file to any run configuration.
 
 ## Notes
 Project has been set up with a default Django template, as both backend (this repo) 
@@ -39,7 +40,6 @@ of the application code.
 ![Potential Structure](docs/fantasy_funball_structure.png)
 
 ## Todo
-- Logic to get determine weekly results, scorers, assisters & update standings at the end of each gameweek
 - Bulk out tests (both unit and functional)
-- Pull down lineups etc - Can be done with FPL API?
-- Random team/player if funballer doesn't choose before deadline
+- Get docker set up for running functional tests
+
