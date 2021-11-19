@@ -1,5 +1,5 @@
-from fantasy_funball.models import Funballer
 from fantasy_funball.dev_tools.scripts.db_connection import database_connection
+from fantasy_funball.models import Funballer
 
 
 def setup_users() -> None:

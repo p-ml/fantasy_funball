@@ -1,8 +1,8 @@
 import logging
 
+from fantasy_funball.dev_tools.scripts.db_connection import database_connection
 from fantasy_funball.fpl_interface.interface import FPLInterface
 from fantasy_funball.models import Fixture
-from fantasy_funball.dev_tools.scripts.db_connection import database_connection
 
 N_GAMEWEEKS = 38
 logger = logging.getLogger("papertrail")
@@ -15,8 +15,8 @@ def setup_fixtures():
     cur.execute(
         "truncate fantasy_funball_fixture,"
         "fantasy_funball_result,"
-        "fantasy_funball_result_assists,"
-        "fantasy_funball_result_scorers,"
+        "fantasy_funball_assists,"
+        "fantasy_funball_goals,"
         "fantasy_funball_choices;"
     )
     conn.commit()

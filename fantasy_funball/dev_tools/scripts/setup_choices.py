@@ -1,7 +1,7 @@
+from fantasy_funball.dev_tools.scripts.db_connection import database_connection
 from fantasy_funball.models import Choices, Funballer, Gameweek
 from fantasy_funball.models.players import Player
 from fantasy_funball.models.teams import Team
-from fantasy_funball.dev_tools.scripts.db_connection import database_connection
 
 
 def setup_choices() -> None:
