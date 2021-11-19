@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
-from fantasy_funball.models import Gameday, Player, Result, Team
 from fantasy_funball.dev_tools.scripts.db_connection import database_connection
+from fantasy_funball.models import Gameday, Player, Result, Team
 
 
 def setup_results() -> None:
@@ -52,9 +52,10 @@ def setup_results() -> None:
         )
         result_inst.save()
 
+        # TODO: Fix later (not high priority as only for local dev)
         # Model obj must be saved before adding many-to-many fields
-        result_inst.scorers.add(*scorers)
-        result_inst.assists.add(*assists)
+        # result_inst.scorers.add(*scorers)
+        # result_inst.assists.add(*assists)
 
 
 if __name__ == "__main__":

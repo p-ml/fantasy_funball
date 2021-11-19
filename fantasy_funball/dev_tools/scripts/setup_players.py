@@ -1,6 +1,6 @@
+from fantasy_funball.dev_tools.scripts.db_connection import database_connection
 from fantasy_funball.fpl_interface.interface import FPLInterface
 from fantasy_funball.models import Player, Team
-from fantasy_funball.dev_tools.scripts.db_connection import database_connection
 
 
 def setup_players() -> None:
@@ -9,8 +9,8 @@ def setup_players() -> None:
     cur = conn.cursor()
     cur.execute(
         "truncate fantasy_funball_player, "
-        "fantasy_funball_result_assists,"
-        "fantasy_funball_result_scorers,"
+        "fantasy_funball_assists,"
+        "fantasy_funball_goals,"
         "fantasy_funball_choices;"
     )
     conn.commit()
