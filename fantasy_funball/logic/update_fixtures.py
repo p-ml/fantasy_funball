@@ -3,6 +3,7 @@ import logging
 import django
 
 from fantasy_funball.fpl_interface.interface import FPLInterface
+from fantasy_funball.helpers.date import is_first_day_of_gameweek
 from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
 from fantasy_funball.models import Fixture, Gameday, Gameweek
 
@@ -85,8 +86,11 @@ def update_gameweek_deadlines() -> None:
         gameweek_obj.save()
 
 
-if __name__ == "__main__":
-    wipe_upcoming_gameweek_fixtures()
-    insert_new_gamedays()
-    insert_new_fixtures()
-    update_gameweek_deadlines()
+def update_fixtures(gameweek_no: int) -> None:
+    first_day_of_gameweek = is_first_day_of_gameweek(current_gameweek_no=gameweek_no)
+    if first_day_of_gameweek:
+        logger.info(f"Refreshing fixtures for upcoming gameweek ({gameweek_no+1})...")
+        wipe_upcoming_gameweek_fixtures()
+        insert_new_gamedays()
+        insert_new_fixtures()
+        update_gameweek_deadlines()
