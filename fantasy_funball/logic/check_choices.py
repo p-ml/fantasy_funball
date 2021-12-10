@@ -60,7 +60,6 @@ def is_final_gameweek_day(gameweek_no: int):
 
     # Sort by date
     gameweek_gamedays.sort(key=lambda x: x.date, reverse=True)
-
     final_gameday_date = gameweek_gamedays[0].date
 
     # Get todays date, make UTC aware
