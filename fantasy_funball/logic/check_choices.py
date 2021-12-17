@@ -23,6 +23,8 @@ from fantasy_funball.models import (
     Gameday,
     Gameweek,
     Player,
+    Result,
+    Team,
 )
 
 logger = logging.getLogger("papertrail")
@@ -126,7 +128,17 @@ def allocate_choices(
             choice.player_choice for choice in all_funballer_choices
         ]
 
-        random_team = get_random_team(non_permitted_teams=funballer_team_choices)
+        # Determine which teams have been chosen twice already
+        non_permitted_teams = [
+            team
+            for team in funballer_team_choices
+            if funballer_team_choices.count(team) >= 2
+        ]
+
+        random_team = get_random_team(
+            non_permitted_teams=non_permitted_teams,
+            gameweek_no=gameweek_no,
+        )
         random_player = get_random_player(
             non_permitted_players=funballer_player_choices
         )
@@ -155,11 +167,22 @@ def determine_players_fixture_has_finished(
     player: Player,
 ) -> bool:
     """Determines if a player's fixture has finished"""
-    players_fixture = next(
-        fixture
-        for fixture in weekly_fixtures
-        if player.team in {fixture.home_team, fixture.away_team}
-    )
+    try:
+        players_fixture = next(
+            fixture
+            for fixture in weekly_fixtures
+            if player.team in {fixture.home_team, fixture.away_team}
+        )
+    except StopIteration:
+        logger.info(
+            f"{player.surname}'s team did not play this gameweek. Allocating new "
+            f"player."
+        )
+
+        # By setting this to false, recursion continues and a new player is selected
+        players_fixture_has_finished = False
+
+        return players_fixture_has_finished
 
     players_fixture_kickoff = datetime.strptime(
         players_fixture.kickoff, "%Y-%m-%d %H:%M:%S"
@@ -230,7 +253,7 @@ def assign_new_player_if_pick_did_not_play(
     a player is randomly selected to find a player which did play.
     """
     while not player_played:
-        # Has that player's team played yet this weekend?
+        # Has that player's team played in this gameweek?
         players_fixture_has_finished = determine_players_fixture_has_finished(
             weekly_fixtures=weekly_fixtures,
             player=player,
@@ -321,12 +344,75 @@ def check_player_picks_played(gameweek_no: int):
         pick.save()
 
 
-def check_lineups(gameweek_no: int):
+def check_teams_played(gameweek_no: int):
+    """
+    Checks that each funballer's team pick actually played,
+    has to be considered with game postponements (covid situ. Dec '21),
+    If not, a random team is allocated to them.
+    """
+    # Get all teams which played in gameweek
+    gameweek_results = list(
+        Result.objects.filter(
+            gameday__gameweek__gameweek_no=gameweek_no,
+        )
+    )
+    teams_that_played = []
+    for result in gameweek_results:
+        teams_that_played.extend((result.home_team, result.away_team))
+
+    # Get players picked for this gameweek
+    weekly_picks = list(Choices.objects.filter(gameweek__gameweek_no=gameweek_no))
+
+    for pick in weekly_picks:
+        # Get player object using player_choice_id in choices
+        team = Team.objects.get(id=pick.team_choice_id)
+
+        team_played = team in teams_that_played
+
+        if team_played:
+            return team_played
+
+        if not team_played:
+            # Team didn't play - likely game was postponed, or didn't feature in
+            # given gameweek
+            logger.info(
+                f"{team.team_name} did not play this gameweek. Allocating random "
+                f"team for funballer with id {pick.funballer_id}"
+            )
+            funballer_team_picks = list(
+                Choices.objects.filter(
+                    funballer_id=pick.funballer_id,
+                ).values("team_choice")
+            )
+
+            non_permitted_teams = [
+                team
+                for team in funballer_team_picks
+                if funballer_team_picks.count(team) >= 2
+            ]
+
+            new_team = get_random_team(
+                non_permitted_teams=non_permitted_teams,
+                gameweek_no=gameweek_no,
+            )
+
+            logger.info(
+                f"Funballer with id {pick.funballer_id} has been allocated "
+                f"{new_team.team_name}"
+            )
+            pick.team_choice = new_team
+            pick.team_has_been_steved = True
+
+        pick.save()
+
+
+def check_teams_and_lineups(gameweek_no: int):
     """Runs once the gameweek has finished, checks each funballer's player
     pick has played, if not, allocates a random player."""
     final_gameweek_day = is_final_gameweek_day(gameweek_no=gameweek_no)
 
     if final_gameweek_day:
+        check_teams_played(gameweek_no=gameweek_no)
         check_player_picks_played(gameweek_no=gameweek_no)
 
 
