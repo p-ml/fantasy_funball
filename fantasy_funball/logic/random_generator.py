@@ -5,15 +5,31 @@ import django
 
 django.setup()
 
-from fantasy_funball.models import Choices, Funballer, Gameweek, Player, Team
+from fantasy_funball.models import Choices, Fixture, Funballer, Gameweek, Player, Team
 
 
-def get_random_team(non_permitted_teams: List[Team] = None) -> Team:
-    """Retrieve a random team from the database"""
+def get_random_team(
+    gameweek_no: int,
+    non_permitted_teams: List[Team] = None,
+) -> Team:
+    """
+    Retrieve a random team from the database; takes into account teams playing in
+    the given gameweek, and excludes teams which have already been chosen twice.
+    """
     if non_permitted_teams is None:
         non_permitted_teams = []
 
-    all_teams = list(Team.objects.all())
+    # Get ids of teams in gameweek
+    team_ids_in_gameweek = list(
+        Fixture.objects.filter(gameday__gameweek__gameweek_no=gameweek_no).values(
+            "home_team", "away_team"
+        )
+    )
+
+    all_team_ids = []
+    for fixture in team_ids_in_gameweek:
+        all_team_ids.extend((fixture["home_team"], fixture["away_team"]))
+    all_teams = list(Team.objects.all().filter(id__in=all_team_ids))
 
     permitted_teams = [team for team in all_teams if team not in non_permitted_teams]
 
@@ -24,10 +40,10 @@ def get_random_team(non_permitted_teams: List[Team] = None) -> Team:
 
 def get_random_player(non_permitted_players: List[Player] = None) -> Player:
     """Retrieve a random midfielder/forward from the database"""
-    # Get all midfielders & forwards
     if non_permitted_players is None:
         non_permitted_players = []
 
+    # Get all midfielders & forwards
     all_players = list(
         Player.objects.filter(
             position__in={"Midfielder", "Forward"},
@@ -76,7 +92,6 @@ def generate_steve_choices():
 
 
 if __name__ == "__main__":
-    player = get_random_player()
-    team = get_random_team()
-
-    generate_steve_choices()
+    get_random_team(
+        gameweek_no=18,
+    )
