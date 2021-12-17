@@ -1,6 +1,6 @@
 from fantasy_funball.logic.check_choices import (
     check_choices_if_deadline_day,
-    check_lineups,
+    check_teams_and_lineups,
 )
 from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
 from fantasy_funball.logic.update_fixtures import update_fixtures
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     if gameweek_no > 0:
         check_choices_if_deadline_day(gameweek_no=gameweek_no)
         update_results(gameweek_no=gameweek_no)
-        check_lineups(gameweek_no=gameweek_no)
+        check_teams_and_lineups(gameweek_no=gameweek_no)
         update_standings(gameweek_no=gameweek_no)
         update_fixtures(gameweek_no=gameweek_no)
 
