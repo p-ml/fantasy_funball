@@ -14,7 +14,7 @@ if __name__ == "__main__":
     # Run at midnight every day by Heroku Job Scheduler
 
     # Check if game is paused
-    game_paused = os.environment.get("GAME_PAUSED")
+    game_paused = os.environ.get("GAME_PAUSED")
 
     update_players()
     gameweek_no = determine_gameweek_no()
