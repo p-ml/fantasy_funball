@@ -3,6 +3,7 @@ from django.urls import path
 from fantasy_funball.views.choices import (
     FunballerGetChoiceView,
     FunballerPostChoiceView,
+    FunballerRemainingTeamChoice,
 )
 from fantasy_funball.views.fixtures import (
     RetrieveAllGameweeks,
@@ -46,4 +47,9 @@ urlpatterns = [
     path("<str:team_name>/players/", PlayerTeamView.as_view(), name="retrieve-players"),
     path("players/", PlayerView.as_view(), name="retrieve-all-players"),
     path("update_database/", UpdateDatabaseView.as_view(), name="update-database"),
+    path(
+        "funballer/choices/valid_teams/<str:funballer_name>",
+        FunballerRemainingTeamChoice.as_view(),
+        name="funballer-valid-teams-picks",
+    ),
 ]
