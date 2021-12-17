@@ -126,7 +126,17 @@ def allocate_choices(
             choice.player_choice for choice in all_funballer_choices
         ]
 
-        random_team = get_random_team(non_permitted_teams=funballer_team_choices)
+        # Determine which teams have been chosen twice already
+        non_permitted_teams = [
+            team
+            for team in funballer_team_choices
+            if funballer_team_choices.count(team) >= 2
+        ]
+
+        random_team = get_random_team(
+            non_permitted_teams=non_permitted_teams,
+            gameweek_no=gameweek_no,
+        )
         random_player = get_random_player(
             non_permitted_players=funballer_player_choices
         )
