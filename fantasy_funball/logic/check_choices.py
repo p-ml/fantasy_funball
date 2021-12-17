@@ -69,6 +69,7 @@ def is_final_gameweek_day(gameweek_no: int):
     todays_date = utc.localize(datetime.today())
 
     if todays_date > final_gameday_date:
+        logger.info(f"Today is final gameday of gameweek {gameweek_no}")
         return True
     else:
         return False
