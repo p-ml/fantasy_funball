@@ -105,3 +105,36 @@ class FunballerPostChoiceView(APIView):
             choice.save()
 
             return Response(status=status.HTTP_201_CREATED, data="Choice submitted")
+
+
+class FunballerRemainingTeamChoice(APIView):
+    def get(self, request: WSGIRequest, funballer_name: str) -> Response:
+        """
+        Returns the name of each team and how many times the requested funballer
+        can choose them.
+        """
+        team_selection_limit = 2
+
+        try:
+            choices = Choices.objects.filter(
+                funballer_id__first_name=funballer_name,
+            ).values("team_choice__team_name")
+        except Choices.DoesNotExist:
+            raise ChoicesNotFoundError(f"Choices for {funballer_name} not found")
+
+        all_teams = Team.objects.all().values("team_name")
+        all_team_names = []
+        for team in all_teams:
+            all_team_names.append(team["team_name"])
+
+        team_choices = [choice["team_choice__team_name"] for choice in choices]
+
+        valid_team_selections = [
+            {
+                "team_name": team,
+                "remaining_selections": team_selection_limit - team_choices.count(team),
+            }
+            for team in all_team_names
+        ]
+
+        return Response(status=status.HTTP_201_CREATED, data=valid_team_selections)
