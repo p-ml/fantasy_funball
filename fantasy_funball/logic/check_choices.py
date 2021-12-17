@@ -155,11 +155,22 @@ def determine_players_fixture_has_finished(
     player: Player,
 ) -> bool:
     """Determines if a player's fixture has finished"""
-    players_fixture = next(
-        fixture
-        for fixture in weekly_fixtures
-        if player.team in {fixture.home_team, fixture.away_team}
-    )
+    try:
+        players_fixture = next(
+            fixture
+            for fixture in weekly_fixtures
+            if player.team in {fixture.home_team, fixture.away_team}
+        )
+    except StopIteration:
+        logger.info(
+            f"{player.surname}'s team did not play this gameweek. Allocating new "
+            f"player."
+        )
+
+        # By setting this to false, recursion continues and a new player is selected
+        players_fixture_has_finished = False
+
+        return players_fixture_has_finished
 
     players_fixture_kickoff = datetime.strptime(
         players_fixture.kickoff, "%Y-%m-%d %H:%M:%S"
@@ -230,7 +241,7 @@ def assign_new_player_if_pick_did_not_play(
     a player is randomly selected to find a player which did play.
     """
     while not player_played:
-        # Has that player's team played yet this weekend?
+        # Has that player's team played in this gameweek?
         players_fixture_has_finished = determine_players_fixture_has_finished(
             weekly_fixtures=weekly_fixtures,
             player=player,
