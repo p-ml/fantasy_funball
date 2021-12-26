@@ -103,8 +103,9 @@ class RetrieveAllGameweeks(APIView):
 
         # Convert to json for output
         formatted_gameweeks = list(gameweeks)
+        sorted_gameweeks = sorted(formatted_gameweeks, key=lambda x: x["gameweek_no"])
 
         return Response(
             status=status.HTTP_200_OK,
-            data=formatted_gameweeks,
+            data=sorted_gameweeks,
         )
