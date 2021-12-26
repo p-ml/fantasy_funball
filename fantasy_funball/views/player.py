@@ -53,6 +53,7 @@ class PlayerView(APIView):
                 "id": player.id,
             }
             for player in all_players
+            if player.surname != "Void"  # Does not return "gameweek void" player
         ]
 
         return Response(
