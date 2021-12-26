@@ -31,6 +31,10 @@ def get_random_team(
         all_team_ids.extend((fixture["home_team"], fixture["away_team"]))
     all_teams = list(Team.objects.all().filter(id__in=all_team_ids))
 
+    # Do not allow "void" team to be selected
+    void_team = Team.objects.get(team_name="Gameweek Void")
+    non_permitted_teams.append(void_team)
+
     permitted_teams = [team for team in all_teams if team not in non_permitted_teams]
 
     team_index = randrange(0, len(permitted_teams))
@@ -50,6 +54,7 @@ def get_random_player(non_permitted_players: List[Player] = None) -> Player:
         )
     )
 
+    # No need to not allow void player, as only selects midfielders/forwards
     permitted_players = [
         player for player in all_players if player not in non_permitted_players
     ]
