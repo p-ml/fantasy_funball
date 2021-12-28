@@ -93,6 +93,7 @@ class FunballerChoiceView(TestCase):
                 "gameweek_no": 1,
                 "team_choice": "Tottenham Hotspur",
                 "player_choice": "3739",
+                "deadline_passed_check": True,
             },
         )
 
@@ -140,6 +141,7 @@ class FunballerChoiceView(TestCase):
                 "gameweek_no": 1,
                 "team_choice": invalid_team_choice,
                 "player_choice": "3739",
+                "deadline_passed_check": True,
             },
         )
 
@@ -194,6 +196,7 @@ class FunballerChoiceView(TestCase):
                 "gameweek_no": 1,
                 "team_choice": "Barcelona",
                 "player_choice": invalid_player_choice,
+                "deadline_passed_check": True,
             },
         )
 
@@ -250,6 +253,7 @@ class FunballerChoiceView(TestCase):
                 "gameweek_no": 1,
                 "team_choice": "Tottenham Hotspur",
                 "player_choice": "3739",
+                "deadline_passed_check": True,
             },
         )
 
