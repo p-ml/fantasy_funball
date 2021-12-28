@@ -53,7 +53,7 @@ class FunballerPostChoiceView(APIView):
         team_choice = request.data["team_choice"]
         player_choice = int(request.data["player_choice"])
 
-        deadline_passed_check = request.data["deadline_passed_check"]
+        deadline_passed_check = request.data.get("deadline_passed_check", True)
 
         if deadline_passed_check:
             check_for_passed_deadline(gameweek_deadline=gameweek_obj.deadline)
