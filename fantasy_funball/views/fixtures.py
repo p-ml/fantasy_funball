@@ -9,6 +9,12 @@ from core.exceptions import (
     GamedayNotFoundError,
     GameweekNotFoundError,
 )
+from fantasy_funball.logic.update_fixtures import (
+    insert_new_fixtures,
+    insert_new_gamedays,
+    update_gameweek_deadlines,
+    wipe_future_gameweek_fixtures,
+)
 from fantasy_funball.models import Fixture, Gameday, Gameweek
 
 
@@ -108,4 +114,19 @@ class RetrieveAllGameweeks(APIView):
         return Response(
             status=status.HTTP_200_OK,
             data=sorted_gameweeks,
+        )
+
+
+class UpdateGameweekFixtures(APIView):
+    def get(self, request: WSGIRequest, gameweek_no: int) -> Response:
+        """Refresh/update fixtures for a gameweek"""
+
+        wipe_future_gameweek_fixtures(gameweek_no=gameweek_no)
+        insert_new_gamedays(gameweek_no=gameweek_no)
+        insert_new_fixtures(gameweek_no=gameweek_no)
+        update_gameweek_deadlines(gameweek_no=gameweek_no)
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=f"Fixtures for gameweek {gameweek_no} updated successfully",
         )

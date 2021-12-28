@@ -4,7 +4,6 @@ import django
 
 from fantasy_funball.fpl_interface.interface import FPLInterface
 from fantasy_funball.logic.check_choices import is_final_gameweek_day
-from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
 from fantasy_funball.models import Fixture, Gameday, Gameweek
 
 django.setup()
@@ -12,35 +11,29 @@ django.setup()
 logger = logging.getLogger("papertrail")
 
 
-def wipe_upcoming_gameweek_fixtures() -> None:
-    next_gameweek_no = determine_gameweek_no() + 1
-
+def wipe_future_gameweek_fixtures(gameweek_no: int) -> None:
     # First wipe all fixtures
     stored_fixtures = list(
-        Fixture.objects.filter(gameday__gameweek__gameweek_no=next_gameweek_no)
+        Fixture.objects.filter(gameday__gameweek__gameweek_no=gameweek_no)
     )
 
     for fixture in stored_fixtures:
         fixture.delete()
 
     # Then delete gamedays
-    stored_gamedays = list(
-        Gameday.objects.filter(gameweek__gameweek_no=next_gameweek_no)
-    )
+    stored_gamedays = list(Gameday.objects.filter(gameweek__gameweek_no=gameweek_no))
 
     for gameday in stored_gamedays:
         gameday.delete()
 
 
-def insert_new_gamedays() -> None:
-    next_gameweek_no = determine_gameweek_no() + 1
-
+def insert_new_gamedays(gameweek_no: int) -> None:
     fpl_interface = FPLInterface()
     fpl_interface_gameday_dates = fpl_interface.retrieve_gameday_dates(
-        gameweek_no=next_gameweek_no,
+        gameweek_no=gameweek_no,
     )
 
-    gameweek_obj = Gameweek.objects.get(gameweek_no=next_gameweek_no)
+    gameweek_obj = Gameweek.objects.get(gameweek_no=gameweek_no)
 
     for new_gameday_date in fpl_interface_gameday_dates:
         gameday_obj = Gameday(
@@ -50,12 +43,10 @@ def insert_new_gamedays() -> None:
         gameday_obj.save()
 
 
-def insert_new_fixtures() -> None:
-    next_gameweek_no = determine_gameweek_no() + 1
-
+def insert_new_fixtures(gameweek_no: int) -> None:
     fpl_interface = FPLInterface()
     gameweek_fixtures = fpl_interface.retrieve_gameweek_fixtures(
-        gameweek_no=next_gameweek_no,
+        gameweek_no=gameweek_no,
     )
 
     for fixture in gameweek_fixtures:
@@ -69,16 +60,14 @@ def insert_new_fixtures() -> None:
         fixture_obj.save()
 
 
-def update_gameweek_deadlines() -> None:
-    next_gameweek_no = determine_gameweek_no() + 1
-
+def update_gameweek_deadlines(gameweek_no: int) -> None:
     fpl_interface = FPLInterface()
     updated_gameweek_deadline = fpl_interface.retrieve_gameweek_deadline(
-        gameweek_no=next_gameweek_no,
+        gameweek_no=gameweek_no,
     )
 
     gameweek_obj = Gameweek.objects.get(
-        gameweek_no=next_gameweek_no,
+        gameweek_no=gameweek_no,
     )
 
     if gameweek_obj.deadline != updated_gameweek_deadline:
@@ -87,17 +76,14 @@ def update_gameweek_deadlines() -> None:
 
 
 def update_fixtures(gameweek_no: int) -> None:
+    """Run by scheduler"""
     final_gameweek_day = is_final_gameweek_day(gameweek_no=gameweek_no)
     if final_gameweek_day:
-        logger.info(f"Refreshing fixtures for upcoming gameweek ({gameweek_no+1})...")
-        wipe_upcoming_gameweek_fixtures()
-        insert_new_gamedays()
-        insert_new_fixtures()
-        update_gameweek_deadlines()
-
-
-if __name__ == "__main__":
-    wipe_upcoming_gameweek_fixtures()
-    insert_new_gamedays()
-    insert_new_fixtures()
-    update_gameweek_deadlines()
+        upcoming_gameweek_no = gameweek_no + 1
+        logger.info(
+            f"Refreshing fixtures for upcoming gameweek ({upcoming_gameweek_no})..."
+        )
+        wipe_future_gameweek_fixtures(gameweek_no=upcoming_gameweek_no)
+        insert_new_gamedays(gameweek_no=upcoming_gameweek_no)
+        insert_new_fixtures(gameweek_no=upcoming_gameweek_no)
+        update_gameweek_deadlines(gameweek_no=upcoming_gameweek_no)
