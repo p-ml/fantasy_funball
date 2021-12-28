@@ -42,7 +42,7 @@ class PlayerTeamView(APIView):
         )
 
 
-class PlayerView(APIView):
+class RetrievePlayerView(APIView):
     def get(self, request: WSGIRequest) -> Response:
         """Retrieve names of all players in db"""
         all_players = Player.objects.all()
@@ -59,4 +59,28 @@ class PlayerView(APIView):
         return Response(
             status=status.HTTP_200_OK,
             data=formatted_players,
+        )
+
+
+class AddPlayerView(APIView):
+    def post(self, request: WSGIRequest) -> Response:
+        """Add player to the db"""
+        new_player_team = Team.objects.get(team_name=request.data["team_name"])
+        new_player = Player(
+            first_name=request.data["first_name"],
+            surname=request.data["surname"],
+            team=new_player_team,
+            position=request.data["position"],
+        )
+
+        new_player.save()
+
+        confirmation_message = (
+            f"Player {request.data['surname']}, playing for {new_player_team.team_name}"
+            f" has successfully been added to the database."
+        )
+
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data=confirmation_message,
         )
