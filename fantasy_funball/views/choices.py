@@ -53,7 +53,10 @@ class FunballerPostChoiceView(APIView):
         team_choice = request.data["team_choice"]
         player_choice = int(request.data["player_choice"])
 
-        check_for_passed_deadline(gameweek_deadline=gameweek_obj.deadline)
+        deadline_passed_check = request.data["deadline_passed_check"]
+
+        if deadline_passed_check:
+            check_for_passed_deadline(gameweek_deadline=gameweek_obj.deadline)
 
         # Check if team/player has already been selected
         team_selection_check(
