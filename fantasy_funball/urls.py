@@ -10,6 +10,7 @@ from fantasy_funball.views.fixtures import (
     RetrieveFixture,
     RetrieveGameday,
     RetrieveGameweek,
+    UpdateGameweekFixtures,
 )
 from fantasy_funball.views.funballer import FunballerView, SingleFunballerView
 from fantasy_funball.views.gameweek_summary import GameweekSummaryViewset
@@ -40,6 +41,11 @@ urlpatterns = [
         "gameweek/all/",
         RetrieveAllGameweeks.as_view(),
         name="retrieve-all-gameweeks",
+    ),
+    path(
+        "gameweek/<int:gameweek_no>/update_fixtures/",
+        UpdateGameweekFixtures.as_view(),
+        name="update-fixtures",
     ),
     path(
         "gameweek/summary/", GameweekSummaryViewset.as_view(), name="gameweek-summary"
