@@ -14,7 +14,11 @@ from fantasy_funball.views.fixtures import (
 )
 from fantasy_funball.views.funballer import FunballerView, SingleFunballerView
 from fantasy_funball.views.gameweek_summary import GameweekSummaryViewset
-from fantasy_funball.views.player import PlayerTeamView, PlayerView
+from fantasy_funball.views.player import (
+    AddPlayerView,
+    PlayerTeamView,
+    RetrievePlayerView,
+)
 from fantasy_funball.views.update_database import UpdateDatabaseView
 
 urlpatterns = [
@@ -51,7 +55,8 @@ urlpatterns = [
         "gameweek/summary/", GameweekSummaryViewset.as_view(), name="gameweek-summary"
     ),
     path("<str:team_name>/players/", PlayerTeamView.as_view(), name="retrieve-players"),
-    path("players/", PlayerView.as_view(), name="retrieve-all-players"),
+    path("players/", RetrievePlayerView.as_view(), name="retrieve-all-players"),
+    path("players/add/", AddPlayerView.as_view(), name="add-player"),
     path("update_database/", UpdateDatabaseView.as_view(), name="update-database"),
     path(
         "funballer/choices/valid_teams/<str:funballer_name>",
