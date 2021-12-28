@@ -123,9 +123,12 @@ class FunballerRemainingTeamChoice(APIView):
             raise ChoicesNotFoundError(f"Choices for {funballer_name} not found")
 
         all_teams = Team.objects.all().values("team_name")
-        all_team_names = []
-        for team in all_teams:
-            all_team_names.append(team["team_name"])
+
+        all_team_names = [
+            team["team_name"]
+            for team in all_teams
+            if team["team_name"] != "Gameweek Void"
+        ]
 
         team_choices = [choice["team_choice__team_name"] for choice in choices]
 
