@@ -54,7 +54,7 @@ def remove_players():
     fpl_interface = FPLInterface()
     fpl_players = fpl_interface.retrieve_players()
 
-    db_players = list(Player.objects.all())
+    db_players = list(Player.objects.exclude(surname="Void"))
     for db_player in db_players:
         try:
             _ = next(
