@@ -6,8 +6,8 @@ from fantasy_funball.views.choices import (
     FunballerRemainingTeamChoice,
 )
 from fantasy_funball.views.fixtures import (
+    FixtureViewSet,
     RetrieveAllGameweeks,
-    RetrieveFixture,
     RetrieveGameday,
     RetrieveGameweek,
     UpdateGameweekFixtures,
@@ -34,7 +34,7 @@ urlpatterns = [
         FunballerGetChoiceView.as_view(),
         name="funballer-get-choices",
     ),
-    path("fixture/<int:id>", RetrieveFixture.as_view(), name="retrieve-fixture"),
+    path("fixture/<int:id>", FixtureViewSet.as_view(), name="retrieve-delete-fixture"),
     path("gameday/<int:id>", RetrieveGameday.as_view(), name="retrieve-gameday"),
     path(
         "gameweek/<int:gameweek_no>",

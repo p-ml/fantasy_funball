@@ -18,7 +18,7 @@ from fantasy_funball.logic.update_fixtures import (
 from fantasy_funball.models import Fixture, Gameday, Gameweek
 
 
-class RetrieveFixture(APIView):
+class FixtureViewSet(APIView):
     """Viewset to handle fixtures"""
 
     def get(self, request: WSGIRequest, id: int) -> Response:
@@ -36,6 +36,21 @@ class RetrieveFixture(APIView):
         return Response(
             status=status.HTTP_200_OK,
             data=formatted_fixture,
+        )
+
+    def delete(self, request: WSGIRequest, id: int) -> Response:
+        """Delete fixture from postgres db"""
+        try:
+            fixture = Fixture.objects.get(id=id)
+        except Fixture.DoesNotExist:
+            raise FixtureNotFoundError(f"Fixture with id {id} not found")
+
+        fixture.delete()
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=f"Fixture with id {id} - {fixture.home_team.team_name} vs "
+            f"{fixture.away_team.team_name} has been successfully deleted.",
         )
 
 
