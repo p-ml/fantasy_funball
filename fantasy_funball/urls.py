@@ -7,6 +7,7 @@ from fantasy_funball.views.choices import (
 )
 from fantasy_funball.views.fixtures import (
     FixtureViewSet,
+    InsertGameweekFixtures,
     RetrieveAllGameweeks,
     RetrieveGameday,
     RetrieveGameweek,
@@ -50,6 +51,11 @@ urlpatterns = [
         "gameweek/<int:gameweek_no>/update_fixtures/",
         UpdateGameweekFixtures.as_view(),
         name="update-fixtures",
+    ),
+    path(
+        "gameweek/<int:gameweek_no>/insert_fixtures/",
+        InsertGameweekFixtures.as_view(),
+        name="add-fixtures",
     ),
     path(
         "gameweek/summary/", GameweekSummaryViewset.as_view(), name="gameweek-summary"

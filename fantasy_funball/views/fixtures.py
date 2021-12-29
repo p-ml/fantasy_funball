@@ -145,3 +145,16 @@ class UpdateGameweekFixtures(APIView):
             status=status.HTTP_200_OK,
             data=f"Fixtures for gameweek {gameweek_no} updated successfully",
         )
+
+
+class InsertGameweekFixtures(APIView):
+    def get(self, request: WSGIRequest, gameweek_no: int) -> Response:
+        """
+        Add fixtures to gameweek, with assumption that gamedays have already been
+        set up"""
+        insert_new_fixtures(gameweek_no=gameweek_no)
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=f"Fixtures for gameweek {gameweek_no} added successfully",
+        )
