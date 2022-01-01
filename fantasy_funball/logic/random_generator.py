@@ -8,17 +8,8 @@ django.setup()
 from fantasy_funball.models import Choices, Fixture, Funballer, Gameweek, Player, Team
 
 
-def get_random_team(
-    gameweek_no: int,
-    non_permitted_teams: List[Team] = None,
-) -> Team:
-    """
-    Retrieve a random team from the database; takes into account teams playing in
-    the given gameweek, and excludes teams which have already been chosen twice.
-    """
-    if non_permitted_teams is None:
-        non_permitted_teams = []
-
+def get_teams_playing_in_gameweek(gameweek_no: int) -> List[Team]:
+    """Retrieve a list of teams which played in the given gameweek"""
     # Get ids of teams in gameweek
     team_ids_in_gameweek = list(
         Fixture.objects.filter(gameday__gameweek__gameweek_no=gameweek_no).values(
@@ -31,6 +22,23 @@ def get_random_team(
         all_team_ids.extend((fixture["home_team"], fixture["away_team"]))
     all_teams = list(Team.objects.all().filter(id__in=all_team_ids))
 
+    return all_teams
+
+
+def get_random_team(
+    gameweek_no: int,
+    non_permitted_teams: List[Team] = None,
+) -> Team:
+    """
+    Retrieve a random team from the database; takes into account teams playing in
+    the given gameweek, and excludes teams which have already been chosen twice.
+    """
+    if non_permitted_teams is None:
+        non_permitted_teams = []
+
+    # Only allow selection from the teams that played
+    all_teams = get_teams_playing_in_gameweek(gameweek_no=gameweek_no)
+
     # Do not allow "void" team to be selected
     void_team = Team.objects.get(team_name="Gameweek Void")
     non_permitted_teams.append(void_team)
@@ -42,15 +50,22 @@ def get_random_team(
     return permitted_teams[team_index]
 
 
-def get_random_player(non_permitted_players: List[Player] = None) -> Player:
-    """Retrieve a random midfielder/forward from the database"""
+def get_random_player(
+    gameweek_no: int, non_permitted_players: List[Player] = None
+) -> Player:
+    """Retrieve a random midfielder/forward from the database; takes into account
+    teams playing in the given gameweek."""
     if non_permitted_players is None:
         non_permitted_players = []
+
+    # Only allow selection from the teams that played
+    all_teams = get_teams_playing_in_gameweek(gameweek_no=gameweek_no)
 
     # Get all midfielders & forwards
     all_players = list(
         Player.objects.filter(
             position__in={"Midfielder", "Forward"},
+            team__in=all_teams,
         )
     )
 
