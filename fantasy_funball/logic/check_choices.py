@@ -141,7 +141,7 @@ def allocate_choices(
             gameweek_no=gameweek_no,
         )
         random_player = get_random_player(
-            non_permitted_players=funballer_player_choices
+            gameweek_no=gameweek_no, non_permitted_players=funballer_player_choices
         )
 
         # Get gameweek obj from gameweek no
@@ -242,6 +242,7 @@ def determine_player_played_in_fixture(
 
 
 def assign_new_player_if_pick_did_not_play(
+    gameweek_no: int,
     player: Player,
     weekly_fixtures: List[Fixture],
     fpl_players: List,
@@ -286,6 +287,7 @@ def assign_new_player_if_pick_did_not_play(
                 )
 
                 new_player = get_random_player(
+                    gameweek_no=gameweek_no,
                     non_permitted_players=funballer_player_picks,
                 )
                 return assign_new_player_if_pick_did_not_play(
@@ -327,6 +329,7 @@ def check_player_picks_played(gameweek_no: int):
         player = Player.objects.get(id=pick.player_choice_id)
 
         new_player = assign_new_player_if_pick_did_not_play(
+            gameweek_no=gameweek_no,
             player=player,
             weekly_fixtures=weekly_fixtures,
             fpl_players=fpl_players,
