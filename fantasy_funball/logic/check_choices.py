@@ -270,34 +270,39 @@ def assign_new_player_if_pick_did_not_play(
 
             if player_played:
                 # Player has played -> Valid choice
-                return player
-
-            if not player_played:
-                # Player didn't play -> allocate random player
                 logger.info(
-                    f"{player.surname} did not play. Allocating random choice for "
+                    f"{player.surname} confirmed for "
                     f"funballer with id {pick.funballer_id}"
                 )
+                return player
 
-                # Get list of funballer's player picks so far
-                funballer_player_picks = list(
-                    Choices.objects.filter(
-                        funballer_id=pick.funballer_id,
-                    ).values("player_choice")
-                )
+        if not player_played or not players_fixture_has_finished:
+            # Player didn't play -> allocate random player
+            logger.info(
+                f"{player.surname} did not play. Allocating random choice for "
+                f"funballer with id {pick.funballer_id}"
+            )
 
-                new_player = get_random_player(
-                    gameweek_no=gameweek_no,
-                    non_permitted_players=funballer_player_picks,
-                )
-                return assign_new_player_if_pick_did_not_play(
-                    player=new_player,
-                    weekly_fixtures=weekly_fixtures,
-                    fpl_players=fpl_players,
-                    pick=pick,
-                    raw_gameweek_player_data=raw_gameweek_player_data,
-                    player_played=player_played,
-                )
+            # Get list of funballer's player picks so far
+            funballer_player_picks = list(
+                Choices.objects.filter(
+                    funballer_id=pick.funballer_id,
+                ).values("player_choice")
+            )
+
+            new_player = get_random_player(
+                gameweek_no=gameweek_no,
+                non_permitted_players=funballer_player_picks,
+            )
+            return assign_new_player_if_pick_did_not_play(
+                gameweek_no=gameweek_no,
+                player=new_player,
+                weekly_fixtures=weekly_fixtures,
+                fpl_players=fpl_players,
+                pick=pick,
+                raw_gameweek_player_data=raw_gameweek_player_data,
+                player_played=player_played,
+            )
 
     return player
 
