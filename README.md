@@ -41,5 +41,4 @@ of the application code.
 
 ## Todo
 - Bulk out tests (both unit and functional)
-- Get docker set up for running functional tests
 
