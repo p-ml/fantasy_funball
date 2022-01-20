@@ -1,6 +1,6 @@
 # Fantasy Funball 2: Electric Boogaloo
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](http://fantasy-funball-streamlit.herokuapp.com/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/p-ml/fantasy_funball_streamlit/fantasy_funball.py)
 ![Testing Workflow](https://github.com/p-ml/fantasy_funball/actions/workflows/testing_workflow.yml/badge.svg)
 
 
@@ -41,5 +41,4 @@ of the application code.
 
 ## Todo
 - Bulk out tests (both unit and functional)
-- Get docker set up for running functional tests
 

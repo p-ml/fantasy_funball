@@ -25,12 +25,12 @@ if __name__ == "__main__":
     logger.info(f"Game paused: {game_paused}")
     logger.info(f"Gameweek no: {gameweek_no}")
 
-    # if gameweek_no > 0 and not game_paused:
-    check_choices_if_deadline_day(gameweek_no=gameweek_no)
-    update_results(gameweek_no=gameweek_no)
-    check_teams_and_lineups(gameweek_no=gameweek_no)
-    update_standings(gameweek_no=gameweek_no)
-    update_fixtures(gameweek_no=gameweek_no)
+    if gameweek_no > 0 and not game_paused:
+        check_choices_if_deadline_day(gameweek_no=gameweek_no)
+        update_results(gameweek_no=gameweek_no)
+        check_teams_and_lineups(gameweek_no=gameweek_no)
+        update_standings(gameweek_no=gameweek_no)
+        update_fixtures(gameweek_no=gameweek_no)
 
-    # else:
-    #     print("Season has not started yet")
+    else:
+        print("Season has not started yet")
