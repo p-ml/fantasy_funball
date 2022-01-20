@@ -150,11 +150,14 @@ class FPLInterface:
 
         return team_assist_structure
 
-    def _determine_gameday_from_teams(self, home_team: str, away_team: str):
+    def _determine_gameday_from_teams(
+            self, gameweek_no: int, home_team: str, away_team: str,
+    ):
         # Check fixtures in db to get gameday_id
         gameday = Fixture.objects.get(
             home_team__team_name=home_team,
             away_team__team_name=away_team,
+            gameday__gameweek__gameweek_no=gameweek_no,
         )
 
         return gameday.gameday_id
@@ -182,6 +185,7 @@ class FPLInterface:
 
             # Get gameday id using team names
             gameday_id = self._determine_gameday_from_teams(
+                gameweek_no=gameweek_no,
                 home_team=home_team_name,
                 away_team=away_team_name,
             )
@@ -284,5 +288,11 @@ class FPLInterface:
 
 
 if __name__ == "__main__":
-    fpl_interface = FPLInterface()
-    results = fpl_interface.retrieve_weekly_scorers(gameweek_no=1)
+    # test _determine_gameday_from_teams
+    interface = FPLInterface()
+    gameday = interface._determine_gameday_from_teams(
+        gameweek_no=22,
+        home_team="Newcastle",
+        away_team="Watford",
+    )
+
