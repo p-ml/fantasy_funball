@@ -13,7 +13,6 @@ from fantasy_funball.scheduler.update_players import update_players
 
 logger = logging.getLogger("papertrail")
 
-
 if __name__ == "__main__":
     # Run at midnight every day by Heroku Job Scheduler
 
@@ -25,7 +24,7 @@ if __name__ == "__main__":
     logger.info(f"Game paused: {game_paused}")
     logger.info(f"Gameweek no: {gameweek_no}")
 
-    if gameweek_no > 0 and not game_paused:
+    if gameweek_no > 0:
         check_choices_if_deadline_day(gameweek_no=gameweek_no)
         update_results(gameweek_no=gameweek_no)
         check_teams_and_lineups(gameweek_no=gameweek_no)
