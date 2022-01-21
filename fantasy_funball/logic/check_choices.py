@@ -9,8 +9,10 @@ import pytz
 import requests
 
 from fantasy_funball.fpl_interface.interface import FPLInterface
-from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
-from fantasy_funball.logic.random_generator import get_random_player, get_random_team
+from fantasy_funball.logic.random_generator import (
+    get_random_player,
+    get_random_team,
+)
 
 django.setup()
 
@@ -230,7 +232,7 @@ def determine_player_played_in_fixture(
         )
     except StopIteration:
         # Seems not all players from FPL API appear in gameweek stats?
-        player_played = False
+        return False
 
     # Check minutes
     if players_fpl_gameweek_stats["stats"]["minutes"] == 0:
@@ -423,9 +425,3 @@ def check_teams_and_lineups(gameweek_no: int):
     if final_gameweek_day:
         check_teams_played(gameweek_no=gameweek_no)
         check_player_picks_played(gameweek_no=gameweek_no)
-
-
-if __name__ == "__main__":
-    prev_gameweek_no = determine_gameweek_no()
-    check_choices(gameweek_no=prev_gameweek_no)
-    check_player_picks_played(gameweek_no=prev_gameweek_no)
