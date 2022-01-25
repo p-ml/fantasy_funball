@@ -57,9 +57,7 @@ urlpatterns = [
         InsertGameweekFixtures.as_view(),
         name="add-fixtures",
     ),
-    path(
-        "gameweek/summary/", GameweekSummaryViewset.as_view(), name="gameweek-summary"
-    ),
+    path("gameweek/summary/", GameweekSummaryViewset.as_view(), name="gameweek-summary"),
     path("<str:team_name>/players/", PlayerTeamView.as_view(), name="retrieve-players"),
     path("players/", RetrievePlayerView.as_view(), name="retrieve-all-players"),
     path("players/add/", AddPlayerView.as_view(), name="add-player"),

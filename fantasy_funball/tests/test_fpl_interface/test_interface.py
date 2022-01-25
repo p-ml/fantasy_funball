@@ -236,9 +236,7 @@ class TestFPLInterface(TestCase):
         mock_gameday = Mock(spec=Gameday)
         mock_get_gameday.return_value = mock_gameday
 
-        kickoff_datetime = datetime.strptime(
-            "2021-08-13T19:00:00Z", "%Y-%m-%dT%H:%M:%SZ"
-        )
+        kickoff_datetime = datetime.strptime("2021-08-13T19:00:00Z", "%Y-%m-%dT%H:%M:%SZ")
 
         expected_output = [
             {

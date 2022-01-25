@@ -81,9 +81,7 @@ def get_weekly_assists(weekly_result_data: List) -> Set:
 
 
 def get_weekly_scorers_and_assists(gameweek_no: int) -> ScorerAssistIds:
-    weekly_result_data = Result.objects.filter(
-        gameday__gameweek__gameweek_no=gameweek_no
-    )
+    weekly_result_data = Result.objects.filter(gameday__gameweek__gameweek_no=gameweek_no)
 
     # Convert QuerySet to list
     weekly_result_data = list(weekly_result_data)
@@ -129,10 +127,7 @@ def update_standings(gameweek_no: int):
                 pick.save()
 
         if not pick.player_point_awarded:
-            if (
-                pick.player_choice_id in scorer_ids
-                or pick.player_choice_id in assist_ids
-            ):
+            if pick.player_choice_id in scorer_ids or pick.player_choice_id in assist_ids:
                 # Increment funballer player_points
                 funballer = Funballer.objects.get(
                     id=pick.funballer_id,

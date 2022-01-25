@@ -40,8 +40,8 @@ def setup_results() -> None:
         scorers_surnames = {x.split(" ")[1] for x in result["scorers"]}
         assists_surnames = {x.split(" ")[1] for x in result["assists"]}
 
-        scorers = list(Player.objects.filter(surname__in=scorers_surnames))
-        assists = list(Player.objects.filter(surname__in=assists_surnames))
+        scorers = list(Player.objects.filter(surname__in=scorers_surnames))  # noqa: F841
+        assists = list(Player.objects.filter(surname__in=assists_surnames))  # noqa: F841
 
         result_inst = Result(
             home_team=Team.objects.get(team_name=result["home_team"]),

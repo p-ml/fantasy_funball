@@ -9,16 +9,14 @@ from functional_tests.harness import FunctionalTestHarness
 
 class TestFunballerView(TestCase):
     def setUp(self) -> None:
-        self.funballer_url = (
-            "http://0.0.0.0:8080/fantasy_funball/funballer/"
-        )
+        self.funballer_url = "http://0.0.0.0:8080/fantasy_funball/funballer/"
         self.dummy_funballer_data = {
             "first_name": "functional",
             "surname": "test",
             "points": 100,
             "team_points": 80,
             "player_points": 25,
-            "pin": "9876"
+            "pin": "9876",
         }
 
     def tearDown(self) -> None:
@@ -51,9 +49,7 @@ class TestFunballerView(TestCase):
         )
 
         # Then, get that funballer
-        get_response = requests.get(
-            url=f"{self.funballer_url}{funballer_id}"
-        )
+        get_response = requests.get(url=f"{self.funballer_url}{funballer_id}")
         get_response_content = json.loads(get_response.content)
         get_response_content.pop("id")
 
@@ -66,16 +62,12 @@ class TestFunballerView(TestCase):
         get_response_invalid_id = requests.get(
             url=f"{self.funballer_url}{invalid_funballer_id}"
         )
-        get_response_invalid_id_content = json.loads(
-            get_response_invalid_id.content
-        )
+        get_response_invalid_id_content = json.loads(get_response_invalid_id.content)
 
-        self.assertTrue(
-            get_response_invalid_id.status_code, status.HTTP_404_NOT_FOUND
-        )
+        self.assertTrue(get_response_invalid_id.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
             get_response_invalid_id_content["detail"],
-            f"Funballer with id {invalid_funballer_id} not found"
+            f"Funballer with id {invalid_funballer_id} not found",
         )
 
     def test_retrieve_all_funballers(self):
@@ -91,7 +83,7 @@ class TestFunballerView(TestCase):
             "points": 50,
             "team_points": 20,
             "player_points": 30,
-            "pin": "6543"
+            "pin": "6543",
         }
         self._post_funballer(
             funballer_data=second_funballer_data,

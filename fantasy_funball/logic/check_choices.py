@@ -9,10 +9,7 @@ import pytz
 import requests
 
 from fantasy_funball.fpl_interface.interface import FPLInterface
-from fantasy_funball.logic.random_generator import (
-    get_random_player,
-    get_random_team,
-)
+from fantasy_funball.logic.random_generator import get_random_player, get_random_team
 
 django.setup()
 
@@ -122,9 +119,7 @@ def allocate_choices(
         all_funballer_choices = list(Choices.objects.filter(funballer=funballer))
 
         # Get all funballer's team picks
-        funballer_team_choices = [
-            choice.team_choice for choice in all_funballer_choices
-        ]
+        funballer_team_choices = [choice.team_choice for choice in all_funballer_choices]
 
         # Get all funballer's player picks
         funballer_player_choices = [
