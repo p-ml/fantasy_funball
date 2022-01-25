@@ -15,11 +15,7 @@ from fantasy_funball.views.fixtures import (
 )
 from fantasy_funball.views.funballer import FunballerView, SingleFunballerView
 from fantasy_funball.views.gameweek_summary import GameweekSummaryViewset
-from fantasy_funball.views.player import (
-    AddPlayerView,
-    PlayerTeamView,
-    RetrievePlayerView,
-)
+from fantasy_funball.views.player import AddPlayerView, PlayerTeamView, RetrievePlayerView
 from fantasy_funball.views.update_database import UpdateDatabaseView
 
 urlpatterns = [
