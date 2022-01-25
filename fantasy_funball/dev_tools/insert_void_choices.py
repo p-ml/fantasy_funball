@@ -2,19 +2,13 @@ import django
 
 django.setup()
 
-from fantasy_funball.models import Choices, Player, Team, Gameweek, Funballer
+from fantasy_funball.models import Choices, Funballer, Gameweek, Player, Team
 
 
 def insert_void_choices(gameweek_no: int) -> None:
-    gameweek_choices = list(
-        Choices.objects.all().filter(
-            gameweek_id=gameweek_no
-        )
-    )
+    gameweek_choices = list(Choices.objects.all().filter(gameweek_id=gameweek_no))
 
-    funballers_with_choices = [
-        choice.funballer_id for choice in gameweek_choices
-    ]
+    funballers_with_choices = [choice.funballer_id for choice in gameweek_choices]
 
     funballers_with_no_choices = [
         x for x in range(1, 11) if x not in funballers_with_choices
