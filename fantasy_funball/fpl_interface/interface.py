@@ -60,9 +60,7 @@ class FPLInterface:
 
     def retrieve_weekly_scorers(self, gameweek_no: int) -> Dict:
         """Get fantasy funball IDs of gameweek scorers"""
-        request_response = requests.get(
-            url=f"{self.base_url}/event/{gameweek_no}/live/"
-        )
+        request_response = requests.get(url=f"{self.base_url}/event/{gameweek_no}/live/")
         raw_weekly_data = json.loads(request_response.content)
 
         # Get the FPL API ID of each goal scorer for requested gameweek
@@ -106,9 +104,7 @@ class FPLInterface:
 
     def retrieve_weekly_assists(self, gameweek_no: int) -> Dict:
         """Get fantasy funball IDs of gameweek assisters"""
-        request_response = requests.get(
-            url=f"{self.base_url}/event/{gameweek_no}/live/"
-        )
+        request_response = requests.get(url=f"{self.base_url}/event/{gameweek_no}/live/")
         raw_weekly_data = json.loads(request_response.content)
 
         # Get the FPL API ID of each assister for requested gameweek
@@ -151,7 +147,10 @@ class FPLInterface:
         return team_assist_structure
 
     def _determine_gameday_from_teams(
-            self, gameweek_no: int, home_team: str, away_team: str,
+        self,
+        gameweek_no: int,
+        home_team: str,
+        away_team: str,
     ):
         # Check fixtures in db to get gameday_id
         gameday = Fixture.objects.get(
@@ -295,4 +294,3 @@ if __name__ == "__main__":
         home_team="Newcastle",
         away_team="Watford",
     )
-

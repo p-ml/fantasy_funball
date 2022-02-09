@@ -2,7 +2,7 @@ import django
 
 django.setup()
 
-from fantasy_funball.models import Funballer, Gameweek, Gameday, Fixture, Team
+from fantasy_funball.models import Fixture, Funballer, Gameday, Gameweek, Team
 
 
 class FunctionalTestHarness:
@@ -40,9 +40,7 @@ class FunctionalTestHarness:
         )
         home_team.save()
 
-        away_team = Team(
-            team_name="Brentford"
-        )
+        away_team = Team(team_name="Brentford")
         away_team.save()
 
         return home_team, away_team

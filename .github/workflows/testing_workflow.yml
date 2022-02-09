@@ -11,13 +11,6 @@ jobs:
     - name: Build docker stack
       run: docker-compose build
 
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        docker-compose run app flake8 fantasy_funball/ --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        docker-compose run app flake8 fantasy_funball/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
     - name: Unit tests
       run: docker-compose run app pytest fantasy_funball/tests/
 
@@ -27,3 +20,8 @@ jobs:
         sleep 5;  # Allow db to spin up
         docker-compose exec -T app pytest functional_tests/
 
+    - name: Lint with flake8 & black
+      run: |
+        docker-compose up -d;
+        docker-compose exec -T app python -m flake8 --benchmark --exit-zero fantasy_funball/;
+        docker-compose exec -T app python -m black --check fantasy_funball;

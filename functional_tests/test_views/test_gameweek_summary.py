@@ -29,4 +29,3 @@ class TestGameweekSummary(TestCase):
         response_content = json.loads(response.content)
         self.assertTrue(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_content, self.gameweek_summary)
-
