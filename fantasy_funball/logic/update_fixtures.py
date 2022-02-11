@@ -3,7 +3,7 @@ import logging
 import django
 
 from fantasy_funball.fpl_interface.interface import FPLInterface
-from fantasy_funball.logic.check_choices import is_final_gameweek_day
+from fantasy_funball.logic.check_choices import has_gameweek_ended
 from fantasy_funball.models import Fixture, Gameday, Gameweek
 
 django.setup()
@@ -77,8 +77,8 @@ def update_gameweek_deadlines(gameweek_no: int) -> None:
 
 def update_fixtures(gameweek_no: int) -> None:
     """Run by scheduler"""
-    final_gameweek_day = is_final_gameweek_day(gameweek_no=gameweek_no)
-    if final_gameweek_day:
+    gameweek_ended = has_gameweek_ended(gameweek_no=gameweek_no)
+    if gameweek_ended:
         upcoming_gameweek_no = gameweek_no + 1
         logger.info(
             f"Refreshing fixtures for upcoming gameweek ({upcoming_gameweek_no})..."
