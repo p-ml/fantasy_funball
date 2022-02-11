@@ -50,8 +50,8 @@ def is_deadline_day(gameweek_no: int) -> bool:
         return False
 
 
-def is_final_gameweek_day(gameweek_no: int):
-    """Checks if today is final day of the gameweek"""
+def has_gameweek_ended(gameweek_no: int):
+    """Checks if gameweek has ended"""
     # Get all gamedays in gameweek
     gameweek_gamedays = list(
         Gameday.objects.filter(
@@ -63,12 +63,18 @@ def is_final_gameweek_day(gameweek_no: int):
     gameweek_gamedays.sort(key=lambda x: x.date, reverse=True)
     final_gameday_date = gameweek_gamedays[0].date
 
+    # Get midnight of final gameday date, otherwise will return true ON final gameday,
+    # rather than day AFTER
+    final_gameday_date_midnight = final_gameday_date + timedelta(
+        hours=23, minutes=59, seconds=59
+    )
+
     # Get todays date, make UTC aware
     utc = pytz.timezone("UTC")
     todays_date = utc.localize(datetime.today())
 
-    if todays_date > final_gameday_date:
-        logger.info(f"Today is final gameday of gameweek {gameweek_no}")
+    if todays_date > final_gameday_date_midnight:
+        logger.info(f"Gameweek {gameweek_no} has ended.")
         return True
     else:
         return False
@@ -415,8 +421,8 @@ def check_teams_played(gameweek_no: int):
 def check_teams_and_lineups(gameweek_no: int):
     """Runs once the gameweek has finished, checks each funballer's player
     pick has played, if not, allocates a random player."""
-    final_gameweek_day = is_final_gameweek_day(gameweek_no=gameweek_no)
+    gameweek_ended = has_gameweek_ended(gameweek_no=gameweek_no)
 
-    if final_gameweek_day:
+    if gameweek_ended:
         check_teams_played(gameweek_no=gameweek_no)
         check_player_picks_played(gameweek_no=gameweek_no)
