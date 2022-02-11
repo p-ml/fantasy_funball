@@ -1,3 +1,5 @@
+import logging
+
 from django.core.handlers.wsgi import WSGIRequest
 from rest_framework import status
 from rest_framework.response import Response
@@ -10,6 +12,8 @@ from fantasy_funball.views.helpers import (
     player_selection_check,
     team_selection_check,
 )
+
+logger = logging.getLogger("papertrail")
 
 
 class FunballerGetChoiceView(APIView):
@@ -92,6 +96,11 @@ class FunballerPostChoiceView(APIView):
             existing_choice.player_choice = updated_player
             existing_choice.save()
 
+            logger.info(
+                f"Funballer {funballer_name} has successfully updated their choice for "
+                f"gameweek {gameweek_no}: {updated_team} and {updated_player}"
+            )
+
             return Response(status=status.HTTP_200_OK, data="Choice updated")
 
         except Choices.DoesNotExist:
@@ -108,6 +117,12 @@ class FunballerPostChoiceView(APIView):
                 player_choice=player,
             )
             choice.save()
+
+            logger.info(
+                f"Funballer {funballer_name} has successfully submitted their choice for "
+                f"gameweek {gameweek_no}: {team.team_name} and {player.first_name} "
+                f"{player.surname}"
+            )
 
             return Response(status=status.HTTP_201_CREATED, data="Choice submitted")
 
