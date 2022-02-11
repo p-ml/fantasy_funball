@@ -239,9 +239,16 @@ class FunballerChoiceView(TestCase):
         mock_funballer = Mock(spec=Funballer)
         mock_funballer.first_name = "Mock"
 
+        mock_team = Mock(spec=Team)
+        mock_team.team_name = "Spurs"
+
+        mock_player = Mock(spec=Player)
+        mock_player.first_name = "First Name"
+        mock_player.surname = "Surname"
+
         mock_retrieve_funballer.return_value = mock_funballer
-        mock_retrieve_team.return_value = {}
-        mock_retrieve_player.return_value = {}
+        mock_retrieve_team.return_value = mock_team
+        mock_retrieve_player.return_value = mock_player
         mock_check_for_passed_deadline.return_value = {}
 
         mock_player_selection_check.return_value = None
