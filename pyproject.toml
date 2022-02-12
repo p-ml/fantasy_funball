@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fantasy_funball"
-version = "1.12.2"
+version = "1.12.1"
 description = "Backend for Fantasy Funball"
 authors = ["Patrick McLaughlin"]
 
