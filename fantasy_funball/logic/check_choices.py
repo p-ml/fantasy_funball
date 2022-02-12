@@ -38,10 +38,9 @@ def is_deadline_day(gameweek_no: int) -> bool:
 
     # When this func returns true, todays_date will be midnight (UTC) next day
     # So go back one day
-    todays_date = date.today()
-    todays_date = todays_date - timedelta(days=1)
+    yesterdays_date = date.today() - timedelta(days=1)
 
-    if todays_date == gameweek_deadline_date:
+    if yesterdays_date == gameweek_deadline_date:
         logger.info("Today is deadline day")
         return True
 
@@ -50,8 +49,9 @@ def is_deadline_day(gameweek_no: int) -> bool:
         return False
 
 
-def has_gameweek_ended(gameweek_no: int):
-    """Checks if gameweek has ended"""
+def has_gameweek_ended(gameweek_no: int) -> bool:
+    """Checks if the final playing day of the gameweek has passed. Will return true only
+    the day AFTER the final playing day of the gameweek."""
     # Get all gamedays in gameweek
     gameweek_gamedays = list(
         Gameday.objects.filter(
@@ -61,26 +61,20 @@ def has_gameweek_ended(gameweek_no: int):
 
     # Sort by date
     gameweek_gamedays.sort(key=lambda x: x.date, reverse=True)
-    final_gameday_date = gameweek_gamedays[0].date
+    final_gameday_date = gameweek_gamedays[0].date.date()
 
-    # Get midnight of final gameday date, otherwise will return true ON final gameday,
-    # rather than day AFTER
-    final_gameday_date_midnight = final_gameday_date + timedelta(
-        hours=23, minutes=59, seconds=59
-    )
+    yesterdays_date = date.today() - timedelta(days=1)
 
-    # Get todays date, make UTC aware
-    utc = pytz.timezone("UTC")
-    todays_date = utc.localize(datetime.today())
-
-    if todays_date > final_gameday_date_midnight:
-        logger.info(f"Gameweek {gameweek_no} has ended.")
+    if yesterdays_date == final_gameday_date:
+        logger.info(f"The final match of gameweek {gameweek_no} has finished.")
         return True
     else:
         return False
 
 
 def check_choices(gameweek_no: int):
+    """Checks for funballers who have not submitted a choice for a given gameweek before
+    the deadline. Then allocates a random team/player to each."""
     logger.info("Checking for funballers who haven't submitted choices...")
 
     choices = list(
