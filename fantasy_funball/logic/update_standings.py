@@ -2,12 +2,7 @@ import logging
 from collections import namedtuple
 from typing import List, Set
 
-import django
-
-django.setup()
-
-from fantasy_funball.models import Choices, Funballer, Result
-from fantasy_funball.models.players import Assists, Goals
+from fantasy_funball.models import Assists, Choices, Funballer, Goals, Result
 
 ScorerAssistIds = namedtuple("ScorerAssistIds", ["scorer_ids", "assist_ids"])
 

@@ -1,7 +1,3 @@
-import django
-
-django.setup()
-
 from fantasy_funball.models import Fixture, Funballer, Gameday, Gameweek, Team
 
 

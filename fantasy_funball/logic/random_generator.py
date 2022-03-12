@@ -1,10 +1,6 @@
 from random import randrange, shuffle
 from typing import List
 
-import django
-
-django.setup()
-
 from fantasy_funball.models import Choices, Fixture, Funballer, Gameweek, Player, Team
 
 

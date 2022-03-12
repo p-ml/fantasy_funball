@@ -1,9 +1,4 @@
-import django
-
-from fantasy_funball.fpl_interface.interface import FPLInterface
-
-django.setup()
-
+from fantasy_funball.fpl_interface import FPLInterface
 from fantasy_funball.models import Result
 
 

@@ -2,13 +2,9 @@ from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-import django
 import pytz
 
-from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
-
-django.setup()
-
+from fantasy_funball.logic import determine_gameweek_no
 from fantasy_funball.models import Gameweek
 
 DETERMINE_GAMEWEEK_PATH = "fantasy_funball.logic.determine_gameweek"

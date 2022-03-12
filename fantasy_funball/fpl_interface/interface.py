@@ -2,11 +2,8 @@ import json
 from datetime import datetime
 from typing import Dict, List, Set
 
-import django
 import pytz
 import requests
-
-django.setup()
 
 from fantasy_funball.models import Fixture, Gameday, Player, Team
 

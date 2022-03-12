@@ -1,15 +1,15 @@
 import logging
 import os
 
-from fantasy_funball.logic.check_choices import (
+from fantasy_funball.logic import (
     check_choices_if_deadline_day,
     check_teams_and_lineups,
+    determine_gameweek_no,
+    update_fixtures,
+    update_players,
+    update_results,
+    update_standings,
 )
-from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
-from fantasy_funball.logic.update_fixtures import update_fixtures
-from fantasy_funball.logic.update_results import update_results
-from fantasy_funball.logic.update_standings import update_standings
-from fantasy_funball.scheduler.update_players import update_players
 
 logger = logging.getLogger("papertrail")
 
@@ -32,4 +32,4 @@ if __name__ == "__main__":
         update_fixtures(gameweek_no=gameweek_no)
 
     else:
-        print("Season has not started yet")
+        logger.info("Season has not started yet")

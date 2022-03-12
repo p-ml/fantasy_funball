@@ -1,7 +1,3 @@
-import django
-
-django.setup()
-
 from fantasy_funball.models import Funballer
 
 
@@ -43,7 +39,3 @@ def test_db_crud():
     Funballer.objects.get(
         id=funballer_id,
     ).delete()
-
-
-if __name__ == "__main__":
-    test_db_crud()

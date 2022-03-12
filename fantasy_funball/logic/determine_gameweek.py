@@ -1,14 +1,11 @@
 from datetime import datetime
 
-import django
 import pytz
-
-django.setup()
 
 from fantasy_funball.models import Gameweek
 
 
-def determine_gameweek_no():
+def determine_gameweek_no() -> int:
     """Uses local time to determine what gameweek number we are in"""
     # Retrieve list of gameweek objects, sorted by deadline
     gameweek_info = list(Gameweek.objects.order_by("deadline"))
