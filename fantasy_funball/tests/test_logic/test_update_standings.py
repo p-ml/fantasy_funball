@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from fantasy_funball.logic.update_standings import (
+from fantasy_funball.logic.standings import (
     ScorerAssistIds,
     determine_gameweek_winners,
     get_gameweek_results,
@@ -12,7 +12,7 @@ from fantasy_funball.logic.update_standings import (
 )
 from fantasy_funball.models import Assists, Choices, Goals, Result, Team
 
-UPDATE_STANDINGS_PATH = "fantasy_funball.logic.update_standings"
+UPDATE_STANDINGS_PATH = "fantasy_funball.logic.standings"
 
 
 class TestUpdateStandings(TestCase):

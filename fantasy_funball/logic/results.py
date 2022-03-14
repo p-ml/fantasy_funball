@@ -67,7 +67,3 @@ def update_results(gameweek_no: int):
                     assists_made=assist["assists_made"],
                 )
                 assist_obj.save()
-
-
-if __name__ == "__main__":
-    update_results(gameweek_no=4)

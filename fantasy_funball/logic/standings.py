@@ -139,7 +139,3 @@ def update_standings(gameweek_no: int):
                 # Mark point awarded for player choice
                 pick.player_point_awarded = True
                 pick.save()
-
-
-if __name__ == "__main__":
-    get_weekly_scorers_and_assists(gameweek_no=4)
