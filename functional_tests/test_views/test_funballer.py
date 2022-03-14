@@ -1,12 +1,14 @@
 import json
 from unittest import TestCase
 
+import pytest
 import requests
 from rest_framework import status
 
 from functional_tests.harness import FunctionalTestHarness
 
 
+@pytest.mark.django_db
 class TestFunballerView(TestCase):
     def setUp(self) -> None:
         self.funballer_url = "http://0.0.0.0:8080/fantasy_funball/funballer/"

@@ -1,12 +1,14 @@
 import json
 from unittest import TestCase
 
+import pytest
 import requests
 from rest_framework import status
 
 from functional_tests.harness import FunctionalTestHarness
 
 
+@pytest.mark.django_db
 class TestGameweekView(TestCase):
     def setUp(self) -> None:
         self.harness = FunctionalTestHarness()
