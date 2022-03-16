@@ -1,14 +1,14 @@
 import json
 from unittest import TestCase
 
-import pytest
+import django
 import requests
 from rest_framework import status
 
+django.setup()
 from functional_tests.harness import FunctionalTestHarness
 
 
-@pytest.mark.django_db
 class TestFunballerView(TestCase):
     def setUp(self) -> None:
         self.funballer_url = "http://0.0.0.0:8080/fantasy_funball/funballer/"
@@ -18,7 +18,7 @@ class TestFunballerView(TestCase):
             "points": 100,
             "team_points": 80,
             "player_points": 25,
-            "pin": "9876",
+            "pin": "4567",
         }
 
     def tearDown(self) -> None:

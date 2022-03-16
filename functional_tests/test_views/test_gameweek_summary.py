@@ -1,12 +1,10 @@
 import json
 from unittest import TestCase
 
-import pytest
 import requests
 from rest_framework import status
 
 
-@pytest.mark.django_db
 class TestGameweekSummary(TestCase):
     def setUp(self) -> None:
         self.gameweek_summary = {"text": "Test Gameweek Summary"}

@@ -1,17 +1,18 @@
 import json
 from unittest import TestCase
 
-import pytest
+import django
 import requests
 from rest_framework import status
 
+django.setup()
 from functional_tests.harness import FunctionalTestHarness
 
 
-@pytest.mark.django_db
 class TestGameweekView(TestCase):
     def setUp(self) -> None:
         self.harness = FunctionalTestHarness()
+
         self.dummy_fixture = self.harness.setup_dummy_fixture()
         self.gameweek_url = "http://0.0.0.0:8080/fantasy_funball/gameweek"
 
