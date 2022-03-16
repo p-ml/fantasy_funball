@@ -20,7 +20,6 @@ black = "*"
 flake8 = "*"
 isort = "*"
 pytest = "*"
-pytest-django = "*"
 pre-commit = "*"
 
 [build-system]
