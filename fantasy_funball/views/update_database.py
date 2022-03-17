@@ -3,9 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
-from fantasy_funball.logic.update_results import update_results
-from fantasy_funball.logic.update_standings import update_standings
+from fantasy_funball.logic.helpers import determine_gameweek_no
+from fantasy_funball.logic.results import update_results
+from fantasy_funball.logic.standings import update_standings
 
 
 class UpdateDatabaseView(APIView):

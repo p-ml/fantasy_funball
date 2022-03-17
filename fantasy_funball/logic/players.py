@@ -1,6 +1,6 @@
 import logging
 
-from fantasy_funball.fpl_interface.interface import FPLInterface
+from fantasy_funball.fpl_interface import FPLInterface
 from fantasy_funball.models import Player, Team
 
 logger = logging.getLogger("papertrail")

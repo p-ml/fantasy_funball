@@ -1,11 +1,8 @@
 from datetime import datetime
 
-import django
 import pytz
 
-from fantasy_funball.logic.determine_gameweek import determine_gameweek_no
-
-django.setup()
+from fantasy_funball.logic import determine_gameweek_no
 
 
 def get_current_datetime() -> datetime:

@@ -1,11 +1,8 @@
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-import django
 from django.test import Client
 from rest_framework import status
-
-django.setup()
 
 from fantasy_funball.models import Player, Team
 

@@ -1,7 +1,3 @@
-import django
-
-django.setup()
-
 from fantasy_funball.models import Choices, Funballer, Gameweek, Player, Team
 
 
@@ -10,6 +6,7 @@ def insert_void_choices(gameweek_no: int) -> None:
 
     funballers_with_choices = [choice.funballer_id for choice in gameweek_choices]
 
+    # TODO: replace range(1,11) with no. of funballers
     funballers_with_no_choices = [
         x for x in range(1, 11) if x not in funballers_with_choices
     ]
