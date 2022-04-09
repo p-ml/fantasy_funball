@@ -160,4 +160,4 @@ class FunballerRemainingTeamChoice(APIView):
             for team in all_team_names
         ]
 
-        return Response(status=status.HTTP_201_CREATED, data=valid_team_selections)
+        return Response(status=status.HTTP_200_OK, data=valid_team_selections)
