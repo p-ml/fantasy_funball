@@ -27,7 +27,7 @@ class GameweekSummaryViewset(APIView):
 
     def put(self, request: WSGIRequest) -> Response:
         """Update gameweek summary"""
-        # Only need 1 record, that overwrites itself on each POST/PATCH
+        # Only need 1 record, that overwrites itself on each PUT
 
         # Check if gameweek summary exists
         gameweek_summary = list(GameweekSummary.objects.all())
