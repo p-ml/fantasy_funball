@@ -1,10 +1,7 @@
 from datetime import datetime
 from typing import List
 
-import django
 import pytz
-
-django.setup()
 
 from fantasy_funball.models import Fixture, Gameweek, Team
 
