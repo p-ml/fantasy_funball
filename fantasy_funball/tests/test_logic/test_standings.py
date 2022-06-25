@@ -75,7 +75,7 @@ class TestUpdateStandings(TestCase):
         self.assertEqual(response, self.mock_teams[0])
 
     @patch(f"{UPDATE_STANDINGS_PATH}.Choices.objects.filter")
-    def test_get_weekly_team_picks_results(
+    def test_get_weekly_team_picks(
         self,
         mock_retrieve_choices,
     ):
@@ -122,7 +122,7 @@ class TestUpdateStandings(TestCase):
     @patch(f"{UPDATE_STANDINGS_PATH}.get_weekly_scorers")
     @patch(f"{UPDATE_STANDINGS_PATH}.list")
     @patch(f"{UPDATE_STANDINGS_PATH}.Result.objects.filter")
-    def test_get_weekly_scorers_assists(
+    def test_get_weekly_scorers_and_assists(
         self,
         mock_retrieve_result,
         mock_convert_queryset,

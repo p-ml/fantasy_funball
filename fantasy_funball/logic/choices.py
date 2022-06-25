@@ -1,5 +1,10 @@
 """At midnight of deadline day, checks if all players have made a choice
 If they haven't, Steve them"""
+
+import django
+
+django.setup()
+
 import json
 import logging
 from datetime import date, datetime, timedelta

@@ -9,14 +9,12 @@ from fantasy_funball.models import Fixture, Gameweek, Team
 def get_teams_playing_in_gameweek(gameweek_no: int) -> List[Team]:
     """Retrieve a list of teams which played in the given gameweek"""
     # Get ids of teams in gameweek
-    team_ids_in_gameweek = list(
-        Fixture.objects.filter(gameday__gameweek__gameweek_no=gameweek_no).values(
-            "home_team", "away_team"
-        )
-    )
+    team_ids_in_gameweek = Fixture.objects.filter(
+        gameday__gameweek__gameweek_no=gameweek_no
+    ).values("home_team", "away_team")
 
     all_team_ids = []
-    for fixture in team_ids_in_gameweek:
+    for fixture in list(team_ids_in_gameweek):
         all_team_ids.extend((fixture["home_team"], fixture["away_team"]))
     all_teams = list(Team.objects.all().filter(id__in=all_team_ids))
 
@@ -39,3 +37,7 @@ def determine_gameweek_no() -> int:
             gameweek_no = gameweek.gameweek_no
 
     return gameweek_no
+
+
+if __name__ == "__main__":
+    get_teams_playing_in_gameweek(gameweek_no=32)

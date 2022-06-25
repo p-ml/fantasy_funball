@@ -80,7 +80,3 @@ def update_players():
     """
     add_players()
     remove_players()
-
-
-if __name__ == "__main__":
-    update_players()
