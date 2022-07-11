@@ -1,9 +1,4 @@
-import django
-
-from fantasy_funball.fpl_interface.interface import FPLInterface
-
-django.setup()
-
+from fantasy_funball.fpl_interface import FPLInterface
 from fantasy_funball.models import Result
 
 
@@ -72,7 +67,3 @@ def update_results(gameweek_no: int):
                     assists_made=assist["assists_made"],
                 )
                 assist_obj.save()
-
-
-if __name__ == "__main__":
-    update_results(gameweek_no=4)

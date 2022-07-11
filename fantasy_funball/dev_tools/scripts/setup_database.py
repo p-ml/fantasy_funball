@@ -1,9 +1,3 @@
-import django
-
-from fantasy_funball.logic.random_generator import generate_steve_choices
-
-django.setup()
-
 from fantasy_funball.dev_tools.scripts import (
     setup_choices,
     setup_fixtures,
@@ -14,6 +8,7 @@ from fantasy_funball.dev_tools.scripts import (
     setup_teams,
     setup_users,
 )
+from fantasy_funball.logic.random_generator import generate_steve_choices
 
 if __name__ == "__main__":
     """Completely wipes the db and sets it up again from scratch"""

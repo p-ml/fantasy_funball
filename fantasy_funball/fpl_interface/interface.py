@@ -2,11 +2,8 @@ import json
 from datetime import datetime
 from typing import Dict, List, Set
 
-import django
 import pytz
 import requests
-
-django.setup()
 
 from fantasy_funball.models import Fixture, Gameday, Player, Team
 
@@ -284,13 +281,3 @@ class FPLInterface:
             gameday_dates_aware.add(gameday_datetime_aware)
 
         return gameday_dates_aware
-
-
-if __name__ == "__main__":
-    # test _determine_gameday_from_teams
-    interface = FPLInterface()
-    gameday = interface._determine_gameday_from_teams(
-        gameweek_no=22,
-        home_team="Newcastle",
-        away_team="Watford",
-    )

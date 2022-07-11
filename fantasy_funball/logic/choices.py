@@ -1,20 +1,20 @@
 """At midnight of deadline day, checks if all players have made a choice
 If they haven't, Steve them"""
-import json
-from datetime import date, datetime, timedelta
-from typing import List
 
 import django
-import pytz
-import requests
-
-from fantasy_funball.fpl_interface.interface import FPLInterface
-from fantasy_funball.logic.random_generator import get_random_player, get_random_team
 
 django.setup()
 
+import json
 import logging
+from datetime import date, datetime, timedelta
+from typing import List
 
+import pytz
+import requests
+
+from fantasy_funball.fpl_interface import FPLInterface
+from fantasy_funball.logic.random_generator import get_random_player, get_random_team
 from fantasy_funball.models import (
     Choices,
     Fixture,

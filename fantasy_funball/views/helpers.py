@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import django
 import pytz
 
 from core.exceptions import (
@@ -8,9 +7,6 @@ from core.exceptions import (
     PlayerSelectedTooManyTimes,
     TeamSelectedTooManyTimes,
 )
-
-django.setup()
-
 from fantasy_funball.models import Choices
 
 
@@ -75,7 +71,3 @@ def player_selection_check(funballer_first_name: str, player_id: int):
         raise PlayerSelectedTooManyTimes(
             f"{funballer_first_name} has selected {player_name} more than once"
         )
-
-
-if __name__ == "__main__":
-    player_selection_check(funballer_first_name="Patrick", player_id=3739)

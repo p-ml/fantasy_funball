@@ -9,7 +9,7 @@ from core.exceptions import (
     GamedayNotFoundError,
     GameweekNotFoundError,
 )
-from fantasy_funball.logic.update_fixtures import (
+from fantasy_funball.logic.fixtures import (
     insert_new_fixtures,
     insert_new_gamedays,
     update_gameweek_deadlines,

@@ -1,12 +1,8 @@
 import logging
 
-import django
-
-from fantasy_funball.fpl_interface.interface import FPLInterface
-from fantasy_funball.logic.check_choices import has_gameweek_ended
+from fantasy_funball.fpl_interface import FPLInterface
+from fantasy_funball.logic.choices import has_gameweek_ended
 from fantasy_funball.models import Fixture, Gameday, Gameweek
-
-django.setup()
 
 logger = logging.getLogger("papertrail")
 

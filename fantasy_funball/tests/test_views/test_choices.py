@@ -1,26 +1,25 @@
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-import django
 from django.test import Client
 from rest_framework import status
 
-django.setup()
-
 from fantasy_funball.models import Choices, Funballer, Gameweek, Player, Team
 
-FUNBALLER_VIEW_PATH = "fantasy_funball.views.choices"
+CHOICES_VIEW_PATH = "fantasy_funball.views.choices"
 
 
 class FunballerChoiceView(TestCase):
     def setUp(self) -> None:
         self.client = Client()
+        self.base_url = "/fantasy_funball/funballer/choices"
+        self.funballer_name = "patrick"
 
-    @patch(f"{FUNBALLER_VIEW_PATH}.Choices.objects.filter")
+    @patch(f"{CHOICES_VIEW_PATH}.Choices.objects.filter")
     def test_get(self, mock_retrieve_choices):
         expected_output = [
             {
-                "funballer_id__first_name": "Patrick",
+                "funballer_id__first_name": self.funballer_name,
                 "gameweek_id__gameweek_no": 1,
                 "team_choice__team_name": "Spurs",
                 "player_choice__first_name": "Hugo",
@@ -30,12 +29,12 @@ class FunballerChoiceView(TestCase):
 
         mock_retrieve_choices.return_value.values.return_value = expected_output
 
-        response = self.client.get("/fantasy_funball/funballer/choices/patrick")
+        response = self.client.get(f"{self.base_url}/{self.funballer_name}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, expected_output)
 
-    @patch(f"{FUNBALLER_VIEW_PATH}.Choices.objects.filter")
+    @patch(f"{CHOICES_VIEW_PATH}.Choices.objects.filter")
     def test_get_choice_not_found(self, mock_retrieve_choices):
         mock_retrieve_choices.side_effect = Choices.DoesNotExist
         invalid_funballer_name = "tony"
@@ -50,14 +49,14 @@ class FunballerChoiceView(TestCase):
             f"Choices for {invalid_funballer_name} not found",
         )
 
-    @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
-    @patch(f"{FUNBALLER_VIEW_PATH}.player_selection_check")
-    @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Team.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Choices")
+    @patch(f"{CHOICES_VIEW_PATH}.team_selection_check")
+    @patch(f"{CHOICES_VIEW_PATH}.player_selection_check")
+    @patch(f"{CHOICES_VIEW_PATH}.check_for_passed_deadline")
+    @patch(f"{CHOICES_VIEW_PATH}.Player.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Gameweek.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Funballer.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Team.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Choices")
     def test_post_update_existing_choice(
         self,
         mock_choice,
@@ -88,7 +87,7 @@ class FunballerChoiceView(TestCase):
         mock_team_selection_check.return_value = None
 
         response = self.client.post(
-            path="/fantasy_funball/funballer/choices/submit/0000",
+            path=f"{self.base_url}/submit/0000",
             data={
                 "gameweek_no": 1,
                 "team_choice": "Tottenham Hotspur",
@@ -100,13 +99,13 @@ class FunballerChoiceView(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(str(response.data), "Choice updated")
 
-    @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
-    @patch(f"{FUNBALLER_VIEW_PATH}.player_selection_check")
-    @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Team.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Choices.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.team_selection_check")
+    @patch(f"{CHOICES_VIEW_PATH}.player_selection_check")
+    @patch(f"{CHOICES_VIEW_PATH}.check_for_passed_deadline")
+    @patch(f"{CHOICES_VIEW_PATH}.Gameweek.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Funballer.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Team.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Choices.objects.get")
     def test_post_update_existing_choice_team_not_found(
         self,
         mock_retrieve_choices,
@@ -136,7 +135,7 @@ class FunballerChoiceView(TestCase):
         mock_retrieve_team.side_effect = Team.DoesNotExist
 
         response = self.client.post(
-            path="/fantasy_funball/funballer/choices/submit/0000",
+            path=f"{self.base_url}/submit/0000",
             data={
                 "gameweek_no": 1,
                 "team_choice": invalid_team_choice,
@@ -152,14 +151,14 @@ class FunballerChoiceView(TestCase):
             f"Team with name {invalid_team_choice} not found",
         )
 
-    @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
-    @patch(f"{FUNBALLER_VIEW_PATH}.player_selection_check")
-    @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Team.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Choices.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.team_selection_check")
+    @patch(f"{CHOICES_VIEW_PATH}.player_selection_check")
+    @patch(f"{CHOICES_VIEW_PATH}.check_for_passed_deadline")
+    @patch(f"{CHOICES_VIEW_PATH}.Player.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Gameweek.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Funballer.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Team.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Choices.objects.get")
     def test_post_update_existing_choice_player_not_found(
         self,
         mock_retrieve_choices,
@@ -191,7 +190,7 @@ class FunballerChoiceView(TestCase):
         mock_check_for_passed_deadline.return_value = {}
 
         response = self.client.post(
-            path="/fantasy_funball/funballer/choices/submit/0000",
+            path=f"{self.base_url}/submit/0000",
             data={
                 "gameweek_no": 1,
                 "team_choice": "Barcelona",
@@ -207,14 +206,14 @@ class FunballerChoiceView(TestCase):
             f"Player with id {invalid_player_choice} not found",
         )
 
-    @patch(f"{FUNBALLER_VIEW_PATH}.team_selection_check")
-    @patch(f"{FUNBALLER_VIEW_PATH}.player_selection_check")
-    @patch(f"{FUNBALLER_VIEW_PATH}.check_for_passed_deadline")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Player.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Gameweek.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Funballer.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Team.objects.get")
-    @patch(f"{FUNBALLER_VIEW_PATH}.Choices")
+    @patch(f"{CHOICES_VIEW_PATH}.team_selection_check")
+    @patch(f"{CHOICES_VIEW_PATH}.player_selection_check")
+    @patch(f"{CHOICES_VIEW_PATH}.check_for_passed_deadline")
+    @patch(f"{CHOICES_VIEW_PATH}.Player.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Gameweek.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Funballer.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Team.objects.get")
+    @patch(f"{CHOICES_VIEW_PATH}.Choices")
     def test_post_new_choice(
         self,
         mock_choices,
@@ -255,7 +254,7 @@ class FunballerChoiceView(TestCase):
         mock_team_selection_check.return_value = None
 
         response = self.client.post(
-            path="/fantasy_funball/funballer/choices/submit/0000",
+            path=f"{self.base_url}/submit/0000",
             data={
                 "gameweek_no": 1,
                 "team_choice": "Tottenham Hotspur",
@@ -266,3 +265,64 @@ class FunballerChoiceView(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(str(response.data), "Choice submitted")
+
+    @patch(f"{CHOICES_VIEW_PATH}.Team.objects.all")
+    @patch(f"{CHOICES_VIEW_PATH}.Choices.objects.filter")
+    def test_get_remaining_team_choices(
+        self,
+        mock_choices,
+        mock_teams,
+    ):
+        mock_choices.return_value.values.return_value = [
+            {"team_choice__team_name": "Spurs"},
+            {"team_choice__team_name": "Spurs"},
+            {"team_choice__team_name": "Brentford"},
+        ]
+
+        mock_teams.return_value.values.return_value = [
+            {"team_name": "Spurs"},
+            {"team_name": "Brentford"},
+            {"team_name": "Liverpool"},
+            {"team_name": "Gameweek Void"},
+        ]
+
+        expected_output = [
+            {
+                "team_name": "Spurs",
+                "remaining_selections": 0,
+            },
+            {
+                "team_name": "Brentford",
+                "remaining_selections": 1,
+            },
+            {
+                "team_name": "Liverpool",
+                "remaining_selections": 2,
+            },
+        ]
+
+        response = self.client.get(
+            path=f"{self.base_url}/valid_teams/{self.funballer_name}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, expected_output)
+
+    @patch(f"{CHOICES_VIEW_PATH}.Choices.objects.filter")
+    def test_get_remaining_team_choices_choices_not_found(
+        self,
+        mock_choices,
+    ):
+        mock_choices.DoesNotExist = BaseException
+        mock_choices.side_effect = Choices.DoesNotExist
+
+        response = self.client.get(
+            path=f"{self.base_url}/valid_teams/{self.funballer_name}"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(response.exception)
+        self.assertEqual(
+            str(response.data["detail"]),
+            f"Choices for {self.funballer_name} not found",
+        )

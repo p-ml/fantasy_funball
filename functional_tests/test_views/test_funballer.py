@@ -1,9 +1,11 @@
 import json
 from unittest import TestCase
 
+import django
 import requests
 from rest_framework import status
 
+django.setup()
 from functional_tests.harness import FunctionalTestHarness
 
 
@@ -16,7 +18,7 @@ class TestFunballerView(TestCase):
             "points": 100,
             "team_points": 80,
             "player_points": 25,
-            "pin": "9876",
+            "pin": "4567",
         }
 
     def tearDown(self) -> None:

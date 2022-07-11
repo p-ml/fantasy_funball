@@ -1,28 +1,8 @@
 from random import randrange, shuffle
 from typing import List
 
-import django
-
-django.setup()
-
-from fantasy_funball.models import Choices, Fixture, Funballer, Gameweek, Player, Team
-
-
-def get_teams_playing_in_gameweek(gameweek_no: int) -> List[Team]:
-    """Retrieve a list of teams which played in the given gameweek"""
-    # Get ids of teams in gameweek
-    team_ids_in_gameweek = list(
-        Fixture.objects.filter(gameday__gameweek__gameweek_no=gameweek_no).values(
-            "home_team", "away_team"
-        )
-    )
-
-    all_team_ids = []
-    for fixture in team_ids_in_gameweek:
-        all_team_ids.extend((fixture["home_team"], fixture["away_team"]))
-    all_teams = list(Team.objects.all().filter(id__in=all_team_ids))
-
-    return all_teams
+from fantasy_funball.logic.helpers import get_teams_playing_in_gameweek
+from fantasy_funball.models import Choices, Funballer, Gameweek, Player, Team
 
 
 def get_random_team(
@@ -109,9 +89,3 @@ def generate_steve_choices():
             player_choice=all_players[i],
         )
         choice.save()
-
-
-if __name__ == "__main__":
-    get_random_team(
-        gameweek_no=18,
-    )

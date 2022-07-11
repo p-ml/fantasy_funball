@@ -7,7 +7,7 @@ import pytz
 from requests import Response
 
 from fantasy_funball.fpl_interface.interface import FPLInterface
-from fantasy_funball.models import Gameday, Player, Team
+from fantasy_funball.models import Fixture, Gameday, Player, Team
 from fantasy_funball.tests.test_logic.mock_gameweek_live_data import (
     mock_gameweek_live_data,
 )
@@ -65,6 +65,19 @@ class TestFPLInterface(TestCase):
         ]
 
         output = self.interface.retrieve_players()
+
+        self.assertEqual(output, expected_output)
+
+    @patch(f"{FPL_INTERFACE_PATH}.FPLInterface.retrieve_teams")
+    def test__generate_team_scorer_assist_structure(self, mock_retrieve_teams):
+        mock_retrieve_teams.return_value = {2: "Aston Villa", 17: "Spurs"}
+
+        output = self.interface._generate_team_scorer_assist_structure()
+
+        expected_output = {
+            "Aston Villa": [],
+            "Spurs": [],
+        }
 
         self.assertEqual(output, expected_output)
 
@@ -154,6 +167,24 @@ class TestFPLInterface(TestCase):
                 }
             ]
         }
+
+        self.assertEqual(output, expected_output)
+
+    @patch(f"{FPL_INTERFACE_PATH}.Fixture.objects.get")
+    def test__determine_gameday_from_teams(self, mock_fixture):
+        expected_output = 2
+
+        mock_fixture_response = Mock(spec=Fixture)
+        mock_fixture_response.gameday_id = expected_output
+
+        mock_fixture.return_value = mock_fixture_response
+
+        output = self.interface._determine_gameday_from_teams(
+            # Arbitrary inputs
+            gameweek_no=1,
+            home_team="Unit",
+            away_team="Test",
+        )
 
         self.assertEqual(output, expected_output)
 

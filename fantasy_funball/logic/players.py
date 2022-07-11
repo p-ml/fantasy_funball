@@ -1,6 +1,6 @@
 import logging
 
-from fantasy_funball.fpl_interface.interface import FPLInterface
+from fantasy_funball.fpl_interface import FPLInterface
 from fantasy_funball.models import Player, Team
 
 logger = logging.getLogger("papertrail")
@@ -80,7 +80,3 @@ def update_players():
     """
     add_players()
     remove_players()
-
-
-if __name__ == "__main__":
-    update_players()
