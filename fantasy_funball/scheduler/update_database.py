@@ -17,14 +17,14 @@ if __name__ == "__main__":
     # Run at midnight every day by Heroku Job Scheduler
 
     # Check if game is paused
-    game_paused = os.environ.get("GAME_PAUSED")
+    game_resume = os.environ.get("GAME_RESUME")
     update_players()
     gameweek_no = determine_gameweek_no()
 
-    logger.info(f"Game paused: {game_paused}")
+    logger.info(f"Game paused: {game_resume}")
     logger.info(f"Gameweek no: {gameweek_no}")
 
-    if gameweek_no > 0:
+    if gameweek_no > 0 and game_resume:
         check_choices_if_deadline_day(gameweek_no=gameweek_no)
         update_results(gameweek_no=gameweek_no)
         check_teams_and_lineups(gameweek_no=gameweek_no)
