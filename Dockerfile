@@ -12,5 +12,9 @@ RUN apt-get update \
 RUN pip install poetry
 COPY . /app/
 
-RUN poetry export --dev -f requirements.txt --output requirements.txt
+RUN poetry export --dev -f requirements.txt --output requirements.txt --without-hashes
 RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 8000
+
+CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "core.wsgi:application"]

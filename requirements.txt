@@ -1,19 +1,18 @@
-asgiref==3.5.0; python_version >= "3.7"
-certifi==2021.10.8; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0"
-charset-normalizer==2.0.12; python_full_version >= "3.6.0" and python_version >= "3"
+asgiref==3.5.2; python_version >= "3.7"
+certifi==2022.9.24; python_version >= "3.7" and python_version < "4"
+charset-normalizer==2.1.1; python_version >= "3.7" and python_version < "4" and python_full_version >= "3.6.0"
 dj-database-url==0.5.0
-django-heroku==0.3.1
-django==3.2.12; python_version >= "3.6"
-djangorestframework==3.13.1; python_version >= "3.6"
-freezegun==1.2.1; python_version >= "3.6"
+django==3.2.16; python_version >= "3.6"
+djangorestframework==3.14.0; python_version >= "3.6"
+freezegun==1.2.2; python_version >= "3.6"
 gunicorn==20.1.0; python_version >= "3.5"
-idna==3.3; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
+idna==3.4; python_version >= "3.7" and python_version < "4"
 psycopg2==2.8.6; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
 python-dateutil==2.8.2; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.6"
-pytz==2021.3; python_version >= "3.6"
-requests==2.27.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
-sentry-sdk==1.5.7
+python-dotenv==0.21.0; python_version >= "3.7"
+pytz==2022.6; python_version >= "3.6"
+requests==2.28.1; python_version >= "3.7" and python_version < "4"
+sentry-sdk==1.10.1
 six==1.16.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.6"
-sqlparse==0.4.2; python_version >= "3.6"
-urllib3==1.26.9; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version < "4"
-whitenoise==6.0.0; python_version >= "3.7"
+sqlparse==0.4.3; python_version >= "3.6"
+urllib3==1.26.12; python_version >= "3.7" and python_full_version < "3.0.0" and python_version < "4" or python_full_version >= "3.6.0" and python_version < "4" and python_version >= "3.7"
