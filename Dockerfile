@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update \
-    && apt-get -y install libpq-dev gcc \
+    && apt-get -y install libpq-dev gcc cron \
     && pip install psycopg2
 
 RUN pip install poetry
@@ -17,4 +17,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "core.wsgi:application"]
+CMD run.sh
