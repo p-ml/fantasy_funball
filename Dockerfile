@@ -15,6 +15,8 @@ COPY . /app/
 RUN poetry export --dev -f requirements.txt --output requirements.txt --without-hashes
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY run.sh /app/run.sh
+
 EXPOSE 8000
 
-CMD run.sh
+CMD /app/run.sh
