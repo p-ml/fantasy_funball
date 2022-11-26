@@ -32,4 +32,4 @@ if __name__ == "__main__":
         update_fixtures(gameweek_no=gameweek_no)
 
     else:
-        logger.info("Season has not started yet")
+        logger.info("Season has not started yet\n")

@@ -15,9 +15,6 @@ echo "PAPERTRAIL_API_TOKEN=${PAPERTRAIL_API_TOKEN}" >> /etc/environment
 
 echo "PYTHONPATH=/app" >> /etc/environment
 
-# Create directory for log.
-mkdir -p /app/var/log
-
 # Load cron configuration.
 crontab /app/etc/crontab
 

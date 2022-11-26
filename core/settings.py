@@ -13,29 +13,27 @@ import os
 import sys
 from pathlib import Path
 
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 import dj_database_url
-
+import sentry_sdk
 from dotenv import load_dotenv
-
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR /  ".env")
+load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
+DEBUG = os.getenv("DEBUG", "0").lower() in ["true", "t", "1"]
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(' ')
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(" ")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(" ")
 
 # Application definition
 INSTALLED_APPS = [
@@ -81,7 +79,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 # Database
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600),
+    "default": dj_database_url.parse(os.environ.get("DATABASE_URL"), conn_max_age=600),
 }
 
 
@@ -150,6 +148,11 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "stream": sys.stdout,
         },
+        "cron": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "/app/var/log/cron.log",
+        },
     },
     "loggers": {
         "django": {
@@ -159,6 +162,11 @@ LOGGING = {
         "papertrail": {
             "handlers": ["console"],
             "level": "INFO",
+            "formatters": {
+                "simple": {
+                    "format": "%(levelname)s %(asctime)s %(funcName)s: %(lineno)s- %(message)s"
+                }
+            },
         },
     },
 }
