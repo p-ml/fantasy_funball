@@ -1,0 +1,22 @@
+name: Lint Fantasy Funball
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build docker stack
+      run: docker-compose build
+
+    - name: Flake8
+      run: |
+        docker-compose up -d;
+        docker-compose exec -T app python -m flake8 --benchmark --exit-zero fantasy_funball/;
+
+    - name: Black
+      run: |
+        docker-compose exec -T app python -m black --check fantasy_funball;
+  
