@@ -3,7 +3,7 @@
 Fantasy Funball Backend API. Accompanied by a Streamlit app to act as a front end.
 
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/p-ml/fantasy_funball_streamlit/fantasy_funball.py)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://fantasy-funball.streamlit.app/)
 ![Testing Workflow](https://github.com/p-ml/fantasy_funball/actions/workflows/testing_workflow.yml/badge.svg)
 
 
@@ -23,7 +23,7 @@ A player must start or be subbed on to have count as "played". If a chosen playe
 the pitch, the funballer will be randomly allocated a midfielder or forward (that they have not already chosen) 
 from any Premier League team.
 
-The app will check for results once a day (at midnight) and update standings accordingly.
+The app will check for results once a day (~at midnight) and update standings accordingly.
 
 The Premier League Fantasy Football API is used as a data source.
 
@@ -35,7 +35,7 @@ All of the _fantasy_funball_ logic is stored within the `fantasy_funball` app.
 - `logic/`: Bulk of the application's day-to-day running logic.
 - `migrations/`: Django migrations.
 - `models/`: Django models.
-- `scheduler/`: The `update_database.py` script is what is run each night at 00:00 UTC by Heroku Scheduler.
+- `scheduler/`: The `update_database.py` script is run each night at 00:30 UTC by a Cron process.
 - `tests/`: Various unit tests.
 - `views/`: Django Rest Framework influenced views as an entry-point for the requests to the app.
 - `urls.py`: Each of the app's endpoints.
@@ -52,13 +52,12 @@ Alternatively, you can run the app without docker via the usual Django `manage.p
 the environment variables listed in `.env.sample`.
 
 ## Hosted Deployment
-The app is hosted on Heroku, where a GitHub Action has been set up to automatically deploy to Heroku on every push to `master`.
-A Heroku PostgreSQL database is used, along with Papertrail and Sentry for logging/monitoring.
+The app is hosted on Fly.io, where a GitHub Action has been set up to automatically deploy to Fly on every push to `master`.
+A PostgreSQL database is also hosted on Fly. No third-party logging/monitoring services (i.e. Papertrail/Sentry) have been set up yet.
 
 
 ## Dependency Management, Testing & Linting
-Poetry is used for dependency management, but a `requirements.txt` file is still required by Heroku. This can be generated
-via the `poetry export --without-hashes --output requirements.txt` command.
+Poetry is used for dependency management, create a poetry shell via `poetry shell`, and install the dependencies with `poetry install`.
 
 `pytest` is used for testing. Functional tests are run against a Dockerised version of the app. A GitHub Action has been set up
 to automatically run the unit and functional tests on every push.
@@ -68,3 +67,4 @@ locally with `pre-commit install`. The config for the linters can be found in `t
 
 ## Todo
 - Bulk out tests (both unit and functional)
+- Set up third-party logging & monitoring

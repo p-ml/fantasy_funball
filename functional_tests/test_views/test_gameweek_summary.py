@@ -9,7 +9,7 @@ class TestGameweekSummary(TestCase):
     def setUp(self) -> None:
         self.gameweek_summary = {"text": "Test Gameweek Summary"}
         self.gameweek_summary_url = (
-            "http://0.0.0.0:8080/fantasy_funball/gameweek/summary/"
+            "http://0.0.0.0:8000/fantasy_funball/gameweek/summary/"
         )
 
     def test_gameweek_summary(self):

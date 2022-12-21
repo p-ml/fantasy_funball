@@ -1,4 +1,6 @@
-from fantasy_funball.models import Fixture, Funballer, Gameday, Gameweek, Team
+from typing import Tuple
+
+from fantasy_funball.models import Choices, Fixture, Funballer, Gameday, Gameweek, Team
 
 
 class FunctionalTestHarness:
@@ -30,7 +32,7 @@ class FunctionalTestHarness:
         gameday.save()
         return gameday
 
-    def _setup_dummy_teams(self) -> (Team, Team):
+    def _setup_dummy_teams(self) -> Tuple[Team, Team]:
         home_team = Team(
             team_name="Tottenham Hotspur",
         )
@@ -57,6 +59,10 @@ class FunctionalTestHarness:
 
     @staticmethod
     def teardown_dummy_fixture():
+        choices = Choices.objects.all()
+        for choice in choices:
+            choice.delete()
+
         fixtures = Fixture.objects.all()
         for fixture in fixtures:
             fixture.delete()

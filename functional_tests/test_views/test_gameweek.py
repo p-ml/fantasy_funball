@@ -14,7 +14,7 @@ class TestGameweekView(TestCase):
         self.harness = FunctionalTestHarness()
 
         self.dummy_fixture = self.harness.setup_dummy_fixture()
-        self.gameweek_url = "http://0.0.0.0:8080/fantasy_funball/gameweek"
+        self.gameweek_url = "http://0.0.0.0:8000/fantasy_funball/gameweek"
 
         self.gameweek_no = self.dummy_fixture.gameday.gameweek.gameweek_no
         self.gameday_id = self.dummy_fixture.gameday_id
