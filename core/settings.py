@@ -148,11 +148,6 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "stream": sys.stdout,
         },
-        "cron": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": "/app/var/log/cron.log",
-        },
     },
     "loggers": {
         "django": {
