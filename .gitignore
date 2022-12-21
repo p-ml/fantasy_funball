@@ -17,3 +17,6 @@ __pycache__/
 
 # Django static files
 staticfiles/
+
+# Database dumps (mainly for Heroku -> Fly migration)
+*.json
