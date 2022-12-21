@@ -21,5 +21,5 @@ crontab /app/etc/crontab
 # Start cron as a daemon.
 cron
 
-# Run your main app.
+# Run the main app.
 gunicorn --bind :8000 --workers 2 core.wsgi:application
