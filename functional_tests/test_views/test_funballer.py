@@ -11,7 +11,7 @@ from functional_tests.harness import FunctionalTestHarness
 
 class TestFunballerView(TestCase):
     def setUp(self) -> None:
-        self.funballer_url = "http://0.0.0.0:8080/fantasy_funball/funballer/"
+        self.funballer_url = "http://0.0.0.0:8000/fantasy_funball/funballer/"
         self.dummy_funballer_data = {
             "first_name": "functional",
             "surname": "test",

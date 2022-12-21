@@ -1,0 +1,2 @@
+SHELL=/bin/sh
+30 0 * * * /app/daily_update.sh >> /app/var/log/cron.log 2>&1
