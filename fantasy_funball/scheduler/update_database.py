@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import date
 
 from fantasy_funball.logic import (
     check_choices_if_deadline_day,
@@ -21,8 +22,12 @@ if __name__ == "__main__":
     update_players()
     gameweek_no = determine_gameweek_no()
 
-    logger.info(f"Game paused: {game_resume}")
-    logger.info(f"Gameweek no: {gameweek_no}")
+    logger.info(
+        f"Game paused: {game_resume}\n"
+        f"Todays date: {date.today()}\n"
+        f"Gameweek no: {gameweek_no}\n"
+    )
+    logger.info()
 
     if gameweek_no > 0 and game_resume:
         check_choices_if_deadline_day(gameweek_no=gameweek_no)
