@@ -27,7 +27,7 @@ if __name__ == "__main__":
         f"Todays date: {date.today()}\n"
         f"Gameweek no: {gameweek_no}\n"
     )
-    
+
     if gameweek_no > 0 and game_resume:
         check_choices_if_deadline_day(gameweek_no=gameweek_no)
         update_results(gameweek_no=gameweek_no)
