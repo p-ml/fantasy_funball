@@ -12,7 +12,7 @@ RUN apt-get update \
 RUN pip install poetry
 COPY . /app/
 
-RUN poetry export --dev -f requirements.txt --output requirements.txt --without-hashes
+RUN poetry export --with dev -f requirements.txt --output requirements.txt --without-hashes
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN mkdir -p /app/var/log
