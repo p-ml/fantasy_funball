@@ -12,7 +12,7 @@ jobs:
       run: docker-compose build
 
     - name: Unit tests
-      run: docker-compose run app pytest fantasy_funball/tests/
+      run: pytest fantasy_funball/
 
     - name: Functional tests
       run: |

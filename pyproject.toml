@@ -21,6 +21,8 @@ flake8 = "*"
 isort = "*"
 pytest = "*"
 pytest-cov = "*"
+pytest-env = "*"
+pytest-django = "*"
 pre-commit = "*"
 freezegun = "*"
 
