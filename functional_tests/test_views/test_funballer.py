@@ -6,7 +6,11 @@ import requests
 from rest_framework import status
 
 django.setup()
+import pytest
+
 from functional_tests.harness import FunctionalTestHarness
+
+pytestmark = pytest.mark.django_db
 
 
 class TestFunballerView(TestCase):
