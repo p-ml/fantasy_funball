@@ -1,4 +1,4 @@
-name: Test Fantasy Funball
+name: Test Fantasy Funball - Unit Tests
 
 on: [push]
 
@@ -21,10 +21,3 @@ jobs:
 
     - name: Unit tests
       run: pytest fantasy_funball/
-
-    - name: Functional tests
-      run: |
-        docker-compose build
-        docker-compose up -d;
-        sleep 5;  # Allow db to spin up
-        docker-compose exec -T app pytest functional_tests/
