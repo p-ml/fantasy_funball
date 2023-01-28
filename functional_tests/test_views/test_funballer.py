@@ -1,12 +1,9 @@
 import json
 from unittest import TestCase
 
-import django
+import pytest
 import requests
 from rest_framework import status
-
-django.setup()
-import pytest
 
 from functional_tests.harness import FunctionalTestHarness
 

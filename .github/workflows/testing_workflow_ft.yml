@@ -17,4 +17,4 @@ jobs:
       run: |
         docker-compose up -d;
         sleep 5;  # Allow db to spin up
-        docker-compose exec -T app pytest functional_tests/
+        docker-compose exec -T app pytest functional_tests/ --no-cov

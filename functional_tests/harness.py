@@ -1,6 +1,10 @@
 from typing import Tuple
 
+import pytest
+
 from fantasy_funball.models import Choices, Fixture, Funballer, Gameday, Gameweek, Team
+
+pytestmark = pytest.mark.django_db
 
 
 class FunctionalTestHarness:
