@@ -8,15 +8,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build docker stack
-      run: docker-compose build
+    
+    - name: Install Flake8 & Black
+      run: pip install flake8 black
 
-    - name: Flake8
-      run: |
-        docker-compose up -d;
-        docker-compose exec -T app python -m flake8 --benchmark fantasy_funball/;
+    - name: Run Flake8
+      run:  python -m flake8 --benchmark fantasy_funball/;
 
-    - name: Black
-      run: |
-        docker-compose exec -T app python -m black --check fantasy_funball;
+    - name: Run Black
+      run: python -m black --check fantasy_funball;
   
